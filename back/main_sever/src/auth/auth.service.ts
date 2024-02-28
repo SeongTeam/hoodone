@@ -1,26 +1,36 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
+import { InjectRepository } from '@nestjs/typeorm'
+import { AuthCredentialsDto, RegisterUserDto } from './dto/auth-credential.dto'
+import { UserRepository } from 'src/users/user.repository'
+import * as bcrypt from 'bcrypt'
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly jwtService: JwtService,
+    @InjectRepository(UserRepository)
+    private userRepository: UserRepository,
+    private readonly configService: ConfigService,
+  ) {}
+
+  async signUp(registerUserDto: RegisterUserDto): Promise<void> {
+    return this.userRepository.createUser(registerUserDto)
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string }> {
+    const { email, password } = authCredentialsDto
+    const user = await this.userRepository.findOneBy({ email: email })
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    if (user && (await bcrypt.compare(password, user.password))) {
+      // 유저 토큰 생성 ( Secret + Payload )
+      const payload = { email }
+      const accessToken = await this.jwtService.sign(payload)
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+      return { accessToken }
+    } else {
+      throw new UnauthorizedException('login failed')
+    }
   }
 }
