@@ -1,14 +1,33 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { PostsModule } from './posts/posts.module';
-import { CommonModule } from './common/common.module';
-import { SearchModule } from './search/search.module';
+import { Module } from '@nestjs/common'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { AuthModule } from './auth/auth.module'
+import { UsersModule } from './users/users.module'
+import { CommonModule } from './common/common.module'
+import { BoardsModule } from './boards/boards.module'
+
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { DataSource, DataSourceOptions } from 'typeorm'
+import { TypeormConfig } from './configs/typeorm.config'
+import { ConfigModule } from '@nestjs/config'
 
 @Module({
-  imports: [AuthModule, UsersModule, PostsModule, CommonModule, SearchModule],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
+    TypeOrmModule.forRootAsync({
+      useClass: TypeormConfig, // TODO: typeorm 설정한 클래스
+      dataSourceFactory: async (options: DataSourceOptions) => {
+        return new DataSource(options).initialize()
+      },
+    }),
+    AuthModule,
+    UsersModule,
+    CommonModule,
+    BoardsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
