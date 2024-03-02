@@ -2,7 +2,7 @@ import { PickType } from '@nestjs/mapped-types'
 import { IsEmail, IsString, Matches, MaxLength, MinLength } from 'class-validator'
 import { emailValidationMessage } from 'src/common/validation-message/email-validation.message'
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message'
-import { User } from 'src/users/entities/user.entity'
+import { User } from 'src/users/entity/user.entity'
 
 // 유저가 로그인할떄 사용할 DTO
 // todo RegisterUserDto 처럼 사용하지 논의필요
