@@ -1,16 +1,18 @@
 // import { Board } from "src/boards/board.entity";
 import { Exclude, Expose } from 'class-transformer'
 import { IsEmail, IsString, Length, Matches } from 'class-validator'
-import { BaseModel } from 'src/common/entity/base.entity'
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm'
+
 import { emailValidationMessage } from 'src/common/validation-message/email-validation.message'
 import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message'
 import { passwordValidationMessage } from 'src/common/validation-message/password-vaildation.message'
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message'
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm'
+import { BaseModel } from 'src/common/entity/base.entity'
+import { PostsModel } from 'src/posts/entities/post.entity'
 
 @Entity()
 @Exclude({ toPlainOnly: true })
-export class User extends BaseModel {
+export class UserModel extends BaseModel {
   @Expose()
   @Column({ length: 20, unique: true })
   @IsString({ message: stringValidationMessage })
