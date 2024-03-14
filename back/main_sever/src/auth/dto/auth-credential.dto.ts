@@ -2,7 +2,7 @@ import { PickType } from '@nestjs/mapped-types'
 import { IsEmail, IsString, Matches, MaxLength, MinLength } from 'class-validator'
 import { emailValidationMessage } from 'src/common/validation-message/email-validation.message'
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message'
-import { User } from 'src/users/entity/user.entity'
+import { UserModel } from 'src/users/entity/user.entity'
 
 // 유저가 로그인할떄 사용할 DTO
 // todo RegisterUserDto 처럼 사용하지 논의필요
@@ -20,6 +20,6 @@ export class AuthCredentialsDto {
   })
   password: string
 }
-
+// todo DTO는 파일 1개에 1개만 분리해야 함
 // 유저기 회원가입 할때 사용할 DTO
-export class RegisterUserDto extends PickType(User, ['nickname', 'email', 'password']) {}
+export class RegisterUserDto extends PickType(UserModel, ['nickname', 'email', 'password']) {}

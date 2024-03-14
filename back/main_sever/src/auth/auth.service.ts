@@ -4,7 +4,7 @@ import { AuthCredentialsDto, RegisterUserDto } from './dto/auth-credential.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { ENV_AUTH_SALT2024_KEY, ENV_HASH_ROUNDS_KEY, ENV_JWT_SECRET_KEY,} from 'src/common/const/env-keys.const';
-import { User } from 'src/users/entity/user.entity';
+import { UserModel } from 'src/users/entity/user.entity';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -102,7 +102,7 @@ export class AuthService {
   }
   // todo bcript를 사용하자 단 너무 느게리게 사용하지 말고
   // salt를 잘 사용하고 주기적으로 salt를 바꿔주자
-  async authenticateWithEmailAndPassword(user: Pick<User, 'email' | 'password'>) {
+  async authenticateWithEmailAndPassword(user: Pick<UserModel, 'email' | 'password'>) {
     /**
      * 1. 사용자가 존재하는지 확인 (email)
      * 2. 비밀번호가 맞는지 확인
@@ -131,7 +131,7 @@ export class AuthService {
 
     return existingUser;
   }
-  loginUser(user: Pick<User, 'email' | 'id'>) {
+  loginUser(user: Pick<UserModel, 'email' | 'id'>) {
     return {
       accessToken: this.signToken(user, false),
       refreshToken: this.signToken(user, true),
@@ -153,7 +153,7 @@ export class AuthService {
    *
    * {email: string, id: number}
    */
-  signToken(user: Pick<User, 'email' | 'id'>, isRefreshToken: boolean) {
+  signToken(user: Pick<UserModel, 'email' | 'id'>, isRefreshToken: boolean) {
     const payload = {
       email: user.email,
       sub: user.id,

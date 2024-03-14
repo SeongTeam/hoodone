@@ -3,13 +3,13 @@ import { Injectable } from '@nestjs/common'
 
 import { ConflictException, InternalServerErrorException } from '@nestjs/common'
 import * as bcrypt from 'bcrypt'
-import { User } from './entity/user.entity'
+import { UserModel } from './entity/user.entity'
 import { AuthCredentialsDto, RegisterUserDto } from 'src/auth/dto/auth-credential.dto'
 
 @Injectable()
-export class UserRepository extends Repository<User> {
+export class UserRepository extends Repository<UserModel> {
   constructor(dataSource: DataSource) {
-    super(User, dataSource.createEntityManager())
+    super(UserModel, dataSource.createEntityManager())
   }
 
   async createUser(authCredentialsDto: RegisterUserDto): Promise<void> {
@@ -30,7 +30,7 @@ export class UserRepository extends Repository<User> {
       }
     }
   }
-  async findUserWithUserName(username: string): Promise<User> {
+  async findUserWithUserName(username: string): Promise<UserModel> {
     const foundUser = this.findOneBy({ nickname: username })
     return foundUser
   }
