@@ -1,20 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entity/user.entity';
+import { UserModel } from './entity/user.entity';
 import { QueryRunner, Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    @InjectRepository(UserModel)
+    private readonly usersRepository: Repository<UserModel>,
   ) {}
 
   getUsersRepository(qr?: QueryRunner) {
-    return qr ? qr.manager.getRepository<User>(User) : this.usersRepository;
+    return qr ? qr.manager.getRepository<UserModel>(UserModel) : this.usersRepository;
   }
 
-  async createUser(user: Pick<User, 'email' | 'nickname' | 'password'>) {
+  async createUser(user: Pick<UserModel, 'email' | 'nickname' | 'password'>) {
     // 1) nickname 중복이 없는지 확인
     // exist() -> 만약에 조건에 해당되는 값이 있으면 true 반환
     const nicknameExists = await this.usersRepository.exist({
