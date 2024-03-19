@@ -1,16 +1,18 @@
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { CommonModule } from './common/common.module';
-import { BoardsModule } from './boards/boards.module';
-
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource, DataSourceOptions } from 'typeorm';
-import { TypeormConfig } from './configs/typeorm.config';
 import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { DataSource, DataSourceOptions } from 'typeorm';
+
+import { AuthModule } from 'src/auth/auth.module';
+import { UsersModule } from 'src/users/users.module';
+import { CommonModule } from 'src/common/common.module';
+import { BoardsModule } from 'src/boards/boards.module';
+import { TypeormConfig } from 'src/configs/typeorm.config';
+import { PostsModule } from 'src/posts/posts.module';
+
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -28,6 +30,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     UsersModule,
     CommonModule,
     BoardsModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService,  {
