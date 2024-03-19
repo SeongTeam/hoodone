@@ -1,4 +1,5 @@
-import { CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Exclude, Expose } from "class-transformer/types/decorators";
+import { CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export abstract class BaseModel{
     @PrimaryGeneratedColumn()
@@ -9,4 +10,7 @@ export abstract class BaseModel{
 
     @CreateDateColumn()
     createdAt: Date;
+
+    @DeleteDateColumn()
+    deletedAt!: Date | null;
 }
