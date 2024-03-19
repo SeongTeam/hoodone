@@ -8,7 +8,7 @@ import { lengthValidationMessage } from 'src/common/validation-message/length-va
 import { passwordValidationMessage } from 'src/common/validation-message/password-vaildation.message'
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message'
 import { BaseModel } from 'src/common/entity/base.entity'
-import { PostsModel } from 'src/posts/entities/post.entity'
+import { PostsModel } from 'src/posts/entities/posts.entity'
 
 @Entity()
 @Exclude({ toPlainOnly: true })
@@ -34,4 +34,15 @@ export class UserModel extends BaseModel {
     message: passwordValidationMessage,
   })
   password: string
+  @OneToMany(() => PostsModel, (post) => post.author)
+    posts: PostsModel[];
+
+  @Column()
+  @Expose()
+  str1: string;
+  
+  @Column()
+  @Expose()
+  str2: string;
+  
 }
