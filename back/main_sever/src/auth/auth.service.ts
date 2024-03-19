@@ -4,7 +4,7 @@ import { AuthCredentialsDto, RegisterUserDto } from './dto/auth-credential.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { ENV_AUTH_SALT2024_KEY, ENV_HASH_ROUNDS_KEY, ENV_JWT_SECRET_KEY,} from 'src/common/const/env-keys.const';
-import { UserModel } from 'src/users/entity/user.entity';
+import { UserModel } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
