@@ -1,7 +1,7 @@
 // import { Board } from "src/boards/board.entity";
 import { Exclude, Expose } from 'class-transformer'
-import { IsEmail, IsString, Length, Matches } from 'class-validator'
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm'
+import { IsEmail, IsEnum, IsString, Length, Matches } from 'class-validator'
+import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm'
 
 import { emailValidationMessage } from 'src/common/validation-message/email-validation.message'
 import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message'
@@ -9,15 +9,24 @@ import { passwordValidationMessage } from 'src/common/validation-message/passwor
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message'
 import { BaseModel } from 'src/common/entity/base.entity'
 import { PostsModel } from 'src/posts/entities/posts.entity'
+import { CommentModel } from 'src/posts/comment/entities/comments.entity'
 
+
+export enum UserModelStatus{
+  ACTIVE,
+  SUSPENDED,
+  BANNED,
+}
 @Entity()
 @Exclude({ toPlainOnly: true })
 export class UserModel extends BaseModel {
+  
+
   @Expose()
   @Column({ length: 20, unique: true })
   @IsString({ message: stringValidationMessage })
-  @Length(1, 20, { message: lengthValidationMessage })
-  nickname: string // 1) 유일무이한 값이 될 것
+  @Length(1, 16, { message: lengthValidationMessage })
+  nickname: string 
 
   @Expose()
   @Column({ unique: true })
@@ -34,15 +43,29 @@ export class UserModel extends BaseModel {
     message: passwordValidationMessage,
   })
   password: string
-  @OneToMany(() => PostsModel, (post) => post.author)
-    posts: PostsModel[];
 
-  @Column()
-  @Expose()
-  str1: string;
+  @Column({
+      enum: UserModelStatus,
+  })
+  @IsEnum(UserModelStatus)
+  @IsString()
+  status: UserModelStatus; 
+
+  @Column({nullable: true})
+  suspensionEnd: string; // 정지기간은 잘 사용하지 않을 거라고 판다 
   
   @Column()
+  userReportCount: number
+
+  @Column()
+  userReportedCount: number
+
   @Expose()
-  str2: string;
+  @OneToMany(() => PostsModel, (post) => post.author)
+  posts: PostsModel[];
+  
+  @Expose()
+  @OneToMany(() => CommentModel, (comment) => comment.author)
+  comments: CommentModel[];
   
 }

@@ -3,6 +3,7 @@ import { BaseModel } from 'src/common/entity/base.entity';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { UserModel } from 'src/users/entities/user.entity';
+import { CommentModel } from '../comment/entities/comments.entity';
 
 @Entity()
 export class PostsModel extends BaseModel {
@@ -10,7 +11,7 @@ export class PostsModel extends BaseModel {
   // 2) null이 될 수 없다.
   //
   @ManyToOne(() => UserModel, (user) => user.posts, {
-      // nullable: false,
+      nullable: false,
   })
   author: UserModel;  
 
@@ -35,6 +36,7 @@ export class PostsModel extends BaseModel {
   @Column()
   isPublished: boolean
   
-
+  @OneToMany(() => CommentModel, (comment) => comment.post)
+  comments: CommentModel[];
   
 }
