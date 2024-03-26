@@ -7,12 +7,12 @@ import { CommonModule } from 'src/common/common.module';
 
 import { PostsService } from './posts.service';
 import { PostsController } from './posts.controller';
-import { PostsModel } from './entities/posts.entity';
+import { PostModel } from './entities/posts.entity';
 import { PostsUseCases } from './usecase/post.use-case';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      PostsModel,
+      PostModel,
     ]),
     AuthModule,
     UsersModule,

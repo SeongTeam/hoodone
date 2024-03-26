@@ -5,7 +5,7 @@ import { Column, Entity } from 'typeorm';
 import { BaseModel } from 'src/common/entity/base.entity';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { UserModel } from 'src/users/entities/user.entity';
-import { PostsModel } from 'src/posts/entities/posts.entity';
+import { PostModel } from 'src/posts/entities/posts.entity';
 
 @Entity()
 export class CommentModel extends BaseModel {
@@ -13,9 +13,9 @@ export class CommentModel extends BaseModel {
   })
   author: UserModel;
 
-  @ManyToOne(() => PostsModel, (post) => post.comments, {
+  @ManyToOne(() => PostModel, (post) => post.comments, {
   })
-  post: PostsModel;
+  post: PostModel;
 
   @Column()
   @IsNotEmpty()

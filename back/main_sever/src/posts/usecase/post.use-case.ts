@@ -4,7 +4,7 @@ import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
-import { PostsModel } from '../entities/posts.entity';
+import { PostModel } from '../entities/posts.entity';
 import { PostsService } from '../posts.service';
 
 @Injectable()
@@ -15,15 +15,15 @@ export class PostsUseCases {
   ) {}
 
   async createNewPost(authorId: number, creatDto: CreatePostDto, qr: QueryRunner) {
-    const createdPost: PostsModel = await this.postService.createPost(authorId, creatDto);
-    const newPost: PostsModel = await this.postService.savePost(createdPost, qr);
+    const createdPost: PostModel = await this.postService.createPost(authorId, creatDto);
+    const newPost: PostModel = await this.postService.savePost(createdPost, qr);
 
     return newPost;
   }
 
   async updatePost(postId: number, updateDto: UpdatePostDto) {
     const { title, content } = updateDto;
-    const post: PostsModel = await this.postService.loadPostById(postId);
+    const post: PostModel = await this.postService.loadPostById(postId);
 
     if (title) post.title = title;
 
