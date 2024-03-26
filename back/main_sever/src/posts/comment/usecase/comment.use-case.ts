@@ -6,12 +6,13 @@ import { QueryRunner } from 'typeorm';
 import { CommentsService } from '../comment.service';
 import { CreateCommentDto } from '../dto/create-comment.dto';
 import { CreateResponseCommentDto } from '../dto/create-response-comment.dto';
+import { PostsService } from 'src/posts/posts.service';
 
 @Injectable()
 export class CommentUseCases {
   constructor(
     @Inject(forwardRef(() => CommentsService))
-    private readonly dataServices: CommentsService,
+    private readonly commentService: CommentsService,
   ) {}
 
   async createComment(
@@ -21,7 +22,7 @@ export class CommentUseCases {
     qr?: QueryRunner,
   ) {
     try {
-      const CommentRepository = this.dataServices.getCommentRepository(qr);
+      const CommentRepository = this.commentService.getCommentRepository(qr);
       const comment = CommentRepository.create({
         post: {
           id: postId,
@@ -33,6 +34,7 @@ export class CommentUseCases {
       });
 
       const newComment = await CommentRepository.save(comment);
+
 
       return newComment;
     } catch (e) {
@@ -48,11 +50,11 @@ export class CommentUseCases {
   ) {
     let _commentIDs: number[] ;
     try {
-      const commentRepository = this.dataServices.getCommentRepository(qr);
+      const commentRepository = this.commentService.getCommentRepository(qr);
     
       // depth의 값에 따라서 댓글 관계가 확인 0이면 댓글 1이상이면 대댓글
 
-        const comment = await this.dataServices.loadCommentById(createDto.responseToId);
+        const comment = await this.commentService.loadCommentById(createDto.responseToId);
         _commentIDs = comment.responseCommentIDs;
     
            const responseComment =  commentRepository.create({
@@ -67,7 +69,7 @@ export class CommentUseCases {
       responseComment.depth++; // 위에서는 depth 값을 1 올려주지 않아서
 
       const newResponseComment = await commentRepository.save(responseComment);
-      this.dataServices.appendResponseCommentId(createDto.depth, newResponseComment.id ,createDto.responseToId)
+      this.commentService.appendResponseCommentId(createDto.depth, newResponseComment.id ,createDto.responseToId)
 
       return newResponseComment;
     } catch (e) {
@@ -76,6 +78,6 @@ export class CommentUseCases {
   }
 
   getCommentById(commentId: number){
-      return this.dataServices.findCommentById(commentId)
+      return this.commentService.findCommentById(commentId)
   }
 }
