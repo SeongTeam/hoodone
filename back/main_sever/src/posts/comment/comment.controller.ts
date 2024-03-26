@@ -1,4 +1,4 @@
-import { Controller,Get,Post,Body,Param,UseGuards,UseInterceptors,ParseIntPipe,Inject,forwardRef,
+import {Controller, Get, Post, Body, Param, UseGuards, UseInterceptors, ParseIntPipe, Inject, forwardRef,
     } from '@nestjs/common';
 import { QueryRunner as QR } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -16,20 +16,16 @@ export class CommentsController {
   constructor(
     @Inject(forwardRef(() => CommentUseCases))
     private readonly commentUseCases: CommentUseCases,
-
   ) {}
 
-  /** Comment와 ResponseComment를 id로 찾는 API는 1개로 설정 
+  /** Comment와 ResponseComment를 id로 찾는 API는 1개로 설정
    * Body.depth로 어떤 table에 접속할지 확인한다.
-  */
+   */
   @Get(':commentId')
   @IsPublic()
-  // todo Comment.id는 1 ~ 1,000,000 ResponseComment.id는 1,000,001 ~ 2,000,000 
-  getComment(@Param('commentId', ParseIntPipe) commentId: number,  @Body() body,) {
-    if (body.depth == 0) {
-      return this.commentUseCases.getCommentById(commentId);
-    }
-    return this.commentUseCases.getResponseCommentById(commentId);
+  // todo Comment.id는 1 ~ 1,000,000 ResponseComment.id는 1,000,001 ~ 2,000,000
+  getComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body) {
+    return this.commentUseCases.getCommentById(commentId);
   }
 
   @Post()

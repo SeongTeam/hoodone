@@ -1,11 +1,10 @@
 import { PickType } from '@nestjs/mapped-types';
 import { CommentModel } from '../entities/comments.entity';
-import { ResponseCommentModel } from '../entities/response_comments.entity';
 import { IsNotEmpty, IsNumber, Matches } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateResponseCommentDto 
-    extends PickType(ResponseCommentModel, ['content', 'responseToId', 'depth']) 
+    extends PickType(CommentModel, ['content', 'responseToId', 'depth']) 
   {
   @IsNotEmpty()
   content: string;

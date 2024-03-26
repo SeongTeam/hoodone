@@ -46,30 +46,27 @@ export class CommentUseCases {
     createDto: CreateResponseCommentDto,
     qr?: QueryRunner,
   ) {
-    let _responseCommentIDs: number[] ;
+    let _commentIDs: number[] ;
     try {
-      const ResponseCommentRepository = this.dataServices.getResponseCommentRepository(qr);
+      const commentRepository = this.dataServices.getCommentRepository(qr);
     
       // depth의 값에 따라서 댓글 관계가 확인 0이면 댓글 1이상이면 대댓글
-      if (createDto.depth === 0){
+
         const comment = await this.dataServices.loadCommentById(createDto.responseToId);
-        _responseCommentIDs = comment.responseCommentIDs;
-      }else 
-        {const responseComment = await this.dataServices.loadRespondCommentById(createDto.responseToId);
-          _responseCommentIDs = responseComment.responseCommentIDs;
-        }
-           const responseComment =  ResponseCommentRepository.create({
+        _commentIDs = comment.responseCommentIDs;
+    
+           const responseComment =  commentRepository.create({
         post: {
           id: postId,
         },
         responseToId: createDto.responseToId,
-        index: ( _responseCommentIDs.length),
+        index: ( _commentIDs.length),
         author,
         ...createDto,
       });
       responseComment.depth++; // 위에서는 depth 값을 1 올려주지 않아서
 
-      const newResponseComment = await ResponseCommentRepository.save(responseComment);
+      const newResponseComment = await commentRepository.save(responseComment);
       this.dataServices.appendResponseCommentId(createDto.depth, newResponseComment.id ,createDto.responseToId)
 
       return newResponseComment;
@@ -81,20 +78,4 @@ export class CommentUseCases {
   getCommentById(commentId: number){
       return this.dataServices.findCommentById(commentId)
   }
-  getResponseCommentById(commentId: number){
-    return this.dataServices.findResponseCommentById(commentId)
-}
-  // controller에서 사용하기 위해서 사용 
-  // 다른 usecase 함수 에서도 사용하자 
-  // async loadCommentById(commentId: number) {
-  //   if (commentId <= 10000000){
-
-  //     return await this.dataServices.loadCommentById(commentId);
-  //   }
-  //   return await this.dataServices.loadRespondCommentById(commentId);
-  // }
-
-  // async loadResponseCommentById(commentId: number) {
-  //   return await this.dataServices.loadRespondCommentById(commentId);
-  // }
 }
