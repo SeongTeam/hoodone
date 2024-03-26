@@ -44,4 +44,7 @@ export class CommentModel extends BaseModel {
   @Column({ type: `smallint` })
   @IsNumber()
   index: number;
+
+  @Column({ default: 0})
+  responseToId: number;
 }
