@@ -8,7 +8,7 @@ import { User } from 'src/users/decorator/user.decorator';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { UserModel } from 'src/users/entities/user.entity';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
-import { CreateResponseCommentDto } from './dto/create-response-comment.dto';
+import { CreateReplyCommentDto } from './dto/create-reply-comment.dto';
 import { CommentUseCases } from './usecase/comment.use-case';
 
 @Controller('posts/:postId/comment')
@@ -23,7 +23,6 @@ export class CommentsController {
    */
   @Get(':commentId')
   @IsPublic()
-  // todo Comment.id는 1 ~ 1,000,000 ResponseComment.id는 1,000,001 ~ 2,000,000
   getComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body) {
     return this.commentUseCases.getCommentById(commentId);
   }
@@ -49,21 +48,21 @@ export class CommentsController {
   @Post(':commentId')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
-  async postNewResponseComment(
+  async postNewReplyComment(
     @Param('postId', ParseIntPipe) postId: number,
-    @Body() body: CreateResponseCommentDto,
+    @Body() body: CreateReplyCommentDto,
     @User() user: UserModel,
     @QueryRunner() qr: QR,
   ) {
     try {
-      const responseComment = await this.commentUseCases.createResponseComment(
+      const replyComment = await this.commentUseCases.createReplyComment(
         user,
         postId,
         body,
         qr,
       );
 
-      return responseComment;
+      return replyComment;
     } catch (e) {
       throw `find error\n ${e}`;
     }

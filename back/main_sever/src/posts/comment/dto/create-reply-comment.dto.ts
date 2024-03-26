@@ -3,7 +3,7 @@ import { CommentModel } from '../entities/comment.entity';
 import { IsNotEmpty, IsNumber, Matches } from 'class-validator';
 import { Transform } from 'class-transformer';
 
-export class CreateResponseCommentDto 
+export class CreateReplyCommentDto 
     extends PickType(CommentModel, ['content', 'responseToId', 'depth']) 
   {
   @IsNotEmpty()
