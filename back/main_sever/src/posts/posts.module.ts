@@ -8,6 +8,7 @@ import { CommonModule } from 'src/common/common.module';
 import { PostsService } from './posts.service';
 import { PostsController } from './posts.controller';
 import { PostsModel } from './entities/posts.entity';
+import { PostsUseCases } from './usecase/post.use-case';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -19,6 +20,7 @@ import { PostsModel } from './entities/posts.entity';
   ],
   controllers: [PostsController],
   
-  providers: [PostsService],
+  providers: [PostsService, PostsUseCases],
+  exports: [PostsUseCases]
 })
 export class PostsModule {}
