@@ -5,7 +5,7 @@ import { QueryRunner } from 'typeorm';
 
 import { CommentsService } from '../comment.service';
 import { CreateCommentDto } from '../dto/create-comment.dto';
-import { CreateResponseCommentDto } from '../dto/create-response-comment.dto';
+import { CreateReplyCommentDto as CreateReplyCommentDto } from '../dto/create-reply-comment.dto';
 import { PostsService } from 'src/posts/post.service';
 import { CommentModel } from '../entities/comment.entity';
 import { PostsUseCases } from 'src/posts/usecase/post.use-case';
@@ -39,10 +39,10 @@ export class CommentUseCases {
     }
   }
 
-  async createResponseComment(
+  async createReplyComment(
     author: UserModel,
     postId: number, // todo 가능하면 createDto안에 집어 넣자
-    createDto: CreateResponseCommentDto,
+    createDto: CreateReplyCommentDto,
     qr?: QueryRunner,
   ) {
     let _commentIDs: number[];
@@ -50,23 +50,23 @@ export class CommentUseCases {
       const commentRepository = this.commentService.getCommentRepository(qr);
 
       // depth의 값에 따라서 댓글 관계가 확인 0이면 댓글, depth가 1이상이면 대댓글
-      const responseComment: CommentModel = await this.commentService.createResponseCommentModel(
+      const replyComment: CommentModel = await this.commentService.createReplyCommentModel(
         author,
         postId,
         createDto,
       );
-      responseComment.depth++; // depth 값을 1 올려서 저장  
+      replyComment.depth++; // depth 값을 1 올려서 저장  
 
-      const newResponseComment = await commentRepository.save(responseComment);
-      this.commentService.appendResponseCommentId(
+      const newReplyComment = await commentRepository.save(replyComment);
+      this.commentService.appendReplyCommentId(
         createDto.depth,
-        newResponseComment.id,
+        newReplyComment.id,
         createDto.responseToId,
       );
 
       await this.postUseCase.incrementCommentCount(postId, qr);
 
-      return newResponseComment;
+      return newReplyComment;
     } catch (e) {
       throw new InternalServerErrorException(`commentService error \n${e}`);
     }

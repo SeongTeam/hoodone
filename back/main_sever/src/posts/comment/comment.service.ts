@@ -7,7 +7,7 @@ import { CommentModel } from './entities/comment.entity';
 import { DEFAULT_COMMENT_FIND_OPTIONS } from './const/default-comment-find-options.const';
 import { UserModel } from 'src/users/entities/user.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { CreateResponseCommentDto } from './dto/create-response-comment.dto';
+import { CreateReplyCommentDto } from './dto/create-reply-comment.dto';
 @Injectable()
 export class CommentsService {
   constructor(
@@ -44,13 +44,13 @@ export class CommentsService {
     return comment;
   }
 
-  async createResponseCommentModel(
+  async createReplyCommentModel(
     author: UserModel,
     postId: number,
-    createDto: CreateResponseCommentDto,
+    createDto: CreateReplyCommentDto,
   ) {
     const responseToComment = await this.loadCommentById(createDto.responseToId);
-    const _commentIDs = responseToComment.responseCommentIDs;
+    const _commentIDs = responseToComment.replyCommentIDs;
 
     const comment: CommentModel = this.commentRepository.create({
       post: {
@@ -77,9 +77,9 @@ export class CommentsService {
   }
 
   /** 대댓글의 아이디를 부모 댓글에 저장*/
-  async appendResponseCommentId(depth: number, responseCommentId: number, responseToId: number) {
+  async appendReplyCommentId(depth: number, replyCommentId: number, responseToId: number) {
     const comment = await this.loadCommentById(responseToId);
-    await comment.responseCommentIDs.push(responseCommentId);
+    await comment.replyCommentIDs.push(replyCommentId);
     const updatedComment: CommentModel = await this.commentRepository.save(comment);
     return updatedComment;
   }

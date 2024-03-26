@@ -32,7 +32,7 @@ export class CommentModel extends BaseModel {
     type: 'jsonb',
     default: [],
   })
-  responseCommentIDs: number[];
+  replyCommentIDs: number[];
 
   // depth를 통해서 몇 차 댓글인지 확인
   @Column({ type: `smallint` })
