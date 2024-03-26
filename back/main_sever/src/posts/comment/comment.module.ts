@@ -7,7 +7,6 @@ import { UsersModule } from 'src/users/users.module';
 import { CommentsController } from './comment.controller';
 import { CommentsService } from './comment.service';
 import { CommentModel } from './entities/comments.entity';
-import { ResponseCommentModel } from './entities/response_comments.entity';
 import { PostsModel } from '../entities/posts.entity';
 import { CommentUseCases } from './usecase/comment.use-case';
 
@@ -18,7 +17,6 @@ export const COMMENT_USE_CASES = Symbol('COMMENT_USE_CASES');
   imports: [
     TypeOrmModule.forFeature([
       CommentModel,
-      ResponseCommentModel
     ]),
   PostsModel,
   CommonModule,
