@@ -5,7 +5,7 @@ import { Column, Entity } from 'typeorm';
 import { BaseModel } from 'src/common/entity/base.entity';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { UserModel } from 'src/users/entities/user.entity';
-import { PostModel } from 'src/posts/entities/posts.entity';
+import { PostModel } from 'src/posts/entities/post.entity';
 
 @Entity()
 export class CommentModel extends BaseModel {

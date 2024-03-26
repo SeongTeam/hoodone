@@ -4,8 +4,8 @@ import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
-import { PostModel } from '../entities/posts.entity';
-import { PostsService } from '../posts.service';
+import { PostModel } from '../entities/post.entity';
+import { PostsService } from '../post.service';
 
 @Injectable()
 export class PostsUseCases {

@@ -5,7 +5,7 @@ import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { PostModel } from './entities/posts.entity';
+import { PostModel } from './entities/post.entity';
 import { DEFAULT_POST_FIND_OPTIONS } from './const/default-post-find-options.const';
 @Injectable()
 export class PostsService {

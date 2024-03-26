@@ -5,9 +5,9 @@ import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
 import { CommonModule } from 'src/common/common.module';
 
-import { PostsService } from './posts.service';
-import { PostsController } from './posts.controller';
-import { PostModel } from './entities/posts.entity';
+import { PostsService } from './post.service';
+import { PostsController } from './post.controller';
+import { PostModel } from './entities/post.entity';
 import { PostsUseCases } from './usecase/post.use-case';
 @Module({
   imports: [

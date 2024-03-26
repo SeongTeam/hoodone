@@ -8,7 +8,7 @@ import { CommentsController } from './comment.controller';
 import { CommentsService } from './comment.service';
 import { CommentModel } from './entities/comments.entity';
 import { CommentUseCases } from './usecase/comment.use-case';
-import { PostsModule } from '../posts.module';
+import { PostsModule } from '../post.module';
 
 export const COMMENT_USE_CASES = Symbol('COMMENT_USE_CASES');
 

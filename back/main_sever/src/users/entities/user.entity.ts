@@ -8,7 +8,7 @@ import { lengthValidationMessage } from 'src/common/validation-message/length-va
 import { passwordValidationMessage } from 'src/common/validation-message/password-vaildation.message'
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message'
 import { BaseModel } from 'src/common/entity/base.entity'
-import { PostModel } from 'src/posts/entities/posts.entity'
+import { PostModel } from 'src/posts/entities/post.entity'
 import { CommentModel } from 'src/posts/comment/entities/comments.entity'
 
 
