@@ -13,6 +13,7 @@ import { PostsModule } from 'src/posts/posts.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CommentModule } from './posts/comment/comment.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AppService } from './app.service';
     CommonModule,
     BoardsModule,
     PostsModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService,  {
