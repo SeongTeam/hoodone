@@ -9,7 +9,7 @@ import { passwordValidationMessage } from 'src/common/validation-message/passwor
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message'
 import { BaseModel } from 'src/common/entity/base.entity'
 import { PostModel } from 'src/posts/entities/post.entity'
-import { CommentModel } from 'src/posts/comment/entities/comments.entity'
+import { CommentModel } from 'src/posts/comment/entities/comment.entity'
 
 
 export enum UserModelStatus{

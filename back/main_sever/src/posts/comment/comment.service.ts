@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm/dist/common';
 import { Repository } from 'typeorm/repository/Repository';
 import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
-import { CommentModel } from './entities/comments.entity';
+import { CommentModel } from './entities/comment.entity';
 import { DEFAULT_COMMENT_FIND_OPTIONS } from './const/default-comment-find-options.const';
 import { UserModel } from 'src/users/entities/user.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
