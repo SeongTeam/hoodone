@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NestMiddleware } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
-import { PostsService } from "src/posts/posts.service";
+import { PostsService } from "src/posts/post.service";
 
 @Injectable()
 export class PostExistsMiddelware implements NestMiddleware{

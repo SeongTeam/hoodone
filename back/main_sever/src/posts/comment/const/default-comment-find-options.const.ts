@@ -1,5 +1,5 @@
 import { FindManyOptions } from 'typeorm';
-import { CommentModel } from '../entities/comments.entity';
+import { CommentModel } from '../entities/comment.entity';
 
 export const DEFAULT_COMMENT_FIND_OPTIONS: FindManyOptions<CommentModel> = {
   relations: {

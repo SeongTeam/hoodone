@@ -9,7 +9,7 @@ import { UsersModule } from 'src/users/users.module';
 import { CommonModule } from 'src/common/common.module';
 import { BoardsModule } from 'src/boards/boards.module';
 import { TypeormConfig } from 'src/configs/typeorm.config';
-import { PostsModule } from 'src/posts/posts.module';
+import { PostsModule } from 'src/posts/post.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';

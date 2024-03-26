@@ -1,8 +1,8 @@
 import { FindManyOptions } from 'typeorm';
-import { PostsModel } from '../entities/posts.entity';
+import { PostModel } from '../entities/post.entity';
 
 // where 옵션은 함수안에서 사용
-export const DEFAULT_POST_FIND_OPTIONS: FindManyOptions<PostsModel> = {
+export const DEFAULT_POST_FIND_OPTIONS: FindManyOptions<PostModel> = {
   relations: {
     author: true,
     comments: true

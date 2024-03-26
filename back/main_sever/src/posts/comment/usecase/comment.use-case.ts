@@ -6,8 +6,8 @@ import { QueryRunner } from 'typeorm';
 import { CommentsService } from '../comment.service';
 import { CreateCommentDto } from '../dto/create-comment.dto';
 import { CreateResponseCommentDto } from '../dto/create-response-comment.dto';
-import { PostsService } from 'src/posts/posts.service';
-import { CommentModel } from '../entities/comments.entity';
+import { PostsService } from 'src/posts/post.service';
+import { CommentModel } from '../entities/comment.entity';
 import { PostsUseCases } from 'src/posts/usecase/post.use-case';
 
 @Injectable()

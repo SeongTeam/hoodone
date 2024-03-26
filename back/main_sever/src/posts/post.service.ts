@@ -5,13 +5,13 @@ import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { PostsModel } from './entities/posts.entity';
+import { PostModel } from './entities/post.entity';
 import { DEFAULT_POST_FIND_OPTIONS } from './const/default-post-find-options.const';
 @Injectable()
 export class PostsService {
   constructor(
-    @InjectRepository(PostsModel)
-    private readonly postsRepository: Repository<PostsModel>,
+    @InjectRepository(PostModel)
+    private readonly postsRepository: Repository<PostModel>,
   ) {}
 
   async findAllPosts() {
@@ -51,7 +51,7 @@ export class PostsService {
 
   async createPost(authorId: number, postDto: CreatePostDto, qr?: QueryRunner) {
     // 1) create -> 저장할 객체를 생성한다.
-    const createdPost: PostsModel = this.postsRepository.create({
+    const createdPost: PostModel = this.postsRepository.create({
       author: {
         id: authorId,
       },
@@ -64,7 +64,7 @@ export class PostsService {
     return createdPost;
   }
   
-  async savePost(post: PostsModel, qr?: QueryRunner) {
+  async savePost(post: PostModel, qr?: QueryRunner) {
     const repository = this.getRepository(qr);
     // 2) save -> 객체를 저장한다. (create 메서드에서 생성한 객체로)
     const newPost = await repository.save(post);
@@ -114,6 +114,6 @@ export class PostsService {
   }
 
   getRepository(qr?: QueryRunner) {
-    return qr ? qr.manager.getRepository<PostsModel>(PostsModel) : this.postsRepository;
+    return qr ? qr.manager.getRepository<PostModel>(PostModel) : this.postsRepository;
   }
 }
