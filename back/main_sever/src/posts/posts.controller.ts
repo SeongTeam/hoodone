@@ -5,20 +5,20 @@ import { QueryRunner as QR } from 'typeorm';
 
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
-import { IsPublic } from 'src/common/decorator/is-public.decorator';
+// import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { User } from 'src/users/decorator/user.decorator';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 
-import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
+import { PostsUseCases } from './usecase/post.use-case';
 
 @Controller('posts')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(private readonly postUseCase: PostsUseCases) {}
 
   @Get('/all')
   async getAllPosts() {
-    return this.postsService.getAllPosts();
+    return this.postUseCase.getAllPosts();
   }
 
   @Get('/userPosts')
@@ -27,15 +27,14 @@ export class PostsController {
     @User('email') userEmail: string, //닉네임을 수정하는 기능이 추가하면 사용할 수 없기에 불변값
   ) {
     console.log('getUserAllPosts() =>>>');
-    return this.postsService.getPublishedPostsByUserEmail(userEmail);
+    return this.postUseCase.getPostsByEmail(userEmail);
   }
   // 2) GET /posts/:id
   //    id에 해당되는 post를 가져온다
   //    예를 들어서 id=1일경우 id가 1인 포스트를 가져온다.
   @Get(':id')
-  @IsPublic()
   getPost(@Param('id', ParseIntPipe) id: number) {
-    return this.postsService.getPostById(id);
+    return this.postUseCase.getPostById(id);
   }
   /**  게시물 작성 post
    * 1. 요청을 받으면 바디에 이미지가 있는지 확인 => 문제가 없다면 post 작성 허용
@@ -52,8 +51,9 @@ export class PostsController {
     @QueryRunner() qr: QR,
   ) {
     // 로직 실행
-    const post = await this.postsService.createPost(userId, body, qr);
+    const newPost = await this.postUseCase.createNewPost(userId, body, qr);
 
-    return this.postsService.getPostById(post.id, qr);
+    return newPost;
   }
+
 }

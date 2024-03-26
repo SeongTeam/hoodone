@@ -14,12 +14,12 @@ export class PostsService {
     private readonly postsRepository: Repository<PostsModel>,
   ) {}
 
-  async getAllPosts() {
+  async findAllPosts() {
     return this.postsRepository.find({
       ...DEFAULT_POST_FIND_OPTIONS,
     });
   }
-  async getPublishedPostsByUserEmail(userEmail: string) {
+  async findPublishedPostsByUserEmail(userEmail: string) {
     return this.postsRepository.find({
       ...DEFAULT_POST_FIND_OPTIONS,
       where: {
@@ -31,7 +31,7 @@ export class PostsService {
     });
   }
 
-  async getPostById(id: number, qr?: QueryRunner) {
+  async findPostById(id: number, qr?: QueryRunner) {
     const repository = this.getRepository(qr);
 
     const post = await repository.findOne({
@@ -51,10 +51,7 @@ export class PostsService {
 
   async createPost(authorId: number, postDto: CreatePostDto, qr?: QueryRunner) {
     // 1) create -> 저장할 객체를 생성한다.
-    // 2) save -> 객체를 저장한다. (create 메서드에서 생성한 객체로)
-    const repository = this.getRepository(qr);
-
-    const post = repository.create({
+    const createdPost: PostsModel = this.postsRepository.create({
       author: {
         id: authorId,
       },
@@ -64,38 +61,56 @@ export class PostsService {
       isPublished: true,
     });
 
+    return createdPost;
+  }
+  
+  async savePost(post: PostsModel, qr?: QueryRunner) {
+    const repository = this.getRepository(qr);
+    // 2) save -> 객체를 저장한다. (create 메서드에서 생성한 객체로)
     const newPost = await repository.save(post);
 
     return newPost;
   }
 
-  async updatePost(postId: number, postDto: UpdatePostDto) {
-    const { title, content } = postDto;
-    // save의 기능
-    // 1) 만약에 데이터가 존재하지 않는다면 (id 기준으로) 새로 생성한다.
-    // 2) 만약에 데이터가 존재한다면 (같은 id의 값이 존재한다면) 존재하던 값을 업데이트한다.
+  async loadPostById(postId: number) {
+    const post = this.postsRepository.preload({
+      id: postId,
+    });
+    if (!post) {
+      throw new NotFoundException(`${postId}id인 게시물을 찾지 못했습니다`);
+    }
+    return post;
+  }
 
-    const post = await this.postsRepository.findOne({
-      where: {
+  async incrementCommentCount(postId: number, qr?: QueryRunner) {
+    const repository = this.getRepository(qr);
+
+    await repository.increment(
+      {
         id: postId,
       },
+      'commentCount',
+      1,
+    );
+  }
+
+  async decrementCommentCount(postId: number, qr?: QueryRunner) {
+    const repository = this.getRepository(qr);
+
+    await repository.decrement(
+      {
+        id: postId,
+      },
+      'commentCount',
+      1,
+    );
+  }
+  async checkPostExistsById(id: number) {
+    return this.postsRepository.exist({
+      where: {
+        id,
+      },
     });
-
-    if (!post) {
-      throw new NotFoundException();
-    }
-
-    if (title) {
-      post.title = title;
-    }
-
-    if (content) {
-      post.content = content;
-    }
-
-    const newPost = await this.postsRepository.save(post);
-
-    return newPost;
   }
 
   getRepository(qr?: QueryRunner) {

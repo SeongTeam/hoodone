@@ -5,6 +5,9 @@ import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
 import { CommentModel } from './entities/comments.entity';
 import { DEFAULT_COMMENT_FIND_OPTIONS } from './const/default-comment-find-options.const';
+import { UserModel } from 'src/users/entities/user.entity';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { CreateResponseCommentDto } from './dto/create-response-comment.dto';
 @Injectable()
 export class CommentsService {
   constructor(
@@ -21,9 +24,48 @@ export class CommentsService {
     });
   }
 
+  async saveNewComment(comment: CommentModel, qr?: QueryRunner) {
+    const commentRepository = this.getCommentRepository(qr);
+    const newComment: CommentModel = await commentRepository.save(comment);
+
+    return newComment;
+  }
+
+  async createCommentModel(author: UserModel, postId: number, createDto: CreateCommentDto) {
+    const comment: CommentModel = this.commentRepository.create({
+      post: {
+        id: postId,
+      },
+      index: 0, // todo post의 댓글 리스트 갯수 만큼 index를 증가시켜야 한다.
+      depth: 0,
+      author,
+      ...createDto,
+    });
+    return comment;
+  }
+
+  async createResponseCommentModel(
+    author: UserModel,
+    postId: number,
+    createDto: CreateResponseCommentDto,
+  ) {
+    const responseToComment = await this.loadCommentById(createDto.responseToId);
+    const _commentIDs = responseToComment.responseCommentIDs;
+
+    const comment: CommentModel = this.commentRepository.create({
+      post: {
+        id: postId,
+      },
+      responseToId: createDto.responseToId,
+      index: _commentIDs.length,
+      author,
+      ...createDto,
+    });
+    return comment;
+  }
 
   async loadCommentById(id: number) {
-    const comment = await this.commentRepository.preload({
+    const comment: CommentModel = await this.commentRepository.preload({
       id: id,
     });
 
@@ -36,12 +78,10 @@ export class CommentsService {
 
   /** 대댓글의 아이디를 부모 댓글에 저장*/
   async appendResponseCommentId(depth: number, responseCommentId: number, responseToId: number) {
-
-
-      const comment = await this.loadCommentById(responseToId);
-      await comment.responseCommentIDs.push(responseCommentId);
-      const updateComment = await this.commentRepository.save(comment);
-      return updateComment;
+    const comment = await this.loadCommentById(responseToId);
+    await comment.responseCommentIDs.push(responseCommentId);
+    const updatedComment: CommentModel = await this.commentRepository.save(comment);
+    return updatedComment;
   }
 
   getCommentRepository(qr?: QueryRunner) {
