@@ -10,17 +10,10 @@ import { PostsController } from './post.controller';
 import { PostModel } from './entities/post.entity';
 import { PostsUseCases } from './usecase/post.use-case';
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      PostModel,
-    ]),
-    AuthModule,
-    UsersModule,
-    CommonModule,
-  ],
+  imports: [TypeOrmModule.forFeature([PostModel]), AuthModule, UsersModule, CommonModule],
   controllers: [PostsController],
-  
+
   providers: [PostsService, PostsUseCases],
-  exports: [PostsUseCases]
+  exports: [PostsUseCases],
 })
 export class PostsModule {}

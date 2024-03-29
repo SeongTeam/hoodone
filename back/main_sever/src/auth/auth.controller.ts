@@ -1,4 +1,4 @@
-import { Controller,  Post, Headers, Body, ValidationPipe, UseGuards} from '@nestjs/common';
+import { Controller, Post, Headers, Body, ValidationPipe, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto, RegisterUserDto } from './dto/auth-credential.dto';
 import { RefreshTokenGuard } from './guard/bearer-token.guard';
@@ -28,7 +28,7 @@ export class AuthController {
   postTokenRefresh(@Headers('authorization') rawToken: string) {
     const token = this.authService.extractTokenFromHeader(rawToken, true);
 
-    console.log(`token ===>> ${token}`)
+    console.log(`token ===>> ${token}`);
 
     const newToken = this.authService.rotateToken(token, true);
 
@@ -47,12 +47,11 @@ export class AuthController {
 
   @Post('/login/email')
   @UseGuards(BasicTokenGuard)
-    login(  @Headers('authorization') rawToken: string,
-    ) {
-      const token = this.authService.extractTokenFromHeader(rawToken, false);
+  login(@Headers('authorization') rawToken: string) {
+    const token = this.authService.extractTokenFromHeader(rawToken, false);
 
-      const credentials:AuthCredentialsDto = this.authService.decodeBasicToken(token);
-  
+    const credentials: AuthCredentialsDto = this.authService.decodeBasicToken(token);
+
     return this.authService.loginWithEmail(credentials);
   }
 }

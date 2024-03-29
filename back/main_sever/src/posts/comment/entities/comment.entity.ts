@@ -9,12 +9,10 @@ import { PostModel } from 'src/posts/entities/post.entity';
 
 @Entity()
 export class CommentModel extends BaseModel {
-  @ManyToOne(() => UserModel, (user) => user.comments, {
-  })
+  @ManyToOne(() => UserModel, (user) => user.comments, {})
   author: UserModel;
 
-  @ManyToOne(() => PostModel, (post) => post.comments, {
-  })
+  @ManyToOne(() => PostModel, (post) => post.comments, {})
   post: PostModel;
 
   @Column()
@@ -45,6 +43,6 @@ export class CommentModel extends BaseModel {
   @IsNumber()
   index: number;
 
-  @Column({ default: 0})
+  @Column({ default: 0 })
   responseToId: number;
 }

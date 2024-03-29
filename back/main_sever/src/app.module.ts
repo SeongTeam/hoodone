@@ -35,9 +35,12 @@ import { CommentModule } from './posts/comment/comment.module';
     CommentModule,
   ],
   controllers: [AppController],
-  providers: [AppService,  {
-    provide: APP_INTERCEPTOR,
-    useClass: ClassSerializerInterceptor,
-  },],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
+  ],
 })
 export class AppModule {}
