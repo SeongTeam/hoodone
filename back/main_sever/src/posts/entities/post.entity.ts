@@ -11,9 +11,9 @@ export class PostModel extends BaseModel {
   // 2) null이 될 수 없다.
   //
   @ManyToOne(() => UserModel, (user) => user.posts, {
-      nullable: false,
+    nullable: false,
   })
-  author: UserModel;  
+  author: UserModel;
 
   @Column()
   @IsString({
@@ -34,9 +34,8 @@ export class PostModel extends BaseModel {
   commentCount: number;
 
   @Column()
-  isPublished: boolean
-  
+  isPublished: boolean;
+
   @OneToMany(() => CommentModel, (comment) => comment.post)
   comments: CommentModel[];
-  
 }

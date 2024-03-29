@@ -55,5 +55,4 @@ export class PostsController {
 
     return newPost;
   }
-
 }

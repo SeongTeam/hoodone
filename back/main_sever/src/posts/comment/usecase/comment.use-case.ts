@@ -55,7 +55,7 @@ export class CommentUseCases {
         postId,
         createDto,
       );
-      replyComment.depth++; // depth 값을 1 올려서 저장  
+      replyComment.depth++; // depth 값을 1 올려서 저장
 
       const newReplyComment = await commentRepository.save(replyComment);
       this.commentService.appendReplyCommentId(

@@ -1,14 +1,14 @@
-import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm'
-import { Injectable } from '@nestjs/common'
-import { BaseModel } from 'src/common/entity/base.entity'
-import { ConfigModule } from '@nestjs/config'
+import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
+import { BaseModel } from 'src/common/entity/base.entity';
+import { ConfigModule } from '@nestjs/config';
 import {
   ENV_DB_DATABASE_KEY,
   ENV_DB_HOST_KEY,
   ENV_DB_PASSWORD_KEY,
   ENV_DB_PORT_KEY,
   ENV_DB_USER_NAME_KEY,
-} from 'src/common/const/env-keys.const'
+} from 'src/common/const/env-keys.const';
 
 @Injectable()
 export class TypeormConfig implements TypeOrmOptionsFactory {
@@ -30,6 +30,6 @@ export class TypeormConfig implements TypeOrmOptionsFactory {
       extra: {
         max: 100,
       },
-    } as TypeOrmModuleOptions
+    } as TypeOrmModuleOptions;
   }
 }

@@ -1,4 +1,4 @@
-import { PickType } from "@nestjs/mapped-types";
-import { CommentModel } from "../entities/comment.entity";
+import { PickType } from '@nestjs/mapped-types';
+import { CommentModel } from '../entities/comment.entity';
 
-export class CreateCommentDto  extends PickType(CommentModel, [ 'content']){}
+export class CreateCommentDto extends PickType(CommentModel, ['content']) {}

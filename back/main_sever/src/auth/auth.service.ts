@@ -3,7 +3,11 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthCredentialsDto, RegisterUserDto } from './dto/auth-credential.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { ENV_AUTH_SALT2024_KEY, ENV_HASH_ROUNDS_KEY, ENV_JWT_SECRET_KEY,} from 'src/common/const/env-keys.const';
+import {
+  ENV_AUTH_SALT2024_KEY,
+  ENV_HASH_ROUNDS_KEY,
+  ENV_JWT_SECRET_KEY,
+} from 'src/common/const/env-keys.const';
 import { UserModel } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 
@@ -87,9 +91,6 @@ export class AuthService {
      * type: 'access' | 'refresh'
      */
     if (decoded.payload.type !== 'refresh') {
-  
-
-
       throw new UnauthorizedException('토큰 재발급은 Refresh 토큰으로만 가능합니다!');
     }
 

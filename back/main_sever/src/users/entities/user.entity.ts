@@ -1,18 +1,17 @@
 // import { Board } from "src/boards/board.entity";
-import { Exclude, Expose } from 'class-transformer'
-import { IsEmail, IsEnum, IsString, Length, Matches } from 'class-validator'
-import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm'
+import { Exclude, Expose } from 'class-transformer';
+import { IsEmail, IsEnum, IsString, Length, Matches } from 'class-validator';
+import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
-import { emailValidationMessage } from 'src/common/validation-message/email-validation.message'
-import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message'
-import { passwordValidationMessage } from 'src/common/validation-message/password-vaildation.message'
-import { stringValidationMessage } from 'src/common/validation-message/string-validation.message'
-import { BaseModel } from 'src/common/entity/base.entity'
-import { PostModel } from 'src/posts/entities/post.entity'
-import { CommentModel } from 'src/posts/comment/entities/comment.entity'
+import { emailValidationMessage } from 'src/common/validation-message/email-validation.message';
+import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message';
+import { passwordValidationMessage } from 'src/common/validation-message/password-vaildation.message';
+import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
+import { BaseModel } from 'src/common/entity/base.entity';
+import { PostModel } from 'src/posts/entities/post.entity';
+import { CommentModel } from 'src/posts/comment/entities/comment.entity';
 
-
-export enum UserModelStatus{
+export enum UserModelStatus {
   ACTIVE,
   SUSPENDED,
   BANNED,
@@ -20,19 +19,17 @@ export enum UserModelStatus{
 @Entity()
 @Exclude({ toPlainOnly: true })
 export class UserModel extends BaseModel {
-  
-
   @Expose()
   @Column({ length: 20, unique: true })
   @IsString({ message: stringValidationMessage })
   @Length(1, 16, { message: lengthValidationMessage })
-  nickname: string 
+  nickname: string;
 
   @Expose()
   @Column({ unique: true })
   @IsString({ message: stringValidationMessage })
   @IsEmail({}, { message: emailValidationMessage })
-  email: string // 1) 유일무이한 값이 될 것
+  email: string; // 1) 유일무이한 값이 될 것
 
   @Column()
   @IsString({ message: stringValidationMessage })
@@ -42,30 +39,29 @@ export class UserModel extends BaseModel {
   @Matches(/^[a-zA-Z0-9]*$/, {
     message: passwordValidationMessage,
   })
-  password: string
+  password: string;
 
   @Column({
-      enum: UserModelStatus,
+    enum: UserModelStatus,
   })
   @IsEnum(UserModelStatus)
   @IsString()
-  status: UserModelStatus; 
+  status: UserModelStatus;
 
-  @Column({nullable: true})
-  suspensionEnd: string; // 정지기간은 잘 사용하지 않을 거라고 판다 
-  
-  @Column()
-  userReportCount: number
+  @Column({ nullable: true })
+  suspensionEnd: string; // 정지기간은 잘 사용하지 않을 거라고 판다
 
   @Column()
-  userReportedCount: number
+  userReportCount: number;
+
+  @Column()
+  userReportedCount: number;
 
   @Expose()
   @OneToMany(() => PostModel, (post) => post.author)
   posts: PostModel[];
-  
+
   @Expose()
   @OneToMany(() => CommentModel, (comment) => comment.author)
   comments: CommentModel[];
-  
 }

@@ -1,4 +1,4 @@
-import { Module} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm/dist';
 import { AuthModule } from 'src/auth/auth.module';
 import { CommonModule } from 'src/common/common.module';
@@ -12,22 +12,15 @@ import { PostsModule } from '../post.module';
 
 export const COMMENT_USE_CASES = Symbol('COMMENT_USE_CASES');
 
-
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      CommentModel,
-    ]),
-  PostsModule,
-  CommonModule,
-  AuthModule,
-  UsersModule
-
+    TypeOrmModule.forFeature([CommentModel]),
+    PostsModule,
+    CommonModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [CommentsController],
-  providers: [
-    CommentUseCases,
-    CommentsService
-  ],
+  providers: [CommentUseCases, CommentsService],
 })
 export class CommentModule {}

@@ -1,5 +1,15 @@
-import {Controller, Get, Post, Body, Param, UseGuards, UseInterceptors, ParseIntPipe, Inject, forwardRef,
-    } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  UseInterceptors,
+  ParseIntPipe,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { QueryRunner as QR } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
@@ -55,12 +65,7 @@ export class CommentsController {
     @QueryRunner() qr: QR,
   ) {
     try {
-      const replyComment = await this.commentUseCases.createReplyComment(
-        user,
-        postId,
-        body,
-        qr,
-      );
+      const replyComment = await this.commentUseCases.createReplyComment(user, postId, body, qr);
 
       return replyComment;
     } catch (e) {

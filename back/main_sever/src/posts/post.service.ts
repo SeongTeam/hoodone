@@ -63,7 +63,7 @@ export class PostsService {
 
     return createdPost;
   }
-  
+
   async savePost(post: PostModel, qr?: QueryRunner) {
     const repository = this.getRepository(qr);
     // 2) save -> 객체를 저장한다. (create 메서드에서 생성한 객체로)
