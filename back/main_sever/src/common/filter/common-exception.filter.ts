@@ -16,19 +16,13 @@ export class CommonExceptionFilter implements ExceptionFilter {
     _exception.timestamp = new Date().toLocaleString('kr');
     _exception.path = request.url;
 
-    // 주후 message formate을 변동할때 참고
-    //  const message = `${result.errorCode}-${result.timestamp}\n${exception['message']}`
-    const messageList = (response.statusCode as any).messageList || [];
-    if (_exception.pastMsg) {
-      messageList.push(_exception.pastMsg);
-    }
-
-    response.status(_exception.statusCode).json({
+    response.status(_exception.getStatus()).json({
       errorCode: _exception.errorCode,
-      statusCode: _exception.statusCode,
+      statusCode: _exception.getStatus(),
       timestamp: _exception.timestamp,
+      response: _exception.getResponse(),
       message: exception['message'],
-      msgHistory: messageList,
+      pastMsg: _exception.pastMsg ?? '',
       path: _exception.path,
     });
   }

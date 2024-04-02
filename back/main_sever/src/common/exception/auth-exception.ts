@@ -18,11 +18,11 @@ export class AuthException extends BaseException {
    * => 앞선 코드에서 발생한 에러 message를 repose 객체 저장할 수 있습니다 (사용하지 않으면 저장 불가)
    *
    */
-  constructor(ExceptionEnum: AuthExceptionEnum, pastMsg?: string) {
+  constructor(ExceptionEnum: AuthExceptionEnum, detailInfo?: { message?: string; pastMsg?: any }) {
     const errorCode = ExceptionErrorCode[ExceptionEnum];
     const content = authExceptionMsg[`error${errorCode}`];
     // message 형식 ex) 'Error-10141):토큰 타입이 refresh가 아닙니다',
-    const message = `Error-${errorCode}):${content}`;
+    const response = `Error-${errorCode}):${content}`;
 
     if (!errorCode) {
       throw new InternalServerErrorException(
@@ -31,6 +31,6 @@ export class AuthException extends BaseException {
     }
 
     /**각각에 Exception 마다  HttpStatus를 변경하는 권장합니다*/
-    super(errorCode, HttpStatus.UNAUTHORIZED, message, pastMsg);
+    super(errorCode, HttpStatus.UNAUTHORIZED, response, detailInfo);
   }
 }

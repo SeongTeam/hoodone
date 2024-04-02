@@ -1,39 +1,41 @@
 import { HttpException } from '@nestjs/common/exceptions';
 import { ApiProperty } from '@nestjs/swagger';
 
-// todo interface를 따로 관리할 파일 만들기
 interface IBaseException {
   errorCode: number;
   timestamp: string;
-  statusCode: number;
   message: string;
-  pastMsg?: string;
+  pastMsg: any;
   path: string;
 }
 
 export class BaseException extends HttpException implements IBaseException {
-  constructor(errorCode: number, statusCode: number, message: string, pastMsg?: string) {
-    super(message, statusCode);
+  constructor(
+    errorCode: number,
+    status: number,
+    response: string,
+    detailInfo?: {
+      message?: string;
+      pastMsg?: string;
+    },
+  ) {
+    super(response, status);
     this.errorCode = errorCode;
-    this.statusCode = statusCode;
-    this.message = message;
-    this.pastMsg = pastMsg;
+    this.message = detailInfo.message ?? '';
+    this.pastMsg = detailInfo.pastMsg;
   }
 
   @ApiProperty()
   errorCode: number;
 
   @ApiProperty()
-  statusCode: number;
-
-  @ApiProperty()
   timestamp: string;
 
   @ApiProperty()
   message: string;
 
   @ApiProperty()
-  pastMsg?: string;
+  pastMsg: any;
 
   @ApiProperty()
   path: string;
