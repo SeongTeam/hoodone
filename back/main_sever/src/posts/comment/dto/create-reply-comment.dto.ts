@@ -2,6 +2,7 @@ import { PickType } from '@nestjs/mapped-types';
 import { CommentModel } from '../entities/comment.entity';
 import { IsNotEmpty, IsNumber, Matches } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { BadRequestException } from '@nestjs/common';
 
 export class CreateReplyCommentDto extends PickType(CommentModel, [
   'content',
@@ -20,7 +21,8 @@ export class CreateReplyCommentDto extends PickType(CommentModel, [
 
   @IsNumber({ maxDecimalPlaces: 1 })
   @Transform(({ value }) => {
-    if (value > 2 || value < 0) throw 'body.depth Depth must be between 0 and 2';
+    if (value > 2 || value < 0)
+      throw new BadRequestException('body.depth Depth must be between 0 and 2');
 
     return parseInt(value);
   })
