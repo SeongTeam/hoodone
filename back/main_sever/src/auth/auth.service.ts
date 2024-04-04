@@ -10,12 +10,13 @@ import {
 } from 'src/common/const/env-keys.const';
 import { UserModel } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { UserUseCase } from 'src/users/usecase/user.use-case';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly usersService: UsersService,
+    private readonly usersUseCase: UserUseCase,
     private readonly configService: ConfigService,
   ) {}
   /**
@@ -109,7 +110,7 @@ export class AuthService {
      * 2. 비밀번호가 맞는지 확인
      * 3. 모두 통과되면 찾은 상용자 정보 반환
      */
-    const existingUser = await this.usersService.getUserByEmail(user.email);
+    const existingUser = await this.usersUseCase.getUserByEmail(user.email);
 
     if (!existingUser) {
       throw new UnauthorizedException('존재하지 않는 사용자입니다.');
@@ -173,11 +174,14 @@ export class AuthService {
       `${user.password}${this.configService.get<string>(ENV_AUTH_SALT2024_KEY)}`,
       parseInt(this.configService.get<string>(ENV_HASH_ROUNDS_KEY)),
     );
-
-    const newUser = await this.usersService.createUser({
-      ...user,
-      password: hash,
-    });
+    let qr = null; // todo QueryRunner 로직 추가하기
+    const newUser = await this.usersUseCase.createNewUser(
+      {
+        ...user,
+        password: hash,
+      },
+      qr,
+    );
 
     return this.loginUser(newUser);
   }
