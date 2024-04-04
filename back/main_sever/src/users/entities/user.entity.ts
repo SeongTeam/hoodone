@@ -23,7 +23,7 @@ export class UserModel extends BaseModel {
   @Column({ length: 20, unique: true })
   @IsString({ message: stringValidationMessage })
   @Length(1, 16, { message: lengthValidationMessage })
-  nickname: string;
+  nickName: string;
 
   @Expose()
   @Column({ unique: true })
@@ -56,6 +56,11 @@ export class UserModel extends BaseModel {
 
   @Column()
   userReportedCount: number;
+
+  // // 좋아요를 누른 게시판
+  // @Expose()
+  // @OneToMany(() => PostModel, (post) => post.author)
+  // likedPosts: PostModel[];
 
   @Expose()
   @OneToMany(() => PostModel, (post) => post.author)
