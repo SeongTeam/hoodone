@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common/decorators';
-import { InternalServerErrorException } from '@nestjs/common/exceptions';
+import {
+  InternalServerErrorException,
+  ServiceUnavailableException,
+} from '@nestjs/common/exceptions';
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common/interfaces';
 import { Observable, catchError, tap } from 'rxjs';
 import { DataSource } from 'typeorm';
+import { UnCatchedException } from '../exception/uncatch.exception';
+import { InterceptorException } from '../exception/interceptor-exception';
 
 @Injectable()
 export class TransactionInterceptor implements NestInterceptor {
@@ -11,7 +16,7 @@ export class TransactionInterceptor implements NestInterceptor {
   async intercept(context: ExecutionContext, next: CallHandler<any>): Promise<Observable<any>> {
     const req = context.switchToHttp().getRequest();
 
-    // 트랜잭션과 관련되 모든 쿼리를 담당할
+    // 트랜잭션과 관련된 모든 쿼리를 담당할
     // 쿼리 러너를 생성한다.
     const qr = this.dataSource.createQueryRunner();
 
@@ -28,8 +33,11 @@ export class TransactionInterceptor implements NestInterceptor {
       catchError(async (e) => {
         await qr.rollbackTransaction();
         await qr.release();
-
-        throw new InternalServerErrorException(e.message);
+        console.log('트랜잭션 실행 에러 발생'); // todo log로직 middle ware로 이동
+        throw new InterceptorException({
+          message: 'TransactionInterceptor에서 에러 발생',
+          pastMsg: e,
+        });
       }),
       tap(async () => {
         await qr.commitTransaction();
