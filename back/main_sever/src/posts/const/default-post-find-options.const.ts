@@ -11,7 +11,7 @@ export const DEFAULT_POST_FIND_OPTIONS: FindManyOptions<PostModel> = {
     deletedAt: false,
     author: {
       id: true,
-      nickname: true,
+      nickName: true,
     },
   },
 

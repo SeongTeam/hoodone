@@ -8,12 +8,13 @@ import {
 import { AuthService } from '../auth.service';
 import { UsersService } from 'src/users/users.service';
 import { Reflector } from '@nestjs/core';
+import { UserUseCase } from 'src/users/usecase/user.use-case';
 
 @Injectable()
 export class BearerTokenGuard implements CanActivate {
   constructor(
     private readonly authService: AuthService,
-    private readonly usersService: UsersService,
+    private readonly userUseCase: UserUseCase,
     private readonly reflector: Reflector,
   ) {}
 
@@ -37,7 +38,7 @@ export class BearerTokenGuard implements CanActivate {
      * 2) token - token
      * 3) tokenType - access | refresh
      */
-    const user = await this.usersService.getUserByEmail(result.email);
+    const user = await this.userUseCase.getUserByEmail(result.email);
 
     req.user = user;
     req.token = token;

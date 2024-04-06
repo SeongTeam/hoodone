@@ -22,4 +22,4 @@ export class AuthCredentialsDto {
 }
 // todo DTO는 파일 1개에 1개만 분리해야 함
 // 유저기 회원가입 할때 사용할 DTO
-export class RegisterUserDto extends PickType(UserModel, ['nickname', 'email', 'password']) {}
+export class RegisterUserDto extends PickType(UserModel, ['nickName', 'email', 'password']) {}

@@ -13,7 +13,6 @@ import { PostsUseCases } from 'src/posts/usecase/post.use-case';
 @Injectable()
 export class CommentUseCases {
   constructor(
-    @Inject(forwardRef(() => CommentsService))
     private readonly commentService: CommentsService,
     private readonly postUseCase: PostsUseCases,
   ) {}
