@@ -17,19 +17,14 @@ export class UsersService {
     private readonly usersRepository: Repository<UserModel>,
   ) {}
 
-  /** 회워가입하려는 닉네임이 존재하는지 확인
-   * ture면*/
-  async isNicknameAvailable(nickName: string): Promise<boolean> {
+  async isNicknameAvailable(nickname: string): Promise<boolean> {
     const nicknameExists = await this.usersRepository.exists({
       where: {
-        nickName,
+        nickname,
       },
     });
 
-    if (nicknameExists) {
-      throw new AuthException('NICKNAME_EXISTS');
-    }
-    return true;
+    return nicknameExists;
   }
   async isEmailAvailable(email: string) {
     const emailExists = await this.usersRepository.exists({
@@ -38,28 +33,30 @@ export class UsersService {
       },
     });
 
-    if (emailExists) {
-      throw new AuthException('EMAIL_EXISTS');
-    }
-    return true;
+    return emailExists;
   }
 
-  async createUser(user: Pick<UserModel, 'email' | 'nickName' | 'password'>, qr: QueryRunner) {
-    const { email, nickName, password } = user;
+  async createUser(
+    userDtoData: Pick<UserModel, 'email' | 'nickname' | 'password'>,
+    qr?: QueryRunner,
+  ) {
+    const { email, nickname, password } = userDtoData;
     const userRepository = this._getUsersRepository(qr);
+    let user: UserModel;
 
     try {
-      const userObject = userRepository.create({
-        nickName: nickName,
+      user = userRepository.create({
+        nickname: nickname,
         email,
         password,
         ...DEFAULT_CREATE_UserModel_OPTIONS,
       });
-
-      return await userRepository.save(userObject);
     } catch (e) {
-      throw new AuthException('ACCOUNT_CREATION_FAILED');
+      throw new AuthException('ACCOUNT_CREATION_FAILED', {
+        message: 'UserService.createUser()에서 error',
+      });
     }
+    return await userRepository.save(user);
   }
 
   async getAllUsers() {
@@ -69,11 +66,21 @@ export class UsersService {
   }
 
   async getUserByEmail(email: string) {
-    return this.usersRepository.findOne({
+    const existingUser = await this.usersRepository.findOne({
       where: {
         email,
       },
     });
+    return existingUser;
+  }
+
+  async getUserByNickname(nickname: string) {
+    const existingUser = await this.usersRepository.findOne({
+      where: {
+        nickname,
+      },
+    });
+    return existingUser;
   }
   _getUsersRepository(qr?: QueryRunner) {
     return qr ? qr.manager.getRepository<UserModel>(UserModel) : this.usersRepository;

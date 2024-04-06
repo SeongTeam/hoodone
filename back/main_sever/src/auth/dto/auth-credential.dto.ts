@@ -22,4 +22,22 @@ export class AuthCredentialsDto {
 }
 // todo DTO는 파일 1개에 1개만 분리해야 함
 // 유저기 회원가입 할때 사용할 DTO
-export class RegisterUserDto extends PickType(UserModel, ['nickName', 'email', 'password']) {}
+
+/** ['nickName', 'email', 'password']을 프로퍼티로 가지고 있다  */
+export class RegisterUserDto extends PickType(UserModel, ['nickname', 'email', 'password']) {
+  @IsString({ message: stringValidationMessage })
+  nickName: string; // 1) 유일무이 하지만 수정가능한 정보
+
+  @IsString({ message: stringValidationMessage })
+  @IsEmail({}, { message: emailValidationMessage })
+  email: string; // 1) 유일무이한 값이 될 것
+
+  @IsString()
+  @MinLength(8)
+  @MaxLength(20)
+  //영어랑 숫자만 가능한 유효성 체크
+  @Matches(/^[a-zA-Z0-9]*$/, {
+    message: 'password only accepts english and number',
+  })
+  password: string;
+}
