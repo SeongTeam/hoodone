@@ -1,7 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UserModel, UserModelStatus } from './entities/user.entity';
+import { Injectable } from '@nestjs/common';
 import { QueryRunner, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { AuthException } from 'src/common/exception/auth-exception';
+
+import { UserModel } from './entities/user.entity';
 import {
   DEFAULT_CREATE_UserModel_OPTIONS,
   DEFAULT_FIND_UserModel_OPTIONS,
@@ -14,41 +17,46 @@ export class UsersService {
     private readonly usersRepository: Repository<UserModel>,
   ) {}
 
-  getUsersRepository(qr?: QueryRunner) {
-    return qr ? qr.manager.getRepository<UserModel>(UserModel) : this.usersRepository;
-  }
-
-  async createUser(user: Pick<UserModel, 'email' | 'nickname' | 'password'>) {
-    // 1) nickname 중복이 없는지 확인
-    // exist() -> 만약에 조건에 해당되는 값이 있으면 true 반환
+  async isNicknameAvailable(nickName: string): Promise<boolean> {
     const nicknameExists = await this.usersRepository.exists({
       where: {
-        nickname: user.nickname,
+        nickName,
       },
     });
 
-    if (nicknameExists) {
-      throw new BadRequestException('이미 존재하는 nickname 입니다!');
-    }
-
+    return nicknameExists;
+  }
+  async isEmailAvailable(email: string) {
     const emailExists = await this.usersRepository.exists({
       where: {
-        email: user.email,
+        email,
       },
     });
 
-    if (emailExists) {
-      throw new BadRequestException('이미 가입한 이메일입니다!');
-    }
+    return emailExists;
+  }
 
-    const userObject = this.usersRepository.create({
-      nickname: user.nickname,
-      email: user.email,
-      password: user.password,
-      ...DEFAULT_CREATE_UserModel_OPTIONS,
-    });
-    const newUser = await this.usersRepository.save(userObject);
-    return newUser;
+  async createUser(
+    userDtoData: Pick<UserModel, 'email' | 'nickName' | 'password'>,
+    qr?: QueryRunner,
+  ) {
+    const { email, nickName, password } = userDtoData;
+    const userRepository = this._getUsersRepository(qr);
+    let user: UserModel;
+
+    try {
+      user = userRepository.create({
+        nickName: nickName,
+        email,
+        password,
+        ...DEFAULT_CREATE_UserModel_OPTIONS,
+      });
+    } catch (e) {
+      throw new AuthException('ACCOUNT_CREATION_FAILED', {
+        message: 'UserService.createUser()에서 error',
+      });
+    }
+    return await userRepository.save(user);
   }
 
   async getAllUsers() {
@@ -58,10 +66,23 @@ export class UsersService {
   }
 
   async getUserByEmail(email: string) {
-    return this.usersRepository.findOne({
+    const existingUser = await this.usersRepository.findOne({
       where: {
         email,
       },
     });
+    return existingUser;
+  }
+
+  async getUserByNickName(nickName: string) {
+    const existingUser = await this.usersRepository.findOne({
+      where: {
+        nickName,
+      },
+    });
+    return existingUser;
+  }
+  _getUsersRepository(qr?: QueryRunner) {
+    return qr ? qr.manager.getRepository<UserModel>(UserModel) : this.usersRepository;
   }
 }
