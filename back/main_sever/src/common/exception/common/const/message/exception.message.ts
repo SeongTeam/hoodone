@@ -22,3 +22,7 @@ export const authExceptionMsg = {
   error10140: 'refresh token 에러 발생',
   error10141: '토큰 타입이 refresh가 아닙니다',
 } as const;
+
+export const InterceptorExceptionMsg = {
+  error100: '트랜잭션 실행 취소',
+};
