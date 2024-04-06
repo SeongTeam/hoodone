@@ -11,7 +11,7 @@ export const DEFAULT_COMMENT_FIND_OPTIONS: FindManyOptions<CommentModel> = {
     updatedAt: false,
     author: {
       id: true,
-      nickname: true,
+      nickName: true,
     },
     post: {
       likeCount: true,

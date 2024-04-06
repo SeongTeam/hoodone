@@ -9,10 +9,7 @@ import { PostsService } from '../post.service';
 
 @Injectable()
 export class PostsUseCases {
-  constructor(
-    @Inject(forwardRef(() => PostsService))
-    private readonly postService: PostsService,
-  ) {}
+  constructor(private readonly postService: PostsService) {}
 
   async createNewPost(authorId: number, creatDto: CreatePostDto, qr: QueryRunner) {
     const createdPost: PostModel = await this.postService.createPost(authorId, creatDto);

@@ -24,7 +24,7 @@ export class AuthCredentialsDto {
 // 유저기 회원가입 할때 사용할 DTO
 
 /** ['nickName', 'email', 'password']을 프로퍼티로 가지고 있다  */
-export class RegisterUserDto extends PickType(UserModel, ['nickName', 'email', 'password']) {
+export class RegisterUserDto extends PickType(UserModel, ['nickname', 'email', 'password']) {
   @IsString({ message: stringValidationMessage })
   nickName: string; // 1) 유일무이 하지만 수정가능한 정보
 

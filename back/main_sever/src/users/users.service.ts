@@ -17,10 +17,10 @@ export class UsersService {
     private readonly usersRepository: Repository<UserModel>,
   ) {}
 
-  async isNicknameAvailable(nickName: string): Promise<boolean> {
+  async isNicknameAvailable(nickname: string): Promise<boolean> {
     const nicknameExists = await this.usersRepository.exists({
       where: {
-        nickName,
+        nickname,
       },
     });
 
@@ -37,16 +37,16 @@ export class UsersService {
   }
 
   async createUser(
-    userDtoData: Pick<UserModel, 'email' | 'nickName' | 'password'>,
+    userDtoData: Pick<UserModel, 'email' | 'nickname' | 'password'>,
     qr?: QueryRunner,
   ) {
-    const { email, nickName, password } = userDtoData;
+    const { email, nickname, password } = userDtoData;
     const userRepository = this._getUsersRepository(qr);
     let user: UserModel;
 
     try {
       user = userRepository.create({
-        nickName: nickName,
+        nickname: nickname,
         email,
         password,
         ...DEFAULT_CREATE_UserModel_OPTIONS,
@@ -74,10 +74,10 @@ export class UsersService {
     return existingUser;
   }
 
-  async getUserByNickName(nickName: string) {
+  async getUserByNickname(nickname: string) {
     const existingUser = await this.usersRepository.findOne({
       where: {
-        nickName,
+        nickname,
       },
     });
     return existingUser;

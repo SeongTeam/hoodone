@@ -13,13 +13,13 @@ export class UserUseCase {
    * 이유: DB에 query문 에러가 나오기에 password값이 노출되기에 외부에서 Exception하는 것을 강조
    */
   async createNewUser(
-    userInfo: Pick<UserModel, 'email' | 'nickName' | 'password'>,
+    userInfo: Pick<UserModel, 'email' | 'nickname' | 'password'>,
     qr: QueryRunner,
   ): Promise<UserModel | null> {
     const isEmailAvailable = await this.userService.isEmailAvailable(userInfo.email);
-    const isNickNameAvailable = await this.userService.isNicknameAvailable(userInfo.nickName);
+    const isNicknameAvailable = await this.userService.isNicknameAvailable(userInfo.nickname);
 
-    if (!(isEmailAvailable || isNickNameAvailable)) {
+    if (!(isEmailAvailable || isNicknameAvailable)) {
       return this.userService.createUser(userInfo, qr);
     }
     return null;
@@ -30,13 +30,13 @@ export class UserUseCase {
     return this.userService.isEmailAvailable(email);
   }
   /**true면 존재하는 닉네임, false면 존재하지 않는 닉네임 */
-  async checkNickNameExist(nickName: string): Promise<boolean> {
-    return await this.userService.isNicknameAvailable(nickName);
+  async checkNicknameExist(nickname: string): Promise<boolean> {
+    return await this.userService.isNicknameAvailable(nickname);
   }
 
   /** User가 존재하면 반환, User가 null이면  */
-  async getUserByNickName(nickName: string): Promise<UserModel> {
-    const existingUser = await this.userService.getUserByNickName(nickName);
+  async getUserByNickname(nickname: string): Promise<UserModel> {
+    const existingUser = await this.userService.getUserByNickname(nickname);
     if (!existingUser) {
       throw new AuthException('EMAIL_NOT_FOUND');
     }
