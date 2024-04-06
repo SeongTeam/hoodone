@@ -23,7 +23,7 @@ export class UserModel extends BaseModel {
   @Column({ length: 20, unique: true })
   @IsString({ message: stringValidationMessage })
   @Length(1, 16, { message: lengthValidationMessage })
-  nickName: string;
+  nickname: string;
 
   @Expose()
   @Column({ unique: true })

@@ -67,7 +67,7 @@ export class AuthController {
     // todo 이메일과 닉네임 확인 로직은 서로 분리 시킬 예정
     const isEmailExist = await this.userUseCase.checkEmailExist(registerUserDto.email);
     if (isEmailExist) throw new AuthException('EMAIL_EXISTS');
-    const isNickNameExist = await this.userUseCase.checkNickNameExist(registerUserDto.nickName);
+    const isNickNameExist = await this.userUseCase.checkNicknameExist(registerUserDto.nickName);
     if (isNickNameExist) throw new AuthException('NICKNAME_EXISTS');
 
     return this.authUseCase.registerWithEmail(registerUserDto, qr);
