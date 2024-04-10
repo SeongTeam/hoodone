@@ -4,12 +4,12 @@ import { InterceptorExceptionCodeEnum } from './common/enum/interceptor-exceptio
 import { InterceptorExceptionMsg } from './common/const/message/exception.message';
 
 export class InterceptorException extends BaseException {
-  constructor(detailInfo?: { message?: string; pastMsg?: any }) {
-    super(
-      InterceptorExceptionCodeEnum.transaction,
-      HttpStatus.NOT_ACCEPTABLE,
-      `Error-100)${InterceptorExceptionMsg.error100}`,
-      detailInfo,
-    );
-  }
+    constructor(detailInfo?: { message?: string; pastMsg?: any }) {
+        super(
+            InterceptorExceptionCodeEnum.transaction,
+            HttpStatus.NOT_ACCEPTABLE,
+            `Error-100)${InterceptorExceptionMsg.error100}`,
+            detailInfo,
+        );
+    }
 }

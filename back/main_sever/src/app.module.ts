@@ -14,33 +14,36 @@ import { PostsModule } from 'src/posts/post.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommentModule } from './posts/comment/comment.module';
+import { LocalTypeormConfig } from './configs/local-typeorm.config';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      envFilePath: '.env',
-      isGlobal: true,
-    }),
-    TypeOrmModule.forRootAsync({
-      useClass: TypeormConfig, // TODO: typeorm 설정한 클래스
-      dataSourceFactory: async (options: DataSourceOptions) => {
-        return new DataSource(options).initialize();
-      },
-    }),
-    AuthModule,
-    UsersModule,
-    CommonModule,
-    BoardsModule,
-    PostsModule,
-    CommentModule,
-  ],
-  controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ClassSerializerInterceptor,
-    },
-  ],
+    imports: [
+        ConfigModule.forRoot({
+            envFilePath: '.env',
+            isGlobal: true,
+        }),
+        TypeOrmModule.forRootAsync({
+            useClass: LocalTypeormConfig, // TODO: typeorm 설정한 클래스
+
+            // useClass: TypeormConfig, // TODO: typeorm 설정한 클래스
+            dataSourceFactory: async (options: DataSourceOptions) => {
+                return new DataSource(options).initialize();
+            },
+        }),
+        AuthModule,
+        UsersModule,
+        CommonModule,
+        BoardsModule,
+        PostsModule,
+        CommentModule,
+    ],
+    controllers: [AppController],
+    providers: [
+        AppService,
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: ClassSerializerInterceptor,
+        },
+    ],
 })
 export class AppModule {}

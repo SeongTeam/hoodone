@@ -2,7 +2,7 @@
   "singleQuote": true,
   "semi": true,
   "printWidth": 100,
-  "tabWidth": 2,
+  "tabWidth": 4,
   "trailingComma": "all",
   "noMultipleEmptyLines": true,
   "editor.formatOnSave": false,

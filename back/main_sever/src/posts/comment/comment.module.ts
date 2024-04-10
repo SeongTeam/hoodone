@@ -13,14 +13,14 @@ import { PostsModule } from '../post.module';
 export const COMMENT_USE_CASES = Symbol('COMMENT_USE_CASES');
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([CommentModel]),
-    PostsModule,
-    CommonModule,
-    AuthModule,
-    UsersModule,
-  ],
-  controllers: [CommentsController],
-  providers: [CommentUseCases, CommentsService],
+    imports: [
+        TypeOrmModule.forFeature([CommentModel]),
+        PostsModule,
+        CommonModule,
+        AuthModule,
+        UsersModule,
+    ],
+    controllers: [CommentsController],
+    providers: [CommentUseCases, CommentsService],
 })
 export class CommentModule {}
