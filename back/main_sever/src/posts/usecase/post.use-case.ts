@@ -1,50 +1,55 @@
-import { Inject, Injectable } from '@nestjs/common/decorators';
-import { forwardRef } from '@nestjs/common/utils';
+import { Injectable } from '@nestjs/common/decorators';
 import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
-import { CreatePostDto } from '../dto/create-post.dto';
-import { UpdatePostDto } from '../dto/update-post.dto';
 import { PostModel } from '../entities/post.entity';
 import { PostsService } from '../post.service';
 
 @Injectable()
 export class PostsUseCases {
-  constructor(private readonly postService: PostsService) {}
+    constructor(private readonly postService: PostsService) {}
 
-  async createNewPost(authorId: number, creatDto: CreatePostDto, qr: QueryRunner) {
-    const createdPost: PostModel = await this.postService.createPost(authorId, creatDto);
-    const newPost: PostModel = await this.postService.savePost(createdPost, qr);
+    async create(
+        authorId: number,
+        postInfo: Pick<PostModel, 'title' | 'content'>,
+        qr: QueryRunner,
+    ) {
+        const createdPost: PostModel = await this.postService.create(authorId, postInfo);
+        const newPost: PostModel = await this.postService.save(createdPost, qr);
 
-    return newPost;
-  }
+        return newPost;
+    }
 
-  async updatePost(postId: number, updateDto: UpdatePostDto) {
-    const { title, content } = updateDto;
-    const post: PostModel = await this.postService.loadPostById(postId);
+    async updatePost(postId: number, updateData: Pick<PostModel, 'title' | 'content'>) {
+        const { title, content } = updateData;
+        const post: PostModel = await this.postService.loadById(postId);
 
-    if (title) post.title = title;
+        if (title) post.title = title;
 
-    if (content) post.content = content;
+        if (content) post.content = content;
 
-    return await this.postService.savePost(post, null);
-  }
+        return await this.postService.save(post, null);
+    }
 
-  async getAllPosts() {
-    return await this.postService.findAllPosts();
-  }
+    getAll() {
+        return this.postService.findAll();
+    }
 
-  async getPostsByEmail(userEmail: string) {
-    return await this.postService.findPublishedPostsByUserEmail(userEmail);
-  }
+    /** email을 통해서 모든 포스트를 반환합니다.
+     *
+     * 복수형임을 알려주기 위해서 Posts를 함수 이름에 사용했습니다
+     */
+    getPostsByEmail(userEmail: string) {
+        return this.postService.getPublishedPostsByUserEmail(userEmail);
+    }
 
-  async getPostById(postId: number) {
-    return await this.postService.findPostById(postId);
-  }
+    getById(postId: number) {
+        return this.postService.findById(postId);
+    }
 
-  async incrementCommentCount(postId: number, qr?: QueryRunner) {
-    this.postService.incrementCommentCount(postId, qr);
-  }
-  async decrementCommentCount(postId: number, qr?: QueryRunner) {
-    this.postService.decrementCommentCount(postId, qr);
-  }
+    incrementCommentCount(postId: number, qr: QueryRunner) {
+        this.postService.incrementCommentCount(postId, qr);
+    }
+    decrementCommentCount(postId: number, qr: QueryRunner) {
+        this.postService.decrementCommentCount(postId, qr);
+    }
 }

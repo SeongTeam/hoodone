@@ -1,12 +1,12 @@
 import {
-  Controller,
-  Post,
-  Headers,
-  Body,
-  ValidationPipe,
-  UseGuards,
-  UseInterceptors,
-  UseFilters,
+    Controller,
+    Post,
+    Headers,
+    Body,
+    ValidationPipe,
+    UseGuards,
+    UseInterceptors,
+    UseFilters,
 } from '@nestjs/common';
 import { QueryRunner as QR } from 'typeorm';
 
@@ -14,72 +14,70 @@ import { TransactionInterceptor } from 'src/common/interceptor/transaction.inter
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 
 import { AuthUseCase } from './usecase/auth.use-case';
-import { AuthCredentialsDto, RegisterUserDto } from './dto/auth-credential.dto';
-import { RefreshTokenGuard } from './guard/bearer-token.guard';
-import { BasicTokenGuard } from './guard/basic-token.guard';
+import { AuthCredentialsDto } from './dto/auth-credential.dto';
+import { BasicTokenGuard } from './guard/token/basic-token.guard';
 import { UserUseCase } from 'src/users/usecase/user.use-case';
 import { AuthException } from 'src/common/exception/auth-exception';
 import { CommonExceptionFilter } from 'src/common/filter/common-exception.filter';
+import { RefreshTokenGuard } from './guard/token/refresh-token.guard';
+import { RegisterUserDto } from './dto/register-user.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authUseCase: AuthUseCase,
-    private readonly userUseCase: UserUseCase,
-  ) {}
+    constructor(
+        private readonly authUseCase: AuthUseCase,
+        private readonly userUseCase: UserUseCase,
+    ) {}
 
-  @Post('token/access')
-  @UseGuards(RefreshTokenGuard)
-  postTokenAccess(@Headers('authorization') rawToken: string) {
-    const token = this.authUseCase.extractTokenFromHeader(rawToken, true);
+    @Post('token/access')
+    @UseGuards(RefreshTokenGuard)
+    postTokenAccess(@Headers('authorization') rawToken: string) {
+        const refreshToken = this.authUseCase.extractTokenFromHeader(rawToken, true);
+        const newToken = this.authUseCase.rotateAccessToken(refreshToken);
 
-    const newToken = this.authUseCase.rotateToken(token, false);
+        /**
+         * {accessToken: {token}}
+         */
+        return {
+            accessToken: newToken,
+        };
+    }
 
-    /**
-     * {accessToken: {token}}
-     */
-    return {
-      accessToken: newToken,
-    };
-  }
+    @Post('token/refresh')
+    @UseGuards(RefreshTokenGuard)
+    postTokenRefresh(@Headers('authorization') rawToken: string) {
+        const refreshToken = this.authUseCase.extractTokenFromHeader(rawToken, true);
 
-  @Post('token/refresh')
-  @UseGuards(RefreshTokenGuard)
-  postTokenRefresh(@Headers('authorization') rawToken: string) {
-    const token = this.authUseCase.extractTokenFromHeader(rawToken, true);
+        const newToken = this.authUseCase.rotateRefreshToken(refreshToken);
 
-    console.log(`token ===>> ${token}`);
+        /**
+         * {refreshToken: {token}}
+         */
+        return {
+            refreshToken: newToken,
+        };
+    }
 
-    const newToken = this.authUseCase.rotateToken(token, true);
+    @Post('/signup')
+    @UseInterceptors(TransactionInterceptor)
+    @UseFilters(CommonExceptionFilter)
+    async signUp(@Body(ValidationPipe) registerUserDto: RegisterUserDto, @QueryRunner() qr: QR) {
+        // todo 이메일과 닉네임 확인 로직은 서로 분리 시킬 예정
+        const isEmailExist = await this.userUseCase.hasExistedEmail(registerUserDto.email);
+        if (isEmailExist) throw new AuthException('EMAIL_EXISTS');
+        const isNickNameExist = await this.userUseCase.hasExistedNickname(registerUserDto.nickName);
+        if (isNickNameExist) throw new AuthException('NICKNAME_EXISTS');
 
-    /**
-     * {refreshToken: {token}}
-     */
-    return {
-      refreshToken: newToken,
-    };
-  }
+        return this.authUseCase.registerWithEmail(registerUserDto, qr);
+    }
 
-  @Post('/signup')
-  @UseInterceptors(TransactionInterceptor)
-  @UseFilters(CommonExceptionFilter)
-  async signUp(@Body(ValidationPipe) registerUserDto: RegisterUserDto, @QueryRunner() qr: QR) {
-    // todo 이메일과 닉네임 확인 로직은 서로 분리 시킬 예정
-    const isEmailExist = await this.userUseCase.checkEmailExist(registerUserDto.email);
-    if (isEmailExist) throw new AuthException('EMAIL_EXISTS');
-    const isNickNameExist = await this.userUseCase.checkNicknameExist(registerUserDto.nickName);
-    if (isNickNameExist) throw new AuthException('NICKNAME_EXISTS');
+    @Post('/login/email')
+    @UseGuards(BasicTokenGuard)
+    login(@Headers('authorization') rawToken: string) {
+        const token = this.authUseCase.extractTokenFromHeader(rawToken, false);
 
-    return this.authUseCase.registerWithEmail(registerUserDto, qr);
-  }
+        const credentials: AuthCredentialsDto = this.authUseCase.decodeBasicToken(token);
 
-  @Post('/login/email')
-  @UseGuards(BasicTokenGuard)
-  login(@Headers('authorization') rawToken: string) {
-    const token = this.authUseCase.extractTokenFromHeader(rawToken, false);
-
-    const credentials: AuthCredentialsDto = this.authUseCase.decodeBasicToken(token);
-
-    return this.authUseCase.loginWithEmail(credentials);
-  }
+        return this.authUseCase.loginWithEmail(credentials);
+    }
 }

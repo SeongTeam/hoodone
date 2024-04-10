@@ -1,3 +1,3 @@
 export const enum InterceptorExceptionCodeEnum {
-  transaction = 100,
+    transaction = 100,
 }

@@ -7,35 +7,35 @@ import { CommentModel } from '../comment/entities/comment.entity';
 
 @Entity()
 export class PostModel extends BaseModel {
-  // 1) UsersModel과 연동한다 Foreign Key를 이용해서
-  // 2) null이 될 수 없다.
-  //
-  @ManyToOne(() => UserModel, (user) => user.posts, {
-    nullable: false,
-  })
-  author: UserModel;
+    // 1) UsersModel과 연동한다 Foreign Key를 이용해서
+    // 2) null이 될 수 없다.
+    //
+    @ManyToOne(() => UserModel, (user) => user.posts, {
+        nullable: false,
+    })
+    author: UserModel;
 
-  @Column()
-  @IsString({
-    message: stringValidationMessage,
-  })
-  title: string;
+    @Column()
+    @IsString({
+        message: stringValidationMessage,
+    })
+    title: string;
 
-  @Column()
-  @IsString({
-    message: stringValidationMessage,
-  })
-  content: string;
+    @Column()
+    @IsString({
+        message: stringValidationMessage,
+    })
+    content: string;
 
-  @Column()
-  likeCount: number;
+    @Column()
+    likeCount: number;
 
-  @Column()
-  commentCount: number;
+    @Column()
+    commentCount: number;
 
-  @Column()
-  isPublished: boolean;
+    @Column()
+    isPublished: boolean;
 
-  @OneToMany(() => CommentModel, (comment) => comment.post)
-  comments: CommentModel[];
+    @OneToMany(() => CommentModel, (comment) => comment.post)
+    comments: CommentModel[];
 }

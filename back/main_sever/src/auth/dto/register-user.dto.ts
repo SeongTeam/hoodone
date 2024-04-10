@@ -4,25 +4,6 @@ import { emailValidationMessage } from 'src/common/validation-message/email-vali
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { UserModel } from 'src/users/entities/user.entity';
 
-// 유저가 로그인할떄 사용할 DTO [email, password]`
-// todo RegisterUserDto 처럼 사용하지 논의필요
-export class AuthCredentialsDto {
-    @IsString({ message: stringValidationMessage })
-    @IsEmail({}, { message: emailValidationMessage })
-    email: string; // 1) 유일무이한 값이 될 것
-
-    @IsString()
-    @MinLength(4)
-    @MaxLength(20)
-    //영어랑 숫자만 가능한 유효성 체크
-    @Matches(/^[a-zA-Z0-9]*$/, {
-        message: 'password only accepts english and number',
-    })
-    password: string;
-}
-// todo DTO는 파일 1개에 1개만 분리해야 함
-// 유저기 회원가입 할때 사용할 DTO
-
 /** 회원가입 때 사용할 DTO ['nickName', 'email', 'password']  */
 export class RegisterUserDto extends PickType(UserModel, ['nickname', 'email', 'password']) {
     @IsString({ message: stringValidationMessage })

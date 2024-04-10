@@ -6,17 +6,18 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserModel } from 'src/users/entities/user.entity';
 import { UsersModule } from 'src/users/users.module';
+import { AuthUseCase } from './usecase/auth.use-case';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([UserModel]),
-    UsersModule,
-    // JwtModule.register({})를 주석 처리했기에 뜨는 에러입니다
-    JwtModule.register({}),
-  ],
-  exports: [AuthService],
-  controllers: [AuthController],
-  // 인스턴스화 없이 IOC container에서 class를 사용가능
-  providers: [AuthService],
+    imports: [
+        TypeOrmModule.forFeature([UserModel]),
+        UsersModule,
+        // JwtModule.register({})를 주석 처리했기에 뜨는 에러입니다
+        JwtModule.register({}),
+    ],
+    exports: [AuthUseCase],
+    controllers: [AuthController],
+    // 인스턴스화 없이 IOC container에서 class를 사용가능
+    providers: [AuthService, AuthUseCase],
 })
 export class AuthModule {}

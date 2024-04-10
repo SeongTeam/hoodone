@@ -1,3 +1,3 @@
 export const enum UncatchedExceptionCodeEnum {
-  UnCatched = 900,
+    UnCatched = 900,
 }

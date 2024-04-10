@@ -4,18 +4,18 @@ import { CommentsController } from './comment.controller';
 import { CommentsService } from './comment.service';
 
 describe('CommentsController', () => {
-  let controller: CommentsController;
+    let controller: CommentsController;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [CommentsController],
-      providers: [CommentsService],
-    }).compile();
+    beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+            controllers: [CommentsController],
+            providers: [CommentsService],
+        }).compile();
 
-    controller = module.get<CommentsController>(CommentsController);
-  });
+        controller = module.get<CommentsController>(CommentsController);
+    });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
+    it('should be defined', () => {
+        expect(controller).toBeDefined();
+    });
 });

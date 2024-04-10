@@ -12,61 +12,61 @@ import { PostModel } from 'src/posts/entities/post.entity';
 import { CommentModel } from 'src/posts/comment/entities/comment.entity';
 
 export enum UserModelStatus {
-  ACTIVE,
-  SUSPENDED,
-  BANNED,
+    ACTIVE,
+    SUSPENDED,
+    BANNED,
 }
 @Entity()
 @Exclude({ toPlainOnly: true })
 export class UserModel extends BaseModel {
-  @Expose()
-  @Column({ length: 20, unique: true })
-  @IsString({ message: stringValidationMessage })
-  @Length(1, 16, { message: lengthValidationMessage })
-  nickname: string;
+    @Expose()
+    @Column({ length: 20, unique: true })
+    @IsString({ message: stringValidationMessage })
+    @Length(1, 16, { message: lengthValidationMessage })
+    nickname: string;
 
-  @Expose()
-  @Column({ unique: true })
-  @IsString({ message: stringValidationMessage })
-  @IsEmail({}, { message: emailValidationMessage })
-  email: string; // 1) 유일무이한 값이 될 것
+    @Expose()
+    @Column({ unique: true })
+    @IsString({ message: stringValidationMessage })
+    @IsEmail({}, { message: emailValidationMessage })
+    email: string; // 1) 유일무이한 값이 될 것
 
-  @Column()
-  @IsString({ message: stringValidationMessage })
-  @Length(4, 20, { message: lengthValidationMessage })
-  //영어랑 숫자만 가능한 유효성 체크
-  // todo 회원가입할때 비밀번호 규칙을 적용해야 한다. DB에 적용할 필요 x
-  @Matches(/^[a-zA-Z0-9]*$/, {
-    message: passwordValidationMessage,
-  })
-  password: string;
+    @Column()
+    @IsString({ message: stringValidationMessage })
+    @Length(4, 20, { message: lengthValidationMessage })
+    //영어랑 숫자만 가능한 유효성 체크
+    // todo 회원가입할때 비밀번호 규칙을 적용해야 한다. DB에 적용할 필요 x
+    @Matches(/^[a-zA-Z0-9]*$/, {
+        message: passwordValidationMessage,
+    })
+    password: string;
 
-  @Column({
-    enum: UserModelStatus,
-  })
-  @IsEnum(UserModelStatus)
-  @IsString()
-  status: UserModelStatus;
+    @Column({
+        enum: UserModelStatus,
+    })
+    @IsEnum(UserModelStatus)
+    @IsString()
+    status: UserModelStatus;
 
-  @Column({ nullable: true })
-  suspensionEnd: string; // 정지기간은 잘 사용하지 않을 거라고 판다
+    @Column({ nullable: true })
+    suspensionEnd: string; // 정지기간은 잘 사용하지 않을 거라고 판다
 
-  @Column()
-  userReportCount: number;
+    @Column()
+    userReportCount: number;
 
-  @Column()
-  userReportedCount: number;
+    @Column()
+    userReportedCount: number;
 
-  // // 좋아요를 누른 게시판
-  // @Expose()
-  // @OneToMany(() => PostModel, (post) => post.author)
-  // likedPosts: PostModel[];
+    // // 좋아요를 누른 게시판
+    // @Expose()
+    // @OneToMany(() => PostModel, (post) => post.author)
+    // likedPosts: PostModel[];
 
-  @Expose()
-  @OneToMany(() => PostModel, (post) => post.author)
-  posts: PostModel[];
+    @Expose()
+    @OneToMany(() => PostModel, (post) => post.author)
+    posts: PostModel[];
 
-  @Expose()
-  @OneToMany(() => CommentModel, (comment) => comment.author)
-  comments: CommentModel[];
+    @Expose()
+    @OneToMany(() => CommentModel, (comment) => comment.author)
+    comments: CommentModel[];
 }
