@@ -7,7 +7,7 @@ import { UserModel } from 'src/users/entities/user.entity';
 /** 회원가입 때 사용할 DTO ['nickName', 'email', 'password']  */
 export class RegisterUserDto extends PickType(UserModel, ['nickname', 'email', 'password']) {
     @IsString({ message: stringValidationMessage })
-    nickName: string; // 1) 유일무이 하지만 수정가능한 정보
+    nickname: string; // 1) 유일무이 하지만 수정가능한 정보
 
     @IsString({ message: stringValidationMessage })
     @IsEmail({}, { message: emailValidationMessage })
