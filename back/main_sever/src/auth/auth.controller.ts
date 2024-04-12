@@ -1,3 +1,5 @@
+import { AuthApiResponseDto } from '../../../../share/response-dto/auth-api-response.dto';
+
 import {
     Controller,
     Post,
@@ -35,49 +37,49 @@ export class AuthController {
         const refreshToken = this.authUseCase.extractTokenFromHeader(rawToken, true);
         const newToken = this.authUseCase.rotateAccessToken(refreshToken);
 
-        /**
-         * {accessToken: {token}}
-         */
-        return {
-            accessToken: newToken,
-        };
+        let res = new AuthApiResponseDto();
+        res.postTokenAccess = newToken;
+
+        return res;
     }
 
     @Post('token/refresh')
     @UseGuards(RefreshTokenGuard)
     postTokenRefresh(@Headers('authorization') rawToken: string) {
         const refreshToken = this.authUseCase.extractTokenFromHeader(rawToken, true);
-
         const newToken = this.authUseCase.rotateRefreshToken(refreshToken);
 
-        /**
-         * {refreshToken: {token}}
-         */
-        return {
-            refreshToken: newToken,
-        };
+        let res = new AuthApiResponseDto();
+        res.postTokenRefresh = newToken;
+        return res;
     }
 
     @Post('/signup')
     @UseInterceptors(TransactionInterceptor)
     @UseFilters(CommonExceptionFilter)
     async signUp(@Body(ValidationPipe) registerUserDto: RegisterUserDto, @QueryRunner() qr: QR) {
-        // todo 이메일과 닉네임 확인 로직은 서로 분리 시킬 예정
+        // TODO): 이메일과 닉네임 확인 로직은 서로 분리 시킬 예정
         const isEmailExist = await this.userUseCase.hasExistedEmail(registerUserDto.email);
         if (isEmailExist) throw new AuthException('EMAIL_EXISTS');
-        const isNickNameExist = await this.userUseCase.hasExistedNickname(registerUserDto.nickName);
+
+        const isNickNameExist = await this.userUseCase.hasExistedNickname(registerUserDto.nickname);
         if (isNickNameExist) throw new AuthException('NICKNAME_EXISTS');
 
-        return this.authUseCase.registerWithEmail(registerUserDto, qr);
+        let res = new AuthApiResponseDto();
+        res.postSignup = await this.authUseCase.registerWithEmail(registerUserDto, qr);
+
+        return res;
     }
 
     @Post('/login/email')
     @UseGuards(BasicTokenGuard)
-    login(@Headers('authorization') rawToken: string) {
+    async login(@Headers('authorization') rawToken: string) {
         const token = this.authUseCase.extractTokenFromHeader(rawToken, false);
-
         const credentials: AuthCredentialsDto = this.authUseCase.decodeBasicToken(token);
 
-        return this.authUseCase.loginWithEmail(credentials);
+        let res = new AuthApiResponseDto();
+        res.postSignup = await this.authUseCase.loginWithEmail(credentials);
+
+        return res;
     }
 }

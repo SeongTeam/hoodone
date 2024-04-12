@@ -1,3 +1,4 @@
+import { CommentApiResponseDto } from '../../../../../share/response-dto/comment-api-response.dto';
 import {
     Controller,
     Get,
@@ -33,50 +34,42 @@ export class CommentsController {
     /** Comment와 ResponseComment를 id로 찾는 API는 1개로 설정
      * Body.depth로 어떤 table에 접속할지 확인한다.
      */
-    @Get(':commentId')
+    @Get(':id')
     @IsPublic()
-    getComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body) {
-        return this.commentUseCases.getById(commentId);
+    async getComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body) {
+        let res = new CommentApiResponseDto();
+        res.getById = await this.commentUseCases.getById(commentId);
+
+        return res;
     }
 
     @Post()
     @UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
-    async postNewComment(
+    async postComment(
         @User() user: UserModel,
         @Param('postId', ParseIntPipe) postId: number,
         @Body() createDto: CreateCommentDto,
         @QueryRunner() qr: QR,
     ) {
-        try {
-            const post = await this.commentUseCases.createComment(user, postId, createDto, qr);
+        let res = new CommentApiResponseDto();
+        res.getById = await this.commentUseCases.createComment(user, postId, createDto, qr);
 
-            return post;
-        } catch (e) {
-            throw `find error\n ${e}`;
-        }
+        return res;
     }
 
-    @Post(':commentId')
+    @Post('/reply')
     @UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
-    async postNewReplyComment(
+    async postReplyComment(
         @Param('postId', ParseIntPipe) postId: number,
         @Body() creatDto: CreateReplyCommentDto,
         @User() user: UserModel,
         @QueryRunner() qr: QR,
     ) {
-        try {
-            const replyComment = await this.commentUseCases.createReplyComment(
-                user,
-                postId,
-                creatDto,
-                qr,
-            );
+        let res = new CommentApiResponseDto();
+        res.postReply = await this.commentUseCases.createReplyComment(user, postId, creatDto, qr);
 
-            return replyComment;
-        } catch (e) {
-            throw `find error\n ${e}`;
-        }
+        return res;
     }
 }
