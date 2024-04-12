@@ -22,7 +22,7 @@ export class CommonExceptionFilter implements ExceptionFilter {
             statusCode: _exception.getStatus(),
             timestamp: _exception.timestamp,
             response: _exception.getResponse(),
-            message: exception['message'],
+            message: _exception.message ?? '',
             pastMsg: _exception.pastMsg ?? '',
             path: _exception.path,
         });
