@@ -21,8 +21,8 @@ export class BaseException extends HttpException implements IBaseException {
     ) {
         super(response, status);
         this.errorCode = errorCode;
-        this.message = detailInfo.message ?? '';
-        this.pastMsg = detailInfo.pastMsg;
+        this.message = detailInfo?.message ?? '';
+        this.pastMsg = detailInfo?.pastMsg;
     }
 
     @ApiProperty()
