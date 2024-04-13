@@ -8,6 +8,7 @@ import { UserModel } from 'src/users/entities/user.entity';
 
 import { AuthService } from '../auth.service';
 import { AuthCredentialsDto } from '../dto/auth-credential.dto';
+import { Logger } from '@nestjs/common';
 
 @Injectable()
 export class AuthUseCase {
@@ -80,18 +81,22 @@ export class AuthUseCase {
         loginInfo: Pick<UserModel, 'email' | 'password'>,
     ): Promise<{ accessToken: string; refreshToken: string }> {
         const existingUser = await this.userUseCase.getUserByEmail(loginInfo.email);
+        let accessToken, refreshToken;
+        Logger.log(`loginWithEmail() =>>> ${JSON.stringify(existingUser)}`);
 
         if (existingUser) {
             const is = await this.authService.authenticateWithEmailAndPassword(
                 loginInfo,
                 existingUser,
             );
-
-            return {
-                accessToken: this.authService.signToken(existingUser, false),
-                refreshToken: this.authService.signToken(existingUser, true),
-            };
+            accessToken = this.authService.signToken(existingUser, false);
+            refreshToken = this.authService.signToken(existingUser, true);
         }
+
+        return {
+            accessToken,
+            refreshToken,
+        };
     }
 
     /** 이메일로 회원가입 진행
@@ -100,7 +105,7 @@ export class AuthUseCase {
     async registerWithEmail(
         userInfo: Pick<UserModel, 'email' | 'nickname' | 'password'>,
         qr: QueryRunner,
-    ): Promise<{ accessToken: string; refreshToken: string }> {
+    ): Promise<{ email: string; nickname: string }> {
         const hash = await this.authService.inCodingPassword(userInfo);
         const newUser: UserModel = await this.userUseCase.createNewUser(
             {
@@ -109,10 +114,14 @@ export class AuthUseCase {
             },
             qr,
         );
+        Logger.log(`registerWithEmail() =>>> ${JSON.stringify(newUser)}`);
         if (newUser === null)
             throw new AuthException('ACCOUNT_CREATION_FAILED', {
                 message: 'registerWithEmail() => UserModel 실행 실패 ',
             });
-        return this.loginWithEmail({ email: userInfo.email, password: userInfo.password });
+        return {
+            email: newUser.email,
+            nickname: newUser.nickname,
+        };
     }
 }
