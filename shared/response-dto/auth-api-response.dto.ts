@@ -4,8 +4,8 @@ export class AuthApiResponseDto {
   postTokenRefresh?: string;
 
   postSignup?: {
-    refreshToken: string;
-    accessToken: string;
+    email: string;
+    nickname: string;
   };
 
   postLoginEmail?: {
