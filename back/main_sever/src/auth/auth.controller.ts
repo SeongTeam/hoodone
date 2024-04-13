@@ -23,6 +23,7 @@ import { AuthException } from 'src/common/exception/auth-exception';
 import { CommonExceptionFilter } from 'src/common/filter/common-exception.filter';
 import { RefreshTokenGuard } from './guard/token/refresh-token.guard';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { Logger } from '@nestjs/common';
 
 @Controller('auth')
 export class AuthController {
@@ -58,10 +59,12 @@ export class AuthController {
     @UseInterceptors(TransactionInterceptor)
     @UseFilters(CommonExceptionFilter)
     async signUp(@Body(ValidationPipe) registerUserDto: RegisterUserDto, @QueryRunner() qr: QR) {
+
+        Logger.log(`signUp() =>>> ${JSON.stringify(registerUserDto)}`);
+
         // TODO): 이메일과 닉네임 확인 로직은 서로 분리 시킬 예정
         const isEmailExist = await this.userUseCase.hasExistedEmail(registerUserDto.email);
         if (isEmailExist) throw new AuthException('EMAIL_EXISTS');
-
         const isNickNameExist = await this.userUseCase.hasExistedNickname(registerUserDto.nickname);
         if (isNickNameExist) throw new AuthException('NICKNAME_EXISTS');
 
