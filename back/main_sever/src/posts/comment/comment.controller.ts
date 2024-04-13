@@ -1,4 +1,4 @@
-import { CommentApiResponseDto } from '../../../../../share/response-dto/comment-api-response.dto';
+import { CommentApiResponseDto } from 'hoodone-shared';
 import {
     Controller,
     Get,

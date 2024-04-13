@@ -1,4 +1,4 @@
-import { AuthApiResponseDto } from '../../../../share/response-dto/auth-api-response.dto';
+import { AuthApiResponseDto } from 'hoodone-shared';
 
 import {
     Controller,
@@ -59,7 +59,6 @@ export class AuthController {
     @UseInterceptors(TransactionInterceptor)
     @UseFilters(CommonExceptionFilter)
     async signUp(@Body(ValidationPipe) registerUserDto: RegisterUserDto, @QueryRunner() qr: QR) {
-
         Logger.log(`signUp() =>>> ${JSON.stringify(registerUserDto)}`);
 
         // TODO): 이메일과 닉네임 확인 로직은 서로 분리 시킬 예정
@@ -69,7 +68,7 @@ export class AuthController {
         if (isNickNameExist) throw new AuthException('NICKNAME_EXISTS');
 
         let res = new AuthApiResponseDto();
-        res.postSignup = await this.authUseCase.registerWithEmail(registerUserDto, qr);
+        res.postSignup = { ...(await this.authUseCase.registerWithEmail(registerUserDto, qr)) };
 
         return res;
     }
@@ -81,7 +80,7 @@ export class AuthController {
         const credentials: AuthCredentialsDto = this.authUseCase.decodeBasicToken(token);
 
         let res = new AuthApiResponseDto();
-        res.postSignup = await this.authUseCase.loginWithEmail(credentials);
+        res.postLoginEmail = await this.authUseCase.loginWithEmail(credentials);
 
         return res;
     }

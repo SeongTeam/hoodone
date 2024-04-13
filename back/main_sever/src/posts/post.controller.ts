@@ -1,4 +1,4 @@
-import { PostApiResponseDto } from '../../../../share/response-dto/post-api-reponse.dto';
+import { PostApiResponseDto } from 'hoodone-shared';
 import { ParseIntPipe } from '@nestjs/common/pipes';
 import { Controller, UseGuards, UseInterceptors } from '@nestjs/common/decorators/core';
 import { Body, Get, Param, Post, Query } from '@nestjs/common/decorators/http';
