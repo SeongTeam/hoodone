@@ -17,6 +17,22 @@ import { IsPublic } from 'src/common/decorator/is-public.decorator';
 export class PostsController {
     constructor(private readonly postUseCase: PostsUseCases) {}
 
+    /**  게시물 작성 post
+     * 1. 요청을 받으면 바디에 이미지가 있는지 확인 => 문제가 없다면 post 작성 허용
+     * 2. 이미지가 있다면 Google OCR에 API 요청을 보내고 대기
+     * 3. google OCR의 resp에 정보를 hoodone의 gpt로 요청을 보낸다.
+     * 4. 응답받은 텍스트를 새로 생성된 post의 댓글로 추가해준다.
+     */
+    @Post()
+    @UseGuards(AccessTokenGuard)
+    @UseInterceptors(TransactionInterceptor)
+    async post(@User('id') userId: number, @Body() body: CreatePostDto, @QueryRunner() qr: QR) {
+        // 로직 실행
+        const newPost = await this.postUseCase.create(userId, body, qr);
+
+        return newPost;
+    }
+
     @Get('/all')
     async getAllPosts() {
         return this.postUseCase.getAll();
@@ -53,20 +69,5 @@ export class PostsController {
         res.getById = await this.postUseCase.getById(id);
 
         return res;
-    }
-    /**  게시물 작성 post
-     * 1. 요청을 받으면 바디에 이미지가 있는지 확인 => 문제가 없다면 post 작성 허용
-     * 2. 이미지가 있다면 Google OCR에 API 요청을 보내고 대기
-     * 3. google OCR의 resp에 정보를 hoodone의 gpt로 요청을 보낸다.
-     * 4. 응답받은 텍스트를 새로 생성된 post의 댓글로 추가해준다.
-     */
-    @Post()
-    @UseGuards(AccessTokenGuard)
-    @UseInterceptors(TransactionInterceptor)
-    async post(@User('id') userId: number, @Body() body: CreatePostDto, @QueryRunner() qr: QR) {
-        // 로직 실행
-        const newPost = await this.postUseCase.create(userId, body, qr);
-
-        return newPost;
     }
 }
