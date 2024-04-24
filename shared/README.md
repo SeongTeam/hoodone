@@ -34,6 +34,7 @@ When making changes to the shared code in the `shared` directory, you need to re
 
 ```bash
 npm run build
+npm link ./
 ```
 
 3. Update the links in the backend and frontend projects by running the following command in their respective directories:
