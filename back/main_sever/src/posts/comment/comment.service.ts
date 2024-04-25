@@ -15,10 +15,28 @@ export class CommentsService {
     ) {}
 
     async findById(id: number) {
-        return this.commentRepository.find({
+        return this.commentRepository.findOne({
             ...COMMON_COMMENT_FIND_OPTION,
             where: {
                 id: id,
+            },
+        });
+    }
+
+    async findCommentsByUserId(userId: number) {
+        return this.commentRepository.find({
+            ...COMMON_COMMENT_FIND_OPTION,
+            where: {
+                author: { id: userId },
+            },
+        });
+    }
+
+    async findCommentsByPostId(postId: number) {
+        return this.commentRepository.find({
+            ...COMMON_COMMENT_FIND_OPTION,
+            where: {
+                post: { id: postId },
             },
         });
     }
@@ -28,7 +46,7 @@ export class CommentsService {
      * 댓글과 대댓글은 같은 table에 저장되기 떄문에 save() 하나로 사용 가능
      */
     async save(comment: CommentModel, qr: QueryRunner) {
-        const commentRepository = this._getCommentRepository(qr);
+        const commentRepository = this._getRepository(qr);
         const newComment: CommentModel = await commentRepository.save(comment);
 
         return newComment;
@@ -64,7 +82,7 @@ export class CommentsService {
         commentInfo: Pick<CommentModel, 'content' | 'responseToId' | 'depth'>,
         qr: QueryRunner,
     ) {
-        const repository = this._getCommentRepository(qr);
+        const repository = this._getRepository(qr);
         const responseToComment = await this.loadById(commentInfo.responseToId);
         const _commentIDs = responseToComment.replyCommentIds;
 
@@ -80,8 +98,13 @@ export class CommentsService {
         return newComment;
     }
 
+    async delete(postId: number, qr: QueryRunner) {
+        const repository = this._getRepository(qr);
+        return await repository.delete(postId);
+    }
+    /** 수정 삭제 시에는 loadById()를 사용 */
     async loadById(id: number) {
-        const comment: CommentModel = await this.commentRepository.preload({
+        const comment: CommentModel = await this.commentRepository.findOneBy({
             id: id,
         });
 
@@ -100,7 +123,21 @@ export class CommentsService {
         return updatedComment;
     }
 
-    _getCommentRepository(qr?: QueryRunner) {
+    async isCommentOwner(userId: number, commentId: number) {
+        return this.commentRepository.exists({
+            where: {
+                id: commentId,
+                author: {
+                    id: userId,
+                },
+            },
+            relations: {
+                author: true,
+            },
+        });
+    }
+
+    _getRepository(qr?: QueryRunner) {
         return qr ? qr.manager.getRepository<CommentModel>(CommentModel) : this.commentRepository;
     }
 }
