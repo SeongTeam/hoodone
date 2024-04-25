@@ -3,6 +3,7 @@ import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
 import { PostModel } from '../entities/post.entity';
 import { PostsService } from '../post.service';
+import { UpdatePostDto } from '../dto/update-post.dto';
 
 @Injectable()
 export class PostsUseCases {
@@ -19,7 +20,7 @@ export class PostsUseCases {
         return newPost;
     }
 
-    async updatePost(postId: number, updateData: Pick<PostModel, 'title' | 'content'>) {
+    async update(postId: number, updateData: UpdatePostDto) {
         const { title, content } = updateData;
         const post: PostModel = await this.postService.loadById(postId);
 
@@ -44,6 +45,14 @@ export class PostsUseCases {
 
     getById(postId: number) {
         return this.postService.findById(postId);
+    }
+
+    delete(postId: number) {
+        const post = this.postService.findById(postId);
+    }
+
+    async isPostOwner(userId: number, postId: number) {
+        return this.postService.isPostOwner(userId, postId);
     }
 
     incrementCommentCount(postId: number, qr: QueryRunner) {

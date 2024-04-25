@@ -5,6 +5,7 @@ import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
 import { COMMON_POST_FIND_OPTION } from './const/post-find-options.const';
 import { PostModel } from './entities/post.entity';
+import { UpdatePostDto } from './dto/update-post.dto';
 @Injectable()
 export class PostsService {
     constructor(
@@ -30,6 +31,9 @@ export class PostsService {
         });
     }
 
+    /** 매계변수id와 동일한 post를 보내줍니다.
+     * 만약 post가 없다면 ` NotFoundException()` 실행
+     */
     async findById(id: number): Promise<PostModel> {
         const post: PostModel = await this.postsRepository.findOne({
             ...COMMON_POST_FIND_OPTION,
@@ -76,6 +80,34 @@ export class PostsService {
 
         return newPost;
     }
+    async updatePost(postId: number, postDto: UpdatePostDto) {
+        const { title, content } = postDto;
+        // save의 기능
+        // 1) 만약에 데이터가 존재하지 않는다면 (id 기준으로) 새로 생성한다.
+        // 2) 만약에 데이터가 존재한다면 (같은 id의 값이 존재한다면) 존재하던 값을 업데이트한다.
+
+        const post = await this.postsRepository.findOne({
+            where: {
+                id: postId,
+            },
+        });
+
+        if (!post) {
+            throw new NotFoundException('Post id를 찾을 수 없습니다');
+        }
+
+        if (title) {
+            post.title = title;
+        }
+
+        if (content) {
+            post.content = content;
+        }
+
+        const updatedPost = await this.postsRepository.save(post);
+
+        return updatedPost;
+    }
 
     async loadById(postId: number) {
         const post = this.postsRepository.preload({
@@ -115,6 +147,20 @@ export class PostsService {
         return this.postsRepository.exists({
             where: {
                 id,
+            },
+        });
+    }
+
+    async isPostOwner(userId: number, postId: number) {
+        return this.postsRepository.exists({
+            where: {
+                id: postId,
+                author: {
+                    id: userId,
+                },
+            },
+            relations: {
+                author: true,
             },
         });
     }
