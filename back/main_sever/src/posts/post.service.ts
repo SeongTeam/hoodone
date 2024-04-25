@@ -59,8 +59,10 @@ export class PostsService {
         commentInfo: Pick<PostModel, 'title' | 'content'>,
         qr?: QueryRunner,
     ) {
+        const _repository = this._getRepository(qr);
+
         // 1) create -> 저장할 객체를 생성한다.
-        const createdPost: PostModel = this.postsRepository.create({
+        const createdPost: PostModel = _repository.create({
             author: {
                 id: authorId,
             },
@@ -109,8 +111,20 @@ export class PostsService {
         return updatedPost;
     }
 
+    async delete(postId: number, qr: QueryRunner): Promise<boolean> {
+        try {
+            const repository = this._getRepository(qr);
+            repository.delete(postId);
+
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    /** 수정 삭제 시에는 loadById()를 사용 */
     async loadById(postId: number) {
-        const post = this.postsRepository.preload({
+        const post = this.postsRepository.findOneBy({
             id: postId,
         });
         if (!post) {

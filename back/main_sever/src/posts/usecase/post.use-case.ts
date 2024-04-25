@@ -4,6 +4,7 @@ import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 import { PostModel } from '../entities/post.entity';
 import { PostsService } from '../post.service';
 import { UpdatePostDto } from '../dto/update-post.dto';
+import { HttpException, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class PostsUseCases {
@@ -14,21 +15,14 @@ export class PostsUseCases {
         postInfo: Pick<PostModel, 'title' | 'content'>,
         qr: QueryRunner,
     ) {
-        const createdPost: PostModel = await this.postService.create(authorId, postInfo);
-        const newPost: PostModel = await this.postService.save(createdPost, qr);
-
-        return newPost;
-    }
-
-    async update(postId: number, updateData: UpdatePostDto) {
-        const { title, content } = updateData;
-        const post: PostModel = await this.postService.loadById(postId);
-
-        if (title) post.title = title;
-
-        if (content) post.content = content;
-
-        return await this.postService.save(post, null);
+        // TODO 게시물 에러코드 생성하기
+        try {
+            const createdPost: PostModel = await this.postService.create(authorId, postInfo);
+            const newPost: PostModel = await this.postService.save(createdPost, qr);
+            return newPost;
+        } catch (e) {
+            throw new NotFoundException('post create 에러');
+        }
     }
 
     getAll() {
@@ -47,8 +41,40 @@ export class PostsUseCases {
         return this.postService.findById(postId);
     }
 
-    delete(postId: number) {
-        const post = this.postService.findById(postId);
+    //TODO update할때 title과 content의 문자열 상태에 따른 case 나누기
+    // ex title = "    " => 공백으로 이뤄져 있을 경우 어떻게 할 것인가?
+    async update(postId: number, updateData: UpdatePostDto) {
+        const { title, content } = updateData;
+        const post: PostModel = await this.postService.loadById(postId);
+        if (!post) {
+            console.log(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
+            throw new NotFoundException(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
+        }
+
+        if (title) post.title = title;
+
+        if (content) post.content = content;
+
+        return await this.postService.save(post, null);
+    }
+
+    async delete(postId: number, qr: QueryRunner): Promise<boolean> {
+        const post: PostModel = await this.postService.loadById(postId);
+
+        // TODO Post 전용 Exception 구현
+        if (!post) {
+            console.log(`PostUseCase.delete 실행x , postId:${postId}를 찾을 수 없음`);
+            throw new NotFoundException(
+                `PostUseCase.delete 실행x , postId:${postId}를 찾을 수 없음`,
+            );
+        }
+
+        //TODO 삭제할 게시물에 댓글이 있다면 어떻게 할 것인가?
+        if (post.commentCount > 0) {
+            return false;
+        }
+
+        return await this.postService.delete(post.id, qr);
     }
 
     async isPostOwner(userId: number, postId: number) {
