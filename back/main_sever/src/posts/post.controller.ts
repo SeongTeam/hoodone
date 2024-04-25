@@ -71,7 +71,12 @@ export class PostsController {
     @Patch(':id')
     @Roles(RoleType.USER, RoleType.ADMIN)
     @UseGuards(AccessTokenGuard, PostOwnerGuard, RoleGuard)
-    async patchPost(@Param('id', ParseIntPipe) id: number, @Body() body: UpdatePostDto) {
+    @UseInterceptors(TransactionInterceptor)
+    async patchPost(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() body: UpdatePostDto,
+        @QueryRunner() qr: QR,
+    ) {
         return this.postUseCase.update(id, body);
     }
 
@@ -80,7 +85,8 @@ export class PostsController {
     @Delete(':id')
     @Roles(RoleType.USER, RoleType.ADMIN)
     @UseGuards(AccessTokenGuard, PostOwnerGuard, RoleGuard)
-    delete(@Param('id', ParseIntPipe) id: number) {
-        return this.postUseCase.delete(id);
+    @UseInterceptors(TransactionInterceptor)
+    delete(@Param('id', ParseIntPipe) id: number, @QueryRunner() qr: QR) {
+        return this.postUseCase.delete(id, qr);
     }
 }
