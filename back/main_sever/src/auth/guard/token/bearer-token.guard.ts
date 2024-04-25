@@ -35,6 +35,7 @@ export class BearerTokenGuard implements CanActivate {
         const user = await this.userUseCase.getUserByEmail(result.email);
 
         req.user = user;
+        //TODO req.token이 필요할지 의논하자
         req.token = token;
         req.tokenType = result.type;
 

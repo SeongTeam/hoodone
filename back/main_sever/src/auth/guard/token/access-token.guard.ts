@@ -3,6 +3,7 @@ import { BearerTokenGuard } from './bearer-token.guard';
 import { ExecutionContext } from '@nestjs/common/interfaces';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 
+/** request header에 jwt 여부와 유요한지 확인합니다 */
 @Injectable()
 export class AccessTokenGuard extends BearerTokenGuard {
     async canActivate(context: ExecutionContext): Promise<boolean> {

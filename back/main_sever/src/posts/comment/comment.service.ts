@@ -66,7 +66,7 @@ export class CommentsService {
     ) {
         const repository = this._getCommentRepository(qr);
         const responseToComment = await this.loadById(commentInfo.responseToId);
-        const _commentIDs = responseToComment.replyCommentIDs;
+        const _commentIDs = responseToComment.replyCommentIds;
 
         const newComment: CommentModel = repository.create({
             post: {
@@ -95,7 +95,7 @@ export class CommentsService {
     /** 대댓글의 아이디를 부모 댓글에 저장*/
     async appendReplyCommentId(replyCommentId: number, responseToId: number) {
         const comment = await this.loadById(responseToId);
-        await comment.replyCommentIDs.push(replyCommentId);
+        await comment.replyCommentIds.push(replyCommentId);
         const updatedComment: CommentModel = await this.commentRepository.save(comment);
         return updatedComment;
     }

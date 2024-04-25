@@ -1,18 +1,20 @@
 import { IsNotEmpty, IsNumber, IsString, Matches } from 'class-validator';
 import { ManyToOne } from 'typeorm/decorator/relations/ManyToOne';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn } from 'typeorm';
 
 import { BaseModel } from 'src/common/entity/base.entity';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { UserModel } from 'src/users/entities/user.entity';
 import { PostModel } from 'src/posts/entities/post.entity';
 
-@Entity()
+@Entity('comment')
 export class CommentModel extends BaseModel {
     @ManyToOne(() => UserModel, (user) => user.comments, {})
+    @JoinColumn({ name: 'user_id' })
     author: UserModel;
 
     @ManyToOne(() => PostModel, (post) => post.comments, {})
+    @JoinColumn({ name: 'post_id' })
     post: PostModel;
 
     @Column()
@@ -22,15 +24,16 @@ export class CommentModel extends BaseModel {
     })
     content: string;
 
-    @Column({ default: 0, type: `smallint` })
+    @Column({ name: 'like_count', default: 0, type: `smallint` })
     @IsNumber()
     likeCount: number;
 
     @Column({
+        name: 'reply_comment_ids',
         type: 'jsonb',
         default: [],
     })
-    replyCommentIDs: number[];
+    replyCommentIds: number[];
 
     // depth를 통해서 몇 차 댓글인지 확인
     @Column({ type: `smallint` })
@@ -43,6 +46,6 @@ export class CommentModel extends BaseModel {
     @IsNumber()
     index: number;
 
-    @Column({ default: 0 })
+    @Column({ name: 'response_to_id', default: 0 })
     responseToId: number;
 }

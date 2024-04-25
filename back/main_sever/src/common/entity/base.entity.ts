@@ -12,12 +12,12 @@ export abstract class BaseModel {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
 
-    @CreateDateColumn()
+    @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;
 
-    @DeleteDateColumn()
+    @DeleteDateColumn({ name: 'deleted_at' })
     deletedAt!: Date | null;
 }

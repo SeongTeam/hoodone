@@ -1,7 +1,7 @@
 // import { Board } from "src/boards/board.entity";
 import { Exclude, Expose } from 'class-transformer';
 import { IsEmail, IsEnum, IsString, Length, Matches } from 'class-validator';
-import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 import { emailValidationMessage } from 'src/common/validation-message/email-validation.message';
 import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message';
@@ -10,13 +10,14 @@ import { stringValidationMessage } from 'src/common/validation-message/string-va
 import { BaseModel } from 'src/common/entity/base.entity';
 import { PostModel } from 'src/posts/entities/post.entity';
 import { CommentModel } from 'src/posts/comment/entities/comment.entity';
+import { RoleType } from '../const/role.type';
 
 export enum UserModelStatus {
     ACTIVE,
     SUSPENDED,
     BANNED,
 }
-@Entity()
+@Entity('user')
 @Exclude({ toPlainOnly: true })
 export class UserModel extends BaseModel {
     @Expose()
@@ -41,20 +42,19 @@ export class UserModel extends BaseModel {
     })
     password: string;
 
-    @Column({
-        enum: UserModelStatus,
-    })
+    @Column({ type: 'enum', enum: RoleType, array: true })
+    roles: RoleType[];
     @IsEnum(UserModelStatus)
     @IsString()
     status: UserModelStatus;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, name: 'suspension_end' })
     suspensionEnd: string; // 정지기간은 잘 사용하지 않을 거라고 판다
 
-    @Column()
+    @Column({ name: 'user_report_count' })
     userReportCount: number;
 
-    @Column()
+    @Column({ name: 'user_reported_count' })
     userReportedCount: number;
 
     // // 좋아요를 누른 게시판
