@@ -16,7 +16,7 @@ import { PostOwnerGuard } from './guard/post-owner.guard';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Roles } from 'src/users/decorator/roles.decorator';
 import { RoleType } from 'src/users/const/role.type';
-import { RoleGuard } from './guard/role.guard';
+import { RoleGuard } from '../auth/guard/role.guard';
 
 @Controller('posts')
 export class PostsController {
