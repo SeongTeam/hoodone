@@ -31,18 +31,6 @@ export class CommentsController {
         private readonly commentUseCases: CommentUseCases,
     ) {}
 
-    /** Comment와 ResponseComment를 id로 찾는 API는 1개로 설정
-     * Body.depth로 어떤 table에 접속할지 확인한다.
-     */
-    @Get(':id')
-    @IsPublic()
-    async getComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body) {
-        let res = new CommentApiResponseDto();
-        res.getById = await this.commentUseCases.getById(commentId);
-
-        return res;
-    }
-
     @Post()
     @UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
@@ -69,6 +57,18 @@ export class CommentsController {
     ) {
         let res = new CommentApiResponseDto();
         res.postReply = await this.commentUseCases.createReplyComment(user, postId, creatDto, qr);
+
+        return res;
+    }
+
+    /** Comment와 ResponseComment를 id로 찾는 API는 1개로 설정
+     * Body.depth로 어떤 table에 접속할지 확인한다.
+     */
+    @Get(':id')
+    @IsPublic()
+    async getComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body) {
+        let res = new CommentApiResponseDto();
+        res.getById = await this.commentUseCases.getById(commentId);
 
         return res;
     }
