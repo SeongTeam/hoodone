@@ -1,12 +1,15 @@
 import { extendTheme } from "@chakra-ui/react";
 import Button from "./componentStyle/button";
 import Input from "./componentStyle/Inputs";
+import { customColors } from "./customColors";
 
 export const theme = extendTheme({
-  colors: {
-    bg: {
-      100: "#242424",
-      200: "#7B889B",
+  styles: {
+    global: {
+      html: {
+        fontSize: "16px",
+        fontColor: customColors.white[100],
+      },
     },
   },
   components: {

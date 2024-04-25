@@ -1,32 +1,29 @@
 import type { ComponentStyleConfig } from "@chakra-ui/theme";
+import { customColors } from "../customColors";
+
+const oauthFontSize = {
+  sm: "1rem",
+  md: "1.25rem",
+  lg: "1.5rem",
+  xl: "1.75rem",
+  "2xl": "2rem",
+};
 
 const Button: ComponentStyleConfig = {
   baseStyle: {
     borderRadius: "15px",
-    fontSize: "20px",
+    fontSize: "1.25rem",
     fontWeight: 700,
     border: "1px solid",
-    borderColor: "#7B889B",
+    borderColor: customColors.strokeColor[100],
     _focus: {
       boxShadow: "none",
     },
   },
-  sizes: {
-    sm: {
-      fontSize: "12px",
-    },
-    md: {
-      fontSize: "16px",
-      // height: "28px",
-    },
-    xl: {
-      fontSize: "20px",
-    },
-  },
   variants: {
     solid: {
-      color: "white",
-      bg: "#4E6D90",
+      color: customColors.white[100],
+      bg: customColors.buttonColor[100],
       _hover: {
         bg: "blue.400",
       },
@@ -37,10 +34,12 @@ const Button: ComponentStyleConfig = {
       borderColor: "blue.500",
     },
     oauth: {
-      w: "190px",
-      h: "70px",
-      bg: "#4E6D90",
-      fontSize: "32px",
+      maxW: "190px",
+      maxH: "70px",
+      px: "2rem",
+      py: "2rem",
+      bg: customColors.buttonColor[100],
+      fontSize: oauthFontSize,
     },
   },
 };

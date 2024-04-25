@@ -95,7 +95,7 @@ const Login: React.FC<LoginProps> = () => {
       >
         Log In
       </Button>
-      <Flex w="100%" justify={"space-between"} color={fontColor}>
+      <Flex w="100%" justify={"space-between"}>
         <Text
           cursor="pointer"
           onClick={() =>

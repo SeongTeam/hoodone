@@ -22,13 +22,6 @@ export default function Home() {
           <p><Link href={"/hello"}>Hello</Link></p>
         </Box>
         <Box w="50%" m ="10px">
-        <Input
-        required
-        name="email"
-        placeholder="Email..."
-        type="email"
-        onChange={onChange}
-        />
         </Box>
 
       </main>

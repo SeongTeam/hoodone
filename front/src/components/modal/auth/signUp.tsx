@@ -2,6 +2,12 @@ import { Button, Flex, Input, Text, useColorModeValue } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { AuthModalState } from "@/atoms/authModal";
+import { customColors } from "@/utils/chakra/customColors";
+
+/*TODO
+- 이메일 인증 및 이메일 중복 검사 로직 구현
+  - backend + front 모두 구현되어야함<div className=""></div>
+*/
 const SignUp: React.FC = () => {
   const [authModalState, setAuthModalState] = useRecoilState(AuthModalState);
   const [signUpForm, setSignUpForm] = useState({
@@ -69,7 +75,7 @@ const SignUp: React.FC = () => {
       { certification.state === false ? (
 
           <form onSubmit={onCertification} className="form-modalPage">
-            <Text textAlign="center" color="red" fontSize="10px">
+            <Text textAlign="center" color={customColors.error[100]} fontSize="10px">
             {error}
             </Text>
             <Input variant="oauth"
@@ -102,7 +108,7 @@ const SignUp: React.FC = () => {
       ) : (
 
           <form onSubmit={onSubmit} className="form-modalPage">
-            <Text textAlign="center" color="red" fontSize="10px">
+            <Text textAlign="center" color="{customColors.error[100]}" fontSize="10px">
                 {}
             </Text>
             <Input variant="oauth"

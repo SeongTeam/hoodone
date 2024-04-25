@@ -2,7 +2,7 @@ import { Button, Flex, Icon, Input, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useRecoilState } from "recoil";
 import { AuthModalState } from "@/atoms/authModal";
-
+import { customColors } from "@/utils/chakra/customColors";
 
 
 const ResetPassword: React.FC = () => {
@@ -10,6 +10,7 @@ const ResetPassword: React.FC = () => {
   const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
   const [error , setError] = useState("");
+
 
   const sendResetEmail = async (email: string) => {
     /*TODO
@@ -30,7 +31,7 @@ const ResetPassword: React.FC = () => {
         <Text fontWeight={700} >Check your email :)</Text>
       ) : (
         <>
-          <Text textAlign="center" fontSize="10pt" color="red">
+          <Text textAlign="center" fontSize="10pt" color={customColors.error[100]}>
               {error}
           </Text>
           <Text fontSize="sm" textAlign="center" mb={2}>

@@ -56,7 +56,7 @@ const UserMenu: React.FC = () => {
       </MenuButton>
       <MenuList mt="10px" bg={bg}>
         <MenuItem 
-          fontSize="15px" 
+          fontSize="1rem" 
           fontWeight="700" 
           closeOnSelect={false}
           _hover={{ bg: "blue.500", color: "white" }}
