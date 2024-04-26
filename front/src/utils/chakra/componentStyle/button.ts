@@ -1,13 +1,6 @@
 import type { ComponentStyleConfig } from "@chakra-ui/theme";
 import { customColors } from "../customColors";
-
-const oauthFontSize = {
-  sm: "1rem",
-  md: "1.25rem",
-  lg: "1.5rem",
-  xl: "1.75rem",
-  "2xl": "2rem",
-};
+import { basicFontSize as oauthFontSize } from "../fonts";
 
 const Button: ComponentStyleConfig = {
   baseStyle: {

@@ -1,6 +1,7 @@
 import type { ComponentStyleConfig } from "@chakra-ui/theme";
 import { inputAnatomy } from "@chakra-ui/anatomy";
 import { customColors } from "../customColors";
+import { basicFontSize as oauthFontSize } from "../fonts";
 
 //refer https://chakra-ui.com/docs/styled-system/customize-theme
 import {
@@ -29,13 +30,6 @@ const baseStyle = definePartsStyle({
 
 */
 
-const oauthFontSize = {
-  sm: "1rem",
-  md: "1.25rem",
-  lg: "1.5rem",
-  xl: "1.75rem",
-  "2xl": "2rem",
-};
 const oauth = definePartsStyle({
   field: {
     w: "592px",

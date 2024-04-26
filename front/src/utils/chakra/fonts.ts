@@ -13,3 +13,19 @@ const rubik = Rubik({
 export const fonts = {
   rubik,
 };
+
+export const basicFontSize = {
+  sm: "1rem",
+  md: "1.25rem",
+  lg: "1.5rem",
+  xl: "1.75rem",
+  "2xl": "2rem",
+};
+
+export const mdFontSize = {
+  sm: "0.75rem",
+  md: "0.875rem",
+  lg: "1rem",
+  xl: "1.25rem",
+  "2xl": "1.5rem",
+};
