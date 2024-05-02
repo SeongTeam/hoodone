@@ -10,7 +10,7 @@ import logger from '@/utils/log/logger';
 type LoginProps = {};
 
 const Login: React.FC<LoginProps> = () => {
-    const [authModalState, setAuthModelState] = useRecoilState(AuthModalState);
+    const [authModalState, setAuthModalState] = useRecoilState(AuthModalState);
     const [userState, setUserState] = useRecoilState(UserAccountState);
     const [msg, setMsg] = useState('');
     const [loginForm, setLoginForm] = useState({
@@ -43,9 +43,9 @@ const Login: React.FC<LoginProps> = () => {
                 email: email,
                 isLogin: true,
             }));
-            setAuthModelState((prev) => ({
+            setAuthModalState((prev) => ({
                 ...prev,
-                open: false,
+                isOpen: false,
             }));
         } else {
             setMsg(data.error);
@@ -94,7 +94,7 @@ const Login: React.FC<LoginProps> = () => {
                 <Text
                     cursor="pointer"
                     onClick={() =>
-                        setAuthModelState((prev) => ({
+                        setAuthModalState((prev) => ({
                             ...prev,
                             view: 'resetPassword',
                         }))
@@ -105,7 +105,7 @@ const Login: React.FC<LoginProps> = () => {
                 <Text
                     cursor="pointer"
                     onClick={() =>
-                        setAuthModelState((prev) => ({
+                        setAuthModalState((prev) => ({
                             ...prev,
                             view: 'signup',
                         }))
