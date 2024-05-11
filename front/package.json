@@ -12,6 +12,7 @@
     "test:dev": "cross-env NODE_ENV=development node -e \"console.log(process.env.NODE_ENV)\""
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/next-js": "^2.2.0",
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.4",
@@ -20,6 +21,7 @@
     "cross-env": "^7.0.3",
     "file-stream-rotator": "^1.0.0",
     "framer-motion": "^11.1.7",
+    "html-react-parser": "^5.1.10",
     "next": "14.2.1",
     "next-cloudinary": "^6.5.1",
     "react": "^18",

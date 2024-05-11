@@ -1,20 +1,29 @@
 import { atom } from "recoil";
 
-export type PostType = {
-  id?: string;
-  creatorEmail: string;
-  creatorDisplayName: string;
-  title: string;
-  content: string;
-  numberOfComments: number;
-  voteStatus: number;
-  imageURL?: string;
-  createdAt: string;
-  modifiedAt: string;
-  linkedPostURL?: string;
+type authorType = {
+  email: string;
+  nickname: string;
+  profileImg: string;
 };
 
-export type PostVoteType = {
+type commentType = {};
+export type PostType = {
+  id?: string;
+  createdAt: string;
+  updatedAt: string;
+  title: string;
+  content: string;
+  likeCount: number;
+  commentCount: number;
+  isPublished: boolean;
+  author: authorType;
+  commentList: object[];
+  thumbnailPublicID?: string;
+  linkedPostURL?: string;
+  publicID?: string;
+};
+
+export type PostLikeType = {
   id: string;
   postId: string;
   voteValue: number;
@@ -23,13 +32,13 @@ export type PostVoteType = {
 interface PostState {
   selectedPost: PostType | null;
   posts: PostType[];
-  postVotes: PostVoteType[];
+  postLikes: PostLikeType[];
 }
 
 const defaultPostState: PostState = {
   selectedPost: null,
   posts: [],
-  postVotes: [],
+  postLikes: [],
 };
 
 export const postState = atom<PostState>({
