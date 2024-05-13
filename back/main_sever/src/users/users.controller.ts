@@ -8,14 +8,15 @@ import {
     Delete,
     UseInterceptors,
     ClassSerializerInterceptor,
+    ParseIntPipe,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserUseCase } from './usecase/user.use-case';
 
 @Controller('users')
 export class UsersController {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(private readonly userUseCase: UserUseCase) {}
     @Get('/all')
     // 직렬화를 할 때 데이터 포맷을 변경 (@Exclude()를 이용하면 제거 가능)
     // @UseInterceptors(ClassSerializerInterceptor) // AppModule에서 전체 적용으로 설정가능
@@ -26,6 +27,16 @@ export class UsersController {
      * deserialization -> 역직렬화
      */
     getUsers() {
-        return this.usersService.getAllUsers();
+        return this.userUseCase.getAllUsers();
+    }
+    @Get('/email:email')
+    getByEmail(@Param('email') email: string) {
+        console.log('calling /email:email ');
+
+        return this.userUseCase.getUserByEmail(email);
+    }
+    @Get('/nickname:nickname')
+    getById(@Param('nickname') nickname: string) {
+        return this.userUseCase.getUserByNickname(nickname);
     }
 }

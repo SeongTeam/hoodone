@@ -36,6 +36,13 @@ export class UserUseCase {
         return await this.userService.hasExistedNickname(nickname);
     }
 
+    async getAllUsers(): Promise<UserModel[]> {
+        const existingUser = await this.userService.getAllUsers();
+        if (!existingUser) {
+            throw new AuthException('EMAIL_NOT_FOUND');
+        }
+        return existingUser;
+    }
     /** User가 존재하면 반환, User가 null이면  */
     async getUserByNickname(nickname: string): Promise<UserModel> {
         const existingUser = await this.userService.getUserByNickname(nickname);
