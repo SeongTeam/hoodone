@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common/decorators';
-import { InternalServerErrorException } from '@nestjs/common';
+import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { UserModel } from 'src/users/entities/user.entity';
 import { QueryRunner } from 'typeorm';
 
 import { CommentsService } from '../comment.service';
 import { CommentModel } from '../entities/comment.entity';
 import { PostsUseCases } from 'src/posts/usecase/post.use-case';
+import { UpdateCommentDto } from '../dto/update-comment.dto';
 
 @Injectable()
-export class CommentUseCases {
+export class CommentUseCase {
     constructor(
         private readonly commentService: CommentsService,
         private readonly postUseCase: PostsUseCases,
@@ -64,8 +65,42 @@ export class CommentUseCases {
             throw new InternalServerErrorException(`commentService error \n${e}`);
         }
     }
+    async update(commentId: number, updateData: UpdateCommentDto, qr: QueryRunner) {
+        const { content } = updateData;
+        const comment: CommentModel = await this.commentService.loadById(commentId);
+        if (!comment) {
+            throw new NotFoundException(
+                `UseCase.update 실행x , commentId:${commentId}를 찾을 수 없음`,
+            );
+        }
+
+        if (content) comment.content = content;
+
+        return await this.commentService.save(comment, qr);
+    }
+
+    async delete(commentId: number, qr: QueryRunner) {
+        const comment: CommentModel = await this.commentService.loadById(commentId);
+
+        // TODO Post 전용 Exception 구현
+        if (!comment) {
+            throw new NotFoundException(
+                `UseCase.delete 실행x , commentId:${commentId}를 찾을 수 없음`,
+            );
+        }
+
+        //TODO 삭제할 댓글에 대댓글이 있다면 어떻게 할 것인가?
+        if (comment.replyCommentIds.length > 0) {
+            return false;
+        }
+        return await this.commentService.delete(comment.id, qr);
+    }
 
     getById(commentId: number) {
         return this.commentService.findById(commentId);
+    }
+
+    isCommentOwner(userId: number, commentId: number) {
+        return this.commentService.isCommentOwner(userId, commentId);
     }
 }

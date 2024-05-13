@@ -26,7 +26,7 @@ export class LocalTypeormConfig implements TypeOrmOptionsFactory {
             // dropSchema: true, // 애플리케이션 실행시 기존 스키마 삭제 여부
             keepConnectionAlive: true, // 애플리케이션 재시작 시 연결 유지
             // logging: true, // TODO: 데이터베이스 쿼리 로깅 여부
-            entities: [BaseModel, __dirname + 'src/**/entity/*.entity.{ts,js}'], //엔티티 클래스 경로
+            entities: [BaseModel, __dirname + 'src/**/entities/*.entity.{ts,js}'], //엔티티 클래스 경로
             extra: {
                 max: 100,
             },

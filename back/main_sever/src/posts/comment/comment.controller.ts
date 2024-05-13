@@ -10,6 +10,8 @@ import {
     ParseIntPipe,
     Inject,
     forwardRef,
+    Patch,
+    Delete,
 } from '@nestjs/common';
 import { QueryRunner as QR } from 'typeorm';
 
@@ -22,26 +24,19 @@ import { UserModel } from 'src/users/entities/user.entity';
 
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreateReplyCommentDto } from './dto/create-reply-comment.dto';
-import { CommentUseCases } from './usecase/comment.use-case';
+import { CommentUseCase } from './usecase/comment.use-case';
+import { Roles } from 'src/users/decorator/roles.decorator';
+import { RoleType } from 'src/users/const/role.type';
+import { RoleGuard } from 'src/auth/guard/role.guard';
+import { CommentOwnerGuard } from './guard/comment-owner.guard';
+import { UpdateCommentDto } from './dto/update-comment.dto';
 
-@Controller('posts/:postId/comment')
+@Controller('posts/:postId/comments')
 export class CommentsController {
     constructor(
-        @Inject(forwardRef(() => CommentUseCases))
-        private readonly commentUseCases: CommentUseCases,
+        @Inject(forwardRef(() => CommentUseCase))
+        private readonly commentUseCases: CommentUseCase,
     ) {}
-
-    /** Comment와 ResponseComment를 id로 찾는 API는 1개로 설정
-     * Body.depth로 어떤 table에 접속할지 확인한다.
-     */
-    @Get(':id')
-    @IsPublic()
-    async getComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body) {
-        let res = new CommentApiResponseDto();
-        res.getById = await this.commentUseCases.getById(commentId);
-
-        return res;
-    }
 
     @Post()
     @UseGuards(AccessTokenGuard)
@@ -71,5 +66,37 @@ export class CommentsController {
         res.postReply = await this.commentUseCases.createReplyComment(user, postId, creatDto, qr);
 
         return res;
+    }
+
+    /** Comment와 ResponseComment를 id로 찾는 API는 1개로 설정
+     * Body.depth로 어떤 table에 접속할지 확인한다.
+     */
+    @Get(':id')
+    @IsPublic()
+    async getComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body) {
+        let res = new CommentApiResponseDto();
+        res.getById = await this.commentUseCases.getById(commentId);
+
+        return res;
+    }
+
+    @Patch(':id')
+    @Roles(RoleType.USER, RoleType.ADMIN)
+    @UseGuards(AccessTokenGuard, CommentOwnerGuard, RoleGuard)
+    @UseInterceptors(TransactionInterceptor)
+    async patch(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() body: UpdateCommentDto,
+        @QueryRunner() qr: QR,
+    ) {
+        return this.commentUseCases.update(id, body, qr);
+    }
+
+    @Delete(':id')
+    @Roles(RoleType.USER, RoleType.ADMIN)
+    @UseGuards(AccessTokenGuard, CommentOwnerGuard, RoleGuard)
+    @UseInterceptors(TransactionInterceptor)
+    delete(@Param('id', ParseIntPipe) id: number, @QueryRunner() qr: QR) {
+        return this.commentUseCases.delete(id, qr);
     }
 }

@@ -7,7 +7,7 @@ import { UsersModule } from 'src/users/users.module';
 import { CommentsController } from './comment.controller';
 import { CommentsService } from './comment.service';
 import { CommentModel } from './entities/comment.entity';
-import { CommentUseCases } from './usecase/comment.use-case';
+import { CommentUseCase } from './usecase/comment.use-case';
 import { PostsModule } from '../post.module';
 
 export const COMMENT_USE_CASES = Symbol('COMMENT_USE_CASES');
@@ -21,6 +21,6 @@ export const COMMENT_USE_CASES = Symbol('COMMENT_USE_CASES');
         UsersModule,
     ],
     controllers: [CommentsController],
-    providers: [CommentUseCases, CommentsService],
+    providers: [CommentUseCase, CommentsService],
 })
 export class CommentModule {}
