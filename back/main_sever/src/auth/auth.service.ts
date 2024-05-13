@@ -28,8 +28,21 @@ export class AuthService {
                 secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
             });
         } catch (e) {
+            // 만료되 토큰일 경우
+            const isExpired = this.isTokenExpired(token);
+            if (isExpired) {
+                throw new AuthException('JWT_EXPIRED');
+            }
+            // 토큰이 서버에서 발급한 것이 아닌 경우
             throw new AuthException('JWT_INVALID_TOKEN');
         }
+    }
+
+    isTokenExpired(token: string): boolean {
+        const decodedToken = this.jwtService.decode(token);
+        const exp = decodedToken.exp;
+        const now = Math.floor(Date.now() / 1000);
+        return exp < now;
     }
     /**
      * refresh 토큰을 매게변수로 받아서 새로운 토큰을 반환
@@ -86,7 +99,6 @@ export class AuthService {
     signToken(user: Pick<UserModel, 'email' | 'id'>, isRefreshToken: boolean): string {
         const payload = {
             email: user.email,
-            sub: user.id,
             type: isRefreshToken ? 'refresh' : 'access',
         };
 
