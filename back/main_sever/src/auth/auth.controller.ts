@@ -68,7 +68,7 @@ export class AuthController {
         if (isNickNameExist) throw new AuthException('NICKNAME_EXISTS');
 
         let res = new AuthApiResponseDto();
-        res.postSignup = { ...(await this.authUseCase.registerWithEmail(registerUserDto, qr)) };
+        res.postSignup = await this.authUseCase.registerWithEmail(registerUserDto, qr);
 
         return res;
     }
