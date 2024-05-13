@@ -24,6 +24,9 @@ export async function POST(req: NextRequest) {
         });
 
         if (res.ok) {
+            // const responseData: AuthApiResponseDto.postSignup = (await res.json()).then((res) => {
+            //     return;
+            // });
             const responseData: AuthApiResponseDto = await res.json();
             logger.info('Backend Response', { message: responseData });
 

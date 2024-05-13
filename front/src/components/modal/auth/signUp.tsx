@@ -56,12 +56,29 @@ const SignUp: React.FC = () => {
                 }));
             } else {
                 console.log(`else response-----`);
+                console.log(data); // route.ts에서 error 프로퍼티에 메세지를 넣어줘야 한다.
                 setMsg('회원가입 오류 발생');
             }
         } catch (err) {
-            console.log('sign up error', error);
+            console.log('error) sign up error', error);
             console.log(error);
         }
+    };
+
+    const checkEmail = async (email: string) => {
+        console.log('pressed checkEmail');
+        const res = await fetch(`/api/users/account/`, {
+            method: 'GET',
+            body: JSON.stringify({
+                email: `sjm4126@naver.com`,
+            }),
+            // headers: {
+            //     'content-type': 'application/json',
+            // },
+        });
+        const data = await res.json();
+        console.log(`else response-----`);
+        console.log(data); // route.ts에서
     };
 
     const onSubmit = async (data: IForm) => {
@@ -133,6 +150,16 @@ const SignUp: React.FC = () => {
                         />
                         <Button variant="oauth" w="180px" h="70px">
                             Send
+                        </Button>
+                        <Button
+                            variant="oauth"
+                            w="180px"
+                            h="70px"
+                            onClick={() => {
+                                checkEmail('');
+                            }}
+                        >
+                            mock-Email
                         </Button>
                     </Flex>
                     <Button variant="oauth" type="submit">
