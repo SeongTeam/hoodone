@@ -2,10 +2,9 @@ import { HttpStatus } from '@nestjs/common/enums';
 import { BaseException } from './common/base.exception';
 import { InternalServerErrorException } from '@nestjs/common';
 import { authExceptionMsg } from './common/const/message/exception.message';
-import { ExceptionErrorCode } from './common/const/error-code/exception-error-code.const';
 import { AuthExceptionEnum } from './common/enum/auth-exception-code.enum';
 
-type AuthExceptionEnum = keyof typeof AuthExceptionEnum;
+type AuthExceptionEnumType = keyof typeof AuthExceptionEnum;
 
 export class AuthException extends BaseException {
     /** custom Exception auth와 관련된 error message를 보낼 수 있습니다.
@@ -19,10 +18,10 @@ export class AuthException extends BaseException {
      *
      */
     constructor(
-        ExceptionEnum: AuthExceptionEnum,
+        ExceptionEnum: AuthExceptionEnumType,
         detailInfo?: { message?: string; pastMsg?: any },
     ) {
-        const errorCode = ExceptionErrorCode[ExceptionEnum];
+        const errorCode = AuthExceptionEnum[ExceptionEnum];
         const content = authExceptionMsg[`error${errorCode}`];
         // message 형식 ex) 'Error-10141):토큰 타입이 refresh가 아닙니다',
         const response = `Error-${errorCode}):${content}`;
