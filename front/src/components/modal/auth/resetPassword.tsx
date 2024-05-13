@@ -9,8 +9,9 @@ const ResetPassword: React.FC = () => {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
 
+
     const sendResetEmail = async (email: string) => {
-        /*TODO
+    /*TODO
     - server Component fetch 로직 추가.
     */
     };

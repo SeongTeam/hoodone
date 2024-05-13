@@ -1,7 +1,13 @@
+
 import { Button, Flex, Input, Text, useColorModeValue } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { AuthModalState } from '@/atoms/authModal';
+        
+/*TODO
+- 이메일 인증 및 이메일 중복 검사 로직 구현
+  - backend + front 모두 구현되어야함<div className=""></div>
+*/
 const SignUp: React.FC = () => {
     const [authModalState, setAuthModalState] = useRecoilState(AuthModalState);
     const [signUpForm, setSignUpForm] = useState({
@@ -160,5 +166,6 @@ const SignUp: React.FC = () => {
             </Flex>
         </>
     );
+
 };
 export default SignUp;
