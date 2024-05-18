@@ -87,4 +87,8 @@ export class PostsUseCases {
     decrementCommentCount(postId: number, qr: QueryRunner) {
         this.postService.decrementCommentCount(postId, qr);
     }
+
+    getPaginatedPosts(offset: number, limit: number) {
+        return this.postService.getPaginatedPosts(offset, limit);
+    }
 }

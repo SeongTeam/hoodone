@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm/dist/common';
 import { Repository } from 'typeorm/repository/Repository';
 import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
@@ -181,5 +181,22 @@ export class PostsService {
 
     _getRepository(qr?: QueryRunner) {
         return qr ? qr.manager.getRepository<PostModel>(PostModel) : this.postsRepository;
+    }
+
+    async getPaginatedPosts(offset: number, limit: number) {
+        const data = this.postsRepository.find({
+            ...COMMON_POST_FIND_OPTION,
+            where: {
+                isPublished: true,
+            },
+            skip: limit * (offset - 1),
+            take: limit,
+            order: {
+                createdAt: 'DESC',
+            },
+        });
+
+        console.log(data);
+        return data;
     }
 }
