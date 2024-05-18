@@ -13,7 +13,7 @@ type PostProps = {
 const Post: React.FC<PostProps> = ({post}) => {
     const bg = customColors.black[300];
     const fontColor = customColors.white[300];
-    console.log("post Author", post?.author);
+    console.log("post Author", post);
     return (
 
         post === null ? (
