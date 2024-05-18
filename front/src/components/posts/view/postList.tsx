@@ -5,6 +5,9 @@ import PostListItem from "./postListItem";
 import PostThumbnail from "./server-component/postThumbnail";
 import { customColors } from "@/utils/chakra/customColors";
 
+/*TODO
+- <PostThumbnail> 컴포넌트 Servercomponent로 활용하기
+*/
 type PostListProps = {
     postList : PostType[]
 }
@@ -13,6 +16,7 @@ const PostList : React.FC<PostListProps> = ({
 }) => {
   
   return (
+
     <Flex 
       flexWrap="wrap" 
       direction="column" 
@@ -20,12 +24,17 @@ const PostList : React.FC<PostListProps> = ({
       width="100%" 
       gap="1rem"
       >
-      {postList.map((post, index) => (
-        <PostListItem post={post} key={post.id}>
+      {postList.map((post, index) => {
+        return (
+        <PostListItem post={post} key={post.id} index={index}>
             <PostThumbnail publicID={post.thumbnailPublicID}/>
         </PostListItem>
-      ))}
+        );
+      }
+      )}
     </Flex>
+    
+
   )
 } 
 

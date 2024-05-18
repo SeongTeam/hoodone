@@ -1,47 +1,48 @@
-import { atom } from "recoil";
+import { atom } from 'recoil';
 
 type authorType = {
-  email: string;
-  nickname: string;
-  profileImg: string;
+    email: string;
+    nickname: string;
+    profileImg: string;
 };
 
 type commentType = {};
 export type PostType = {
-  id?: string;
-  createdAt: string;
-  updatedAt: string;
-  title: string;
-  content: string;
-  likeCount: number;
-  commentCount: number;
-  isPublished: boolean;
-  author: authorType;
-  commentList: object[];
-  thumbnailPublicID?: string;
-  linkedPostURL?: string;
-  publicID?: string;
+    id: number;
+    createdAt: Date;
+    updatedAt: Date;
+    deletedAt: Date | null;
+    title: string;
+    content: string;
+    likeCount: number;
+    commentCount: number;
+    isPublished: boolean;
+    author: authorType;
+    commentID: number;
+    thumbnailPublicID?: string;
+    thumbnailURL?: string;
+    linkedPostURL?: string;
 };
 
 export type PostLikeType = {
-  id: string;
-  postId: string;
-  voteValue: number;
+    id: string;
+    postId: string;
+    voteValue: number;
 };
 
 interface PostState {
-  selectedPost: PostType | null;
-  posts: PostType[];
-  postLikes: PostLikeType[];
+    selectedPost: PostType | null;
+    posts: PostType[];
+    postLikes: PostLikeType[];
 }
 
 const defaultPostState: PostState = {
-  selectedPost: null,
-  posts: [],
-  postLikes: [],
+    selectedPost: null,
+    posts: [],
+    postLikes: [],
 };
 
 export const postState = atom<PostState>({
-  key: "PostState",
-  default: defaultPostState,
+    key: 'PostState',
+    default: defaultPostState,
 });

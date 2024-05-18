@@ -16,7 +16,7 @@ import TextInput from "./postFormat/textInput";
 import { userAccountState } from "@/atoms/userAccount";
 import { customColors } from "@/utils/chakra/customColors";
 import Tab , { type TabItem } from "./tab";
-import { createPosts } from "@/app/server-actions/postsActions";
+import { createPosts } from "@/server-actions/postsActions";
 
 
 
