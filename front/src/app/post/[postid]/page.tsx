@@ -3,13 +3,14 @@ import { NextPage } from "next";
 import { PostType } from "@/atoms/post";
 import { getPostWithID } from "@/lib/server-only/postLib";
 import { Flex } from "@chakra-ui/react";
+import logger from "@/utils/log/logger";
 type PostPageProps = {
 
     params: {
         postid: string
     }
     searchParams: {
-        postPos: string
+        index: string
     }
 }
 
@@ -22,8 +23,8 @@ const PostPage : NextPage<PostPageProps>  = async ( {
         1. post list item 클릭 > 해당 페이지 진입
         2. url 링크를 통해 해당 페이지 진입
     */
-    const post : PostType | null = await getPostWithID(params.postid, parseInt(searchParams.postPos));
-
+    const post : PostType | null = await getPostWithID(params.postid, parseInt(searchParams.index));
+    logger.info("searchParams", { message: searchParams });
     return (
         <Flex w={"full"}>
             <Post post={post} />
