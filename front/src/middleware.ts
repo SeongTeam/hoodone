@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
 
     //TODO) 회원 인증이 필요한 서비스 path에서 불러 올 수 있도록
     if (request.nextUrl.pathname.startsWith('/api')) {
-        return jwtMiddleware;
+        return jwtMiddleware(request);
     }
 
     return NextResponse.next();
