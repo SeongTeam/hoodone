@@ -55,7 +55,7 @@ export async function getPostWithIDFromCache(id: string, PostsPos: number) {
         ]);
 
         if (!postsIniitalpage && !postsLoadMorepage) {
-            throw new Error(`both pages are falsy`);
+            throw new Error(`both pages are falsy. (id: ${id} , PostsPos: ${PostsPos})`);
         }
 
         const posts = [...(postsIniitalpage || []), ...(postsLoadMorepage || [])];
@@ -126,7 +126,9 @@ export async function getPaginatedPosts(
 
             if (!res.ok) {
                 logger.error('getPaginatedPosts error', {
-                    message: `${JSON.stringify(res.body)} ${res.status}`,
+                    message: `(offset: ${offset}, limit: ${limit}) ${JSON.stringify(res.body)} ${
+                        res.status
+                    }`,
                 });
                 reject(new Error('getPaginatedPosts error'));
             }
