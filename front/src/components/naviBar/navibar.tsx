@@ -4,8 +4,6 @@ import { Providers } from '@/utils/chakra/providers';
 import { Button, Flex, Image } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import SearchBar from './searchBar';
-import { UserAccountState } from '@/atoms/userAccount';
-import { useRecoilState } from 'recoil';
 import RightContent from './rightContent/rightContent';
 
 export default function NaviBar() {

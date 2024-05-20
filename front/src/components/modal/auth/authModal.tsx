@@ -15,7 +15,7 @@ import {
 import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { AuthModalState } from '@/atoms/authModal';
-import { UserAccountState } from '@/atoms/userAccount';
+import { useUserAccountWithSSR } from '@/atoms/userAccount';
 import AuthInput from './authInput';
 import ResetPassword from './resetPassword';
 
@@ -28,7 +28,7 @@ import ResetPassword from './resetPassword';
 const AuthModal: React.FC = () => {
     //const { isOpen, onOpen, onClose } = useDisclosure();
     const [modalState, setModalState] = useRecoilState(AuthModalState);
-    const [userState, setUserState] = useRecoilState(UserAccountState);
+    const [userState, setUserState] = useUserAccountWithSSR();
     const bg = '#242424';
     const fontColor = '#FFFFFF';
 

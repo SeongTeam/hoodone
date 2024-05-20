@@ -14,11 +14,11 @@ import {
 import React from 'react';
 
 import { useRouter } from 'next/navigation';
-import { UserAccountState } from '@/atoms/userAccount';
 import { useRecoilState } from 'recoil';
+import { useUserAccountWithSSR } from '@/atoms/userAccount';
 
 const UserMenu: React.FC = () => {
-    const [user, setUser] = useRecoilState(UserAccountState);
+    const [user, setUser] = useUserAccountWithSSR();
     const router = useRouter();
     const { colorMode, toggleColorMode } = useColorMode();
     const textColor = '#FFFFFF';

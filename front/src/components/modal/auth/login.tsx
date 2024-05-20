@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { AuthModalState } from '@/atoms/authModal';
-import { UserAccountState } from '@/atoms/userAccount';
+import { useUserAccountWithSSR } from '@/atoms/userAccount';
 import logger from '@/utils/log/logger';
 
 type LoginProps = {};
 
 const Login: React.FC<LoginProps> = () => {
     const [authModalState, setAuthModelState] = useRecoilState(AuthModalState);
-    const [userState, setUserState] = useRecoilState(UserAccountState);
+    const [userState, setUserState] = useUserAccountWithSSR();
     const [msg, setMsg] = useState('');
     const [loginForm, setLoginForm] = useState({
         email: '',
@@ -19,6 +19,8 @@ const Login: React.FC<LoginProps> = () => {
     });
 
     const fontColor = '#FFFFFF';
+
+    console.log('[Login]', userState);
 
     const loginWithEmailAndPassword = async (email: string, password: string) => {
         const res = await fetch(`/api/auth/login/`, {
