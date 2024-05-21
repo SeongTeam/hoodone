@@ -9,14 +9,45 @@ import {
     UseInterceptors,
     ClassSerializerInterceptor,
     ParseIntPipe,
+    ValidationPipe,
+    BadRequestException,
+    UseFilters,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserUseCase } from './usecase/user.use-case';
+import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
+import { QueryRunner as QR } from 'typeorm';
+import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
+import { TempUserModel } from './entities/temp-user.entity';
+import { TempUserUseCase } from './usecase/temp-user.case';
+import { CommonExceptionFilter } from 'src/common/filter/common-exception.filter';
 
 @Controller('users')
 export class UsersController {
-    constructor(private readonly userUseCase: UserUseCase) {}
+    constructor(
+        private readonly userUseCase: UserUseCase,
+        private readonly tempUserUseCase: TempUserUseCase,
+    ) {}
+
+    @Post('/tempUser')
+    @UseInterceptors(TransactionInterceptor)
+    @UseFilters(CommonExceptionFilter)
+    async postTempUser(@Body() userInfo: Pick<TempUserModel, 'email'>, @QueryRunner() qr: QR) {
+        // let res = new AuthApiResponseDto();
+        const { email } = userInfo;
+        const isExist = await this.userUseCase.hasExistedEmail(email);
+        if (isExist)
+            throw new BadRequestException('이미 사용 중인 email, createNewTempUser() 취소');
+
+        return this.tempUserUseCase.createNewTempUser(email, qr);
+    }
+
+    @Patch('/tempUser')
+    comparePINCodes(@Body() userInfo: Pick<TempUserModel, 'email' | 'pinCode'>) {
+        return this.tempUserUseCase.comparePINCodes(userInfo);
+    }
+
     @Get('/all')
     // 직렬화를 할 때 데이터 포맷을 변경 (@Exclude()를 이용하면 제거 가능)
     // @UseInterceptors(ClassSerializerInterceptor) // AppModule에서 전체 적용으로 설정가능
