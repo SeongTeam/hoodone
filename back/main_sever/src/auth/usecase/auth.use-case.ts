@@ -117,7 +117,7 @@ export class AuthUseCase {
         Logger.log(`registerWithEmail() =>>> ${JSON.stringify(newUser)}`);
         if (newUser === null)
             throw new AuthException('ACCOUNT_CREATION_FAILED', {
-                message: 'registerWithEmail() => UserModel 실행 실패 ',
+                describe: 'registerWithEmail() => UserModel 실행 실패 ',
             });
         return {
             email: newUser.email,
