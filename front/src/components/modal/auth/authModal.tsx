@@ -15,9 +15,10 @@ import {
 import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { AuthModalState } from '@/atoms/authModal';
-import { UserAccountState } from '@/atoms/userAccount';
+import { useUserAccountWithSSR } from '@/atoms/userAccount';
 import AuthInput from './authInput';
 import ResetPassword from './resetPassword';
+import { customColors } from '@/utils/chakra/customColors';
 
 /*TODO
 - accessToken 만료까지 User 로그인 상태 유지하도록 수정하기
@@ -28,9 +29,9 @@ import ResetPassword from './resetPassword';
 const AuthModal: React.FC = () => {
     //const { isOpen, onOpen, onClose } = useDisclosure();
     const [modalState, setModalState] = useRecoilState(AuthModalState);
-    const [userState, setUserState] = useRecoilState(UserAccountState);
-    const bg = '#242424';
-    const fontColor = '#FFFFFF';
+    const [userState, setUserState] = useUserAccountWithSSR();
+    const bg = customColors.black[200];
+    const fontColor = customColors.white[100];
 
     const handleClose = () => {
         setModalState((prev) => ({

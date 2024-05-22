@@ -8,6 +8,7 @@ const Button: ComponentStyleConfig = {
     fontSize: "1.25rem",
     fontWeight: 700,
     border: "1px solid",
+    color: customColors.white[100],
     borderColor: customColors.strokeColor[100],
     _focus: {
       boxShadow: "none",

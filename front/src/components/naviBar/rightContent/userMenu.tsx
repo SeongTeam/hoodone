@@ -14,16 +14,17 @@ import {
 import React from 'react';
 
 import { useRouter } from 'next/navigation';
-import { UserAccountState } from '@/atoms/userAccount';
 import { useRecoilState } from 'recoil';
+import { useUserAccountWithSSR , defaultUserAccount  } from '@/atoms/userAccount';
+import { customColors } from '@/utils/chakra/customColors';
+import { signOut } from '@/server-actions/AuthAction';
 
 const UserMenu: React.FC = () => {
-    const [user, setUser] = useRecoilState(UserAccountState);
+    const [user, setUser] = useUserAccountWithSSR();
     const router = useRouter();
-    const { colorMode, toggleColorMode } = useColorMode();
-    const textColor = '#FFFFFF';
-    const bg = '#1C1C1C';
-    const focusedColor = 'gray.500';
+    const textColor = customColors.white[100];
+    const bg = customColors.black[200];
+    const focusedColor = customColors.strokeColor[100];
 
     const handelNavigatePage = () => {
         if (user.isLogin) {
@@ -32,14 +33,13 @@ const UserMenu: React.FC = () => {
     };
 
     const logout = async () => {
-        /* TODO
-    - user state 변화
-    - cookie에 저장된 accessToken , refresh Token 제거
-    */
+        await signOut();
+        setUser(defaultUserAccount);
+        router.push('/');
     };
 
     return (
-        <Menu>
+        <Menu >
             <MenuButton
                 cursor="pointer"
                 borderRadius={4}
@@ -59,6 +59,7 @@ const UserMenu: React.FC = () => {
                     fontSize="15px"
                     fontWeight="700"
                     closeOnSelect={false}
+                    bg = {bg}
                     _hover={{ bg: 'blue.500', color: 'white' }}
                     _focus={{
                         bg: focusedColor,
@@ -71,6 +72,7 @@ const UserMenu: React.FC = () => {
                 <MenuDivider />
                 <MenuItem
                     fontSize="10px"
+                    bg={bg}
                     _hover={{ bg: 'blue.500', color: 'white' }}
                     _focus={{
                         bg: focusedColor,
@@ -84,6 +86,7 @@ const UserMenu: React.FC = () => {
                 <MenuItem
                     fontSize="10px"
                     fontWeight={700}
+                    bg={bg}
                     _hover={{ bg: 'blue.500', color: 'white' }}
                     onClick={logout}
                     _focus={{
