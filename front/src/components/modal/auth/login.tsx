@@ -6,9 +6,13 @@ import { useRecoilState } from 'recoil';
 import { AuthModalState } from '@/atoms/authModal';
 import { useUserAccountWithSSR } from '@/atoms/userAccount';
 import logger from '@/utils/log/logger';
+import { signIn } from '@/server-actions/AuthAction'
 
 type LoginProps = {};
 
+/* TODO
+- Server Action 오류 처리 로직 구현
+*/
 const Login: React.FC<LoginProps> = () => {
     const [authModalState, setAuthModelState] = useRecoilState(AuthModalState);
     const [userState, setUserState] = useUserAccountWithSSR();
@@ -20,39 +24,33 @@ const Login: React.FC<LoginProps> = () => {
 
     const fontColor = '#FFFFFF';
 
-    console.log('[Login]', userState);
-
     const loginWithEmailAndPassword = async (email: string, password: string) => {
-        const res = await fetch(`/api/auth/login/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email,
-                password,
-            }),
-        });
+        
+        const formData = new FormData();
+        formData.append('email', email);
+        formData.append('password', password);
 
-        const data = await res.json();
+        const res = await signIn(formData);
 
-        if (res.ok) {
-            /*TODO
+        console.log(`[loginWithEmailAndPassword]`, res);
+
+        if(res.ok) {
+        /*TODO
         - nickname 등의 유저 정보를 서버에서 가져오는 로직 필요 
         */
-            setUserState((prev) => ({
-                ...prev,
-                email: email,
-                isLogin: true,
-            }));
-            setAuthModelState((prev) => ({
-                ...prev,
-                open: false,
-            }));
-        } else {
-            setMsg(data.error);
-            console.log('login error', data.error);
-        }
+        setUserState((prev) => ({
+            ...prev,
+            email: email,
+            isLogin: true,
+        }));
+        setAuthModelState((prev) => ({
+            ...prev,
+            open: false,
+        }));
+    } else {
+        setMsg(res.message);
+    }
+
     };
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -117,6 +115,7 @@ const Login: React.FC<LoginProps> = () => {
                 </Text>
             </Flex>
         </form>
+        
     );
 };
 export default Login;
