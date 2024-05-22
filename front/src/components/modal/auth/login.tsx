@@ -7,6 +7,7 @@ import { AuthModalState } from '@/atoms/authModal';
 import { useUserAccountWithSSR } from '@/atoms/userAccount';
 import logger from '@/utils/log/logger';
 import { signIn } from '@/server-actions/AuthAction'
+import { customColors } from '@/utils/chakra/customColors';
 
 type LoginProps = {};
 
@@ -22,7 +23,7 @@ const Login: React.FC<LoginProps> = () => {
         password: '',
     });
 
-    const fontColor = '#FFFFFF';
+    const fontColor = customColors.white[100];
 
     const loginWithEmailAndPassword = async (email: string, password: string) => {
         

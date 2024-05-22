@@ -7,14 +7,15 @@ import {
     InputLeftElement,
     InputRightElement,
 } from '@chakra-ui/react';
+import { customColors } from '@/utils/chakra/customColors';
 
 type SearchInputProps = {
     user?: Object | null;
 };
 
 const SearchBar: React.FC<SearchInputProps> = ({ user }) => {
-    const bg = '#1C1C1C';
-    const white = '#FFFFFF';
+    const bg = customColors.black[200];
+    const white = customColors.white[100];
 
     return (
         <Flex flexGrow={1} maxWidth="auto" align="center" ml="80px">
