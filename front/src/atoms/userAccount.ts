@@ -11,7 +11,7 @@ export interface userAccountState {
     profileImg: string;
 }
 
-const defaultUserAccount: userAccountState = {
+export const defaultUserAccount: userAccountState = {
     email: '',
     nickName: '',
     isLogin: false,
