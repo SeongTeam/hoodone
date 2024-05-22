@@ -46,6 +46,6 @@ export class CommentModel extends BaseModel {
     @IsNumber()
     index: number;
 
-    @Column({ name: 'response_to_id', default: 0 })
+    @Column({ name: 'response_to_id', default: -1 })
     responseToId: number;
 }
