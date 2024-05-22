@@ -12,6 +12,7 @@ import {
     forwardRef,
     Patch,
     Delete,
+    Logger,
 } from '@nestjs/common';
 import { QueryRunner as QR } from 'typeorm';
 
@@ -71,9 +72,9 @@ export class CommentsController {
     /** Comment와 ResponseComment를 id로 찾는 API는 1개로 설정
      * Body.depth로 어떤 table에 접속할지 확인한다.
      */
-    @Get(':id')
+    @Get(':commentId')
     @IsPublic()
-    async getComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body) {
+    async getComment(@Param('commentId', ParseIntPipe) commentId: number) {
         let res = new CommentApiResponseDto();
         res.getById = await this.commentUseCases.getById(commentId);
 
