@@ -7,6 +7,8 @@ import { AuthController } from './auth.controller';
 import { UserModel } from 'src/users/entities/user.entity';
 import { UsersModule } from 'src/users/users.module';
 import { AuthUseCase } from './usecase/auth.use-case';
+import { MailModule } from 'src/mail/mail.module';
+import { TempUserModel } from 'src/users/entities/temp-user.entity';
 
 @Module({
     imports: [
@@ -14,6 +16,8 @@ import { AuthUseCase } from './usecase/auth.use-case';
         UsersModule,
         // JwtModule.register({})를 주석 처리했기에 뜨는 에러입니다
         JwtModule.register({}),
+        MailModule,
+        TempUserModel,
     ],
     exports: [AuthUseCase],
     controllers: [AuthController],

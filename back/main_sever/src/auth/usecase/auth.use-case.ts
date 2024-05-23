@@ -9,6 +9,8 @@ import { UserModel } from 'src/users/entities/user.entity';
 import { AuthService } from '../auth.service';
 import { AuthCredentialsDto } from '../dto/auth-credential.dto';
 import { Logger } from '@nestjs/common';
+import { MailUseCase } from 'src/mail/usecase/mail.usecase';
+import { TempUserUseCase } from 'src/users/usecase/temp-user.case';
 
 @Injectable()
 export class AuthUseCase {
@@ -16,6 +18,8 @@ export class AuthUseCase {
         @Inject(forwardRef(() => AuthService))
         private readonly authService: AuthService,
         private readonly userUseCase: UserUseCase,
+        private readonly tempUserUseCase: TempUserUseCase,
+        private readonly mailUseCase: MailUseCase,
     ) {}
 
     /**
@@ -123,5 +127,19 @@ export class AuthUseCase {
             email: newUser.email,
             nickname: newUser.nickname,
         };
+    }
+
+    async sendPinCode(toEmail: string, qr: QueryRunner) {
+        try {
+            const pinCode = await this.tempUserUseCase.generatePinCode();
+
+            // DB에 생성된 tempUser에게 pinCode를 집어 넣기
+            const TempUserModel = await this.tempUserUseCase.upsertTempUser(toEmail, pinCode);
+
+            return this.mailUseCase.sendCertificationPinCode(toEmail);
+        } catch (e) {
+            console.log(e);
+            return e;
+        }
     }
 }
