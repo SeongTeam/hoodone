@@ -19,7 +19,7 @@ export class AuthException extends BaseException {
      */
     constructor(
         ExceptionEnum: AuthExceptionEnumType,
-        detailInfo?: { message?: string; pastMsg?: any },
+        detailInfo?: { describe?: string; pastMsg?: any },
     ) {
         const errorCode = AuthExceptionEnum[ExceptionEnum];
         const content = authExceptionMsg[`error${errorCode}`];
@@ -31,7 +31,6 @@ export class AuthException extends BaseException {
                 ` errorCod값이  undefined 입니다. ${ExceptionEnum}은 ExceptionErrorCode에 정의되지 않은 에러입니다`,
             );
         }
-
         /**각각에 Exception 마다  HttpStatus를 변경하는 권장합니다*/
         super(errorCode, HttpStatus.UNAUTHORIZED, response, detailInfo);
     }
