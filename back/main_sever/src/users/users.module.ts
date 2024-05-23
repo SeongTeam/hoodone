@@ -9,7 +9,7 @@ import { TempUserUseCase } from './usecase/temp-user.case';
 
 @Module({
     imports: [TypeOrmModule.forFeature([TempUserModel, UserModel])],
-    exports: [UserUseCase],
+    exports: [UserUseCase, TempUserUseCase],
     controllers: [UsersController],
     providers: [TempUserUseCase, UserUseCase, UsersService],
 })

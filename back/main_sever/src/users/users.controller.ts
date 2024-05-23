@@ -34,13 +34,13 @@ export class UsersController {
     @UseInterceptors(TransactionInterceptor)
     @UseFilters(CommonExceptionFilter)
     async postTempUser(@Body() userInfo: Pick<TempUserModel, 'email'>, @QueryRunner() qr: QR) {
-        // let res = new AuthApiResponseDto();
         const { email } = userInfo;
         const isExist = await this.userUseCase.hasExistedEmail(email);
         if (isExist)
             throw new BadRequestException('이미 사용 중인 email, createNewTempUser() 취소');
 
-        return this.tempUserUseCase.createNewTempUser(email, qr);
+        // 처음에 생성할 때는 pinCode가 필요 없기에 빈 문자열 사입
+        return this.tempUserUseCase.upsertTempUser(email, '', qr);
     }
 
     @Patch('/tempUser')
