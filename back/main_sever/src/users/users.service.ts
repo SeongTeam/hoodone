@@ -32,9 +32,10 @@ export class UsersService {
             },
         });
     }
-    async createTempUser(userDtoData: Pick<TempUserModel, 'email' | 'pinCode'>, qr?: QueryRunner) {
-        /**DB에 이미 존재하는 tempUser라면 update 아니면 새로 생성 */
-
+    /**DB에 이미 존재하는 tempUser라면 update 아니면 새로 생성
+     * update시에는 QueryRunner사용 필수 아님
+     */
+    async upsertTempUser(userDtoData: Pick<TempUserModel, 'email' | 'pinCode'>, qr?: QueryRunner) {
         const user: TempUserModel = await this.getTempUserByEmail(userDtoData.email);
         const repository = this._getTempUsersRepository(qr);
         let tempUser: TempUserModel;

@@ -15,6 +15,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommentModule } from './posts/comment/comment.module';
 import { LocalTypeormConfig } from './configs/local-typeorm.config';
+import { MailModule } from './mail/mail.module';
 
 @Module({
     imports: [
@@ -36,6 +37,7 @@ import { LocalTypeormConfig } from './configs/local-typeorm.config';
         BoardsModule,
         PostsModule,
         CommentModule,
+        MailModule,
     ],
     controllers: [AppController],
     providers: [
