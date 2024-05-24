@@ -136,7 +136,7 @@ export class AuthUseCase {
             // DB에 생성된 tempUser에게 pinCode를 집어 넣기
             const TempUserModel = await this.tempUserUseCase.upsertTempUser(toEmail, pinCode);
 
-            return this.mailUseCase.sendCertificationPinCode(toEmail);
+            return this.mailUseCase.sendCertificationPinCode(toEmail, pinCode);
         } catch (e) {
             console.log(e);
             return e;

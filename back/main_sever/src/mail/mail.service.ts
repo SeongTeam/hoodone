@@ -11,18 +11,13 @@ export class MailService {
     async sendCertificationPinCode(to: string, pinCode: string) {
         // const mock = toEmail.toString();
 
-        console.log(to);
-
         try {
             const result = await this.mailerService
                 .sendMail({
                     to,
                     subject: 'Test email',
-                    text: 'Hello, world!',
                     context: {
                         pinCode,
-                        // // pinCode: pinCode.toString(),
-                        // pinCode: '1234',
                     },
                     template: './email',
                 })
