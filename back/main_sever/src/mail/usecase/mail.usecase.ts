@@ -17,8 +17,8 @@ export class MailUseCase {
         // private readonly userUseCase: UserUseCase,
     ) {}
 
-    async sendCertificationPinCode(to: string) {
-        const pinCode = await this.mailService.generatePinCode();
+    async sendCertificationPinCode(to: string, pinCode) {
+        // const pinCode = await this.mailService.generatePinCode();
         return this.mailService.sendCertificationPinCode(to, pinCode);
     }
 }

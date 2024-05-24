@@ -28,7 +28,7 @@ export class TempUserUseCase {
 
         return await this.userService.upsertTempUser({ email, pinCode }, qr);
     }
-    async comparePINCodes(userInfo: Pick<TempUserModel, 'email' | 'pinCode'>) {
+    async comparePinCodes(userInfo: Pick<TempUserModel, 'email' | 'pinCode'>) {
         const tempUser = await this.userService.getTempUserByEmail(userInfo.email);
 
         if (!tempUser) throw new NotFoundException('no tempUser in the DB that matches email');

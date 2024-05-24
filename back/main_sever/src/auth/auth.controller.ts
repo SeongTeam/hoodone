@@ -33,7 +33,7 @@ export class AuthController {
     constructor(
         private readonly authUseCase: AuthUseCase,
         private readonly userUseCase: UserUseCase,
-        private readonly TempUserUseCase: TempUserUseCase,
+        private readonly tempUserUseCase: TempUserUseCase,
     ) {}
 
     @Post('token/access')
@@ -98,25 +98,36 @@ export class AuthController {
          * result[response] : '250 2.0.0 OK ... gsmpt가 들어 있으면 성골
          */
         const { toEmail } = body;
+        const result = await this.authUseCase.sendPinCode(toEmail, qr);
+        let res = new AuthApiResponseDto();
 
-        return this.authUseCase.sendPinCode(toEmail, qr);
+        console.log(result.response);
+        res.postSendPinCode = typeof result.response === 'string' ? result.response : '';
+        console.log(res.postSendPinCode);
+        return res;
     }
-
-    @Get('compare/tempuser-pin-code')
+    //  response: '250 2.0.0 OK  1716551382 d2e1a72fcca58-6f8fcbea886sm952420b3a.137 - gsmtp',
+    @Post('compare/tempuser-pin-code')
     async compareTempUserPinCode(@Body() body) {
         const { email, pinCode } = body;
-        const result = await this.TempUserUseCase.comparePINCodes(body);
-        if (result) {
-            return {
-                state: 200,
+        console.log(body);
+        const result = await this.tempUserUseCase.comparePinCodes({ email, pinCode });
+        let res = new AuthApiResponseDto();
+
+        console.log(`result ===> ${result}`);
+        if (res) {
+            res.getCompareTempUserPinCode = {
+                statusCode: 200,
                 message: '요청이 성공적으로 처리되었습니다.',
-                result: result,
+                result,
             };
         }
-        return {
-            state: 400,
+        res.getCompareTempUserPinCode = {
+            statusCode: 400,
             message: 'pinCode가 알맞지 않습니다.',
-            result: result,
+            result,
         };
+
+        return res;
     }
 }

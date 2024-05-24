@@ -45,7 +45,7 @@ export class UsersController {
 
     @Patch('/tempUser')
     comparePINCodes(@Body() userInfo: Pick<TempUserModel, 'email' | 'pinCode'>) {
-        return this.tempUserUseCase.comparePINCodes(userInfo);
+        return this.tempUserUseCase.comparePinCodes(userInfo);
     }
 
     @Get('/all')

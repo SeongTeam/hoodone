@@ -12,3 +12,10 @@ export const ENV_DB_PASSWORD_KEY = 'DB_PASSWORD';
 export const ENV_DB_DATABASE_KEY = 'DB_DATABASE';
 // OPEN-AI 관련
 export const ENV_OPENAI_API_KEY = 'OPENAI_API_KEY';
+
+// email관련
+export const ENV_SMTP_PW = 'SMTP_PW';
+export const ENV_SMTP_PORT = 'SMTP_PORT';
+export const ENV_SMTP_ID = 'SMTP_ID';
+export const ENV_SMTP_FROM_NAME = 'SMTP_FROM_NAME';
+export const ENV_SMTP_FROM_EMAIL = 'SMTP_FROM_EMAIL';
