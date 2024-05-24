@@ -199,7 +199,7 @@ export async function comparePinCode(formData: FormData) {
         console.log(res);
         if (res.ok) {
             const responseData: AuthApiResponseDto = await res.json();
-            const { result, statusCode, message } = responseData.getCompareTempUserPinCode;
+            const { result, statusCode, message } = responseData.getCompareTempUserPinCode!;
 
             ret.message = message;
             ret.response = statusCode;

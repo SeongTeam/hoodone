@@ -5,6 +5,7 @@ import { AuthModalState } from '@/atoms/authModal';
 import { useForm } from 'react-hook-form';
 import { comparePinCode, requestCertifiedMail, signUp } from '@/server-actions/AuthAction';
 import { extractErrorMessage } from '@/lib/server-only/message';
+import { ExceptionDto } from 'hoodone-shared';
 
 const SignUp: React.FC = () => {
     interface IForm {
@@ -51,10 +52,9 @@ const SignUp: React.FC = () => {
                 }));
             } else {
                 console.log(`else response-----`);
-                console.log(res);
-
+                const exceptionData: ExceptionDto = res.response;
                 // message 값이 없을 수도 있음
-                const message = res.response.detail.message;
+                const message = exceptionData.detail?.message ?? '';
                 const extractedMessage = extractErrorMessage(message);
 
                 setMsg(`회원가입 오류 발생\n ${extractedMessage}`);
@@ -120,14 +120,14 @@ const SignUp: React.FC = () => {
             try {
                 if (res.ok) {
                     console.log(`success request CertifiedMail`);
-                    console.log(res);
+
                     // TODO maill을 성공적으로 보냈다고 알려줌 / tost 메세지 이용?
                 } else {
                     console.log(`else response-----`);
-                    console.log(res);
 
+                    const exceptionData: ExceptionDto = res.response;
                     // message 값이 없을 수도 있음
-                    const message = res.response.detail.message;
+                    const message = exceptionData.detail?.message ?? '';
                     const extractedMessage = extractErrorMessage(message);
 
                     setError(`이메일 전송 오류 발생\n ${extractedMessage}`);
