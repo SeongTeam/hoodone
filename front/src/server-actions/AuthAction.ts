@@ -11,6 +11,7 @@ const backURL = process.env.BACKEND_URL;
 type responseData = {
     ok: boolean;
     message: string;
+    response?: any;
 };
 
 /*TODO
@@ -18,11 +19,54 @@ type responseData = {
     다음 문서 참조 : https://nextjs.org/docs/app/building-your-application/authentication#authorization
 - backend응답으로 받은 accessToken과 resfreshToken 반환 후, 처리할 로직 구현하기.
 */
+
+export async function signUp(formData: FormData) {
+    const ret: responseData = { ok: false, message: '' };
+    try {
+        // TODO) formData 값 최소한으로 줄일 는 코드 찾아보기 3줄 오바
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+        const nickname = formData.get('password') as string;
+
+        const res = await fetch(`${backURL}/auth/signup`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nickname,
+                email,
+                password,
+            }),
+        });
+        console.log(res);
+        if (res.ok) {
+            ret.ok = true;
+            ret.response = await res.json();
+
+            return ret;
+        } else {
+            ret.ok = false;
+            ret.message = 'signUp fail ';
+            const data = await res.json();
+            const { detail, statusCode, timestamp } = data;
+            ret.response = { detail, statusCode, timestamp };
+
+            return ret;
+        }
+    } catch (e) {
+        ret.message = `Authenication failed Because of Internal Server error.`;
+        ret.response = e;
+        return ret;
+    }
+}
+
 export async function signIn(formData: FormData) {
     const ret: responseData = { ok: false, message: '' };
     try {
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
+        // throw '1234';
 
         const basicAuthToken = `${email}:${password}`;
 
