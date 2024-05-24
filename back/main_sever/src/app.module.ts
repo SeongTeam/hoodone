@@ -16,6 +16,14 @@ import { AppService } from './app.service';
 import { CommentModule } from './posts/comment/comment.module';
 import { LocalTypeormConfig } from './configs/local-typeorm.config';
 import { MailModule } from './mail/mail.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import {
+    ENV_SMTP_FROM_EMAIL,
+    ENV_SMTP_ID,
+    ENV_SMTP_PORT,
+    ENV_SMTP_PW,
+} from './common/const/env-keys.const';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
     imports: [
@@ -23,6 +31,30 @@ import { MailModule } from './mail/mail.module';
             envFilePath: '.env',
             isGlobal: true,
         }),
+        MailerModule.forRoot({
+            transport: {
+                host: 'localhost:3000', //TODO)서버 host를 넣어야 한다,
+                port: +process.env[ENV_SMTP_PORT],
+                secure: false,
+                service: 'gmail',
+                auth: {
+                    user: process.env[ENV_SMTP_ID],
+                    pass: process.env[ENV_SMTP_PW],
+                },
+            },
+            defaults: {
+                from: process.env[ENV_SMTP_FROM_EMAIL],
+            },
+            template: {
+                dir: __dirname + '/mail/templates',
+                adapter: new HandlebarsAdapter(),
+                options: {
+                    strict: true,
+                },
+            },
+        }),
+        MailModule,
+
         TypeOrmModule.forRootAsync({
             useClass: LocalTypeormConfig, // TODO: typeorm 설정한 클래스
 
@@ -37,7 +69,6 @@ import { MailModule } from './mail/mail.module';
         BoardsModule,
         PostsModule,
         CommentModule,
-        MailModule,
     ],
     controllers: [AppController],
     providers: [
