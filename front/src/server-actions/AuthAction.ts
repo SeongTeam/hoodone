@@ -12,7 +12,7 @@ const backURL = process.env.BACKEND_URL;
 type responseData = {
     ok: boolean;
     message: string;
-    response?: any;
+    response: object;
 };
 
 /*TODO
@@ -22,7 +22,7 @@ type responseData = {
 */
 
 export async function signUp(formData: FormData) {
-    const ret: responseData = { ok: false, message: '' };
+    const ret: responseData = { ok: false, message: '', response: {} };
     try {
         // TODO) formData 값 최소한으로 줄일 는 코드 찾아보기 3줄 오바
         const email = formData.get('email') as string;
@@ -57,13 +57,13 @@ export async function signUp(formData: FormData) {
         }
     } catch (e) {
         ret.message = `Authenication failed Because of Internal Server error.`;
-        ret.response = e;
+        ret.response = { e };
         return ret;
     }
 }
 
 export async function signIn(formData: FormData) {
-    const ret: responseData = { ok: false, message: '' };
+    const ret: responseData = { ok: false, message: '', response: {} };
     try {
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
@@ -142,7 +142,7 @@ export async function serverActionTest(formData: FormData) {
     });
 }
 export async function requestCertifiedMail(toEmail: string) {
-    const ret: responseData = { ok: false, message: '' };
+    const ret: responseData = { ok: false, message: '', response: {} };
     try {
         const res = await fetch(`${backURL}/auth/send-pin-code`, {
             method: 'POST',
@@ -153,14 +153,14 @@ export async function requestCertifiedMail(toEmail: string) {
                 toEmail,
             }),
         });
-        console.log(res);
+
         if (res.ok) {
-            const responseData: AuthApiResponseDto = await res.json();
+            const responseData = await res.json();
+            console.log(responseData);
 
             const message = responseData.postSendPinCode ?? '';
             if (extractStatusMessage(message)) {
                 ret.ok = true;
-                ret.response = await res.json();
             }
 
             return ret;
@@ -175,13 +175,13 @@ export async function requestCertifiedMail(toEmail: string) {
         }
     } catch (e) {
         ret.message = `Internal Server error.`;
-        ret.response = e;
+        ret.response = { e };
         return ret;
     }
 }
 
 export async function comparePinCode(formData: FormData) {
-    const ret: responseData = { ok: false, message: '' };
+    const ret: responseData = { ok: false, message: '', response: {} };
     const email = formData.get('email') as string;
     const pinCode = formData.get('pinCode') as string;
 
@@ -218,7 +218,7 @@ export async function comparePinCode(formData: FormData) {
         }
     } catch (e) {
         ret.message = `Internal Server error.`;
-        ret.response = e;
+        ret.response = { e };
         return ret;
     }
 }

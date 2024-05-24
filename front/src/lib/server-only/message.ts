@@ -18,7 +18,7 @@ export function extractErrorMessage(message: string): string {
  * 형식으로 보낼 줄 예정입니다.
  */
 export function extractStatusMessage(responseString: string): string | null {
-    const regex = /^250 2.0.0 OK$/;
+    const regex = '250 2.0.0 OK';
     const match = responseString.match(regex);
 
     if (match) {
