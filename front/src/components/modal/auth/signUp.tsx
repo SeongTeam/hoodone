@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { AuthModalState } from '@/atoms/authModal';
 import { useForm } from 'react-hook-form';
-import { signUp } from '@/server-actions/AuthAction';
+import { comparePinCode, requestCertifiedMail, signUp } from '@/server-actions/AuthAction';
 import { extractErrorMessage } from '@/lib/server-only/message';
 
 const SignUp: React.FC = () => {
@@ -30,7 +30,6 @@ const SignUp: React.FC = () => {
         state: false,
         code: '1234',
         inputCode: '',
-        email: '',
     });
 
     const createUserAccount = async (email: string, nickname: string, password: string) => {
@@ -81,22 +80,68 @@ const SignUp: React.FC = () => {
         createUserAccount(email, nickname, password);
     };
 
-    const onCertification = (event: React.FormEvent<HTMLFormElement>) => {
+    const onCertification = async (event: React.FormEvent<HTMLFormElement>) => {
         // TODO영어와 숫자로 이루저지 않았다면 에러 발생
-        function isValidEmail(email: string): boolean {
+
+        event.preventDefault();
+
+        console.log(certification.inputCode);
+
+        const formData = new FormData();
+        formData.append('email', form.getValues('email'));
+        formData.append('pinCode', certification.inputCode);
+        try {
+            const result = await comparePinCode(formData);
+
+            if (result.ok) {
+                setCertification((prev) => ({
+                    ...prev,
+                    state: true,
+                }));
+            }
+
+            setError('Code Do Not Match');
+            return;
+        } catch (e) {
+            console.log(e);
+            setError('Error!!! Code Do Not Match');
+        }
+    };
+
+    const onSendEmail = async () => {
+        function checkValidEmail(email: string): boolean {
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             return emailRegex.test(email);
         }
+        const toEmail = form.getValues('email');
+        if (checkValidEmail(toEmail)) {
+            console.log(toEmail);
+            const res = await requestCertifiedMail(toEmail);
+            try {
+                if (res.ok) {
+                    console.log(`success request CertifiedMail`);
+                    console.log(res);
+                    // TODO maill을 성공적으로 보냈다고 알려줌 / tost 메세지 이용?
+                } else {
+                    console.log(`else response-----`);
+                    console.log(res);
 
-        event.preventDefault();
-        if (certification.inputCode !== certification.code) {
-            setError('Code Do Not Match');
+                    // message 값이 없을 수도 있음
+                    const message = res.response.detail.message;
+                    const extractedMessage = extractErrorMessage(message);
+
+                    setError(`이메일 전송 오류 발생\n ${extractedMessage}`);
+                    return;
+                }
+            } catch (err) {
+                console.log('send email error', error);
+                console.log(error);
+                return;
+            }
+        } else {
+            setError('email 형식이 이상합니다');
             return;
         }
-        setCertification((prev) => ({
-            ...prev,
-            state: true,
-        }));
     };
 
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,7 +178,14 @@ const SignUp: React.FC = () => {
                             type="text"
                             onChange={onChange}
                         />
-                        <Button variant="oauth" w="180px" h="70px">
+                        <Button
+                            variant="oauth"
+                            w="180px"
+                            h="70px"
+                            onClick={() => {
+                                onSendEmail();
+                            }}
+                        >
                             Send
                         </Button>
                     </Flex>
@@ -149,7 +201,7 @@ const SignUp: React.FC = () => {
                     <Input
                         variant="oauth"
                         required
-                        placeholder={certification.email}
+                        placeholder={''}
                         type="email"
                         isDisabled={true}
                     />

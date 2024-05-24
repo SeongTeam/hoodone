@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server';
 import { AuthApiResponseDto } from 'hoodone-shared';
 import { type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
+import { extractStatusMessage } from '@/lib/server-only/message';
 
 const backURL = process.env.BACKEND_URL;
 
@@ -139,4 +140,85 @@ export async function serverActionTest(formData: FormData) {
         sameSite: 'strict',
         path: '/',
     });
+}
+export async function requestCertifiedMail(toEmail: string) {
+    const ret: responseData = { ok: false, message: '' };
+    try {
+        const res = await fetch(`${backURL}/auth/send-pin-code`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                toEmail,
+            }),
+        });
+        console.log(res);
+        if (res.ok) {
+            const responseData: AuthApiResponseDto = await res.json();
+
+            const message = responseData.postSendPinCode ?? '';
+            if (extractStatusMessage(message)) {
+                ret.ok = true;
+                ret.response = await res.json();
+            }
+
+            return ret;
+        } else {
+            ret.ok = false;
+            ret.message = 'send email fail ';
+            const data = await res.json();
+            const { detail, statusCode, timestamp } = data;
+            ret.response = { detail, statusCode, timestamp };
+
+            return ret;
+        }
+    } catch (e) {
+        ret.message = `Internal Server error.`;
+        ret.response = e;
+        return ret;
+    }
+}
+
+export async function comparePinCode(formData: FormData) {
+    const ret: responseData = { ok: false, message: '' };
+    const email = formData.get('email') as string;
+    const pinCode = formData.get('pinCode') as string;
+
+    try {
+        const res = await fetch(`${backURL}/auth/compare/tempuser-pin-code`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email,
+                pinCode,
+            }),
+        });
+        console.log(res);
+        if (res.ok) {
+            const responseData: AuthApiResponseDto = await res.json();
+            const { result, statusCode, message } = responseData.getCompareTempUserPinCode;
+
+            ret.message = message;
+            ret.response = statusCode;
+            if (result) {
+                ret.ok = true;
+            }
+
+            return ret;
+        } else {
+            ret.message = 'not match pin code ';
+            const data = await res.json();
+            const { detail, statusCode, timestamp } = data;
+            ret.response = { detail, statusCode, timestamp };
+
+            return ret;
+        }
+    } catch (e) {
+        ret.message = `Internal Server error.`;
+        ret.response = e;
+        return ret;
+    }
 }
