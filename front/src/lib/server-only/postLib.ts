@@ -87,7 +87,7 @@ export async function getPostWithIDFromServer(id: string) {
         }
 
         const data: PostApiResponseDto = await res.json();
-        console.log('getPostWithIDFromServer', data);
+        logger.info('getPostWithIDFromServer is called');
 
         return data.getById as PostType;
     } catch (error) {
