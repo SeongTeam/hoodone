@@ -20,6 +20,10 @@ import { RoleType } from 'src/users/const/role.type';
 import { RoleGuard } from '../auth/guard/role.guard';
 import { Logger } from '@nestjs/common';
 
+/*TODO
+- Comment list 미포함하여 반환하도록 수정
+    - front의 infinite scroll 동작시 fetch를 감소시켜야하므로 수정 필요
+*/
 @Controller('posts')
 export class PostsController {
     constructor(private readonly postUseCase: PostsUseCases) {}
