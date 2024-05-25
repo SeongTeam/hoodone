@@ -9,6 +9,7 @@ import {
     UseGuards,
     UseInterceptors,
     UseFilters,
+    Get,
 } from '@nestjs/common';
 import { QueryRunner as QR } from 'typeorm';
 
@@ -24,12 +25,15 @@ import { CommonExceptionFilter } from 'src/common/filter/common-exception.filter
 import { RefreshTokenGuard } from './guard/token/refresh-token.guard';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { Logger } from '@nestjs/common';
+import { TempUserUseCase } from 'src/users/usecase/temp-user.case';
+import { retry } from 'rxjs';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private readonly authUseCase: AuthUseCase,
         private readonly userUseCase: UserUseCase,
+        private readonly tempUserUseCase: TempUserUseCase,
     ) {}
 
     @Post('token/access')
@@ -75,12 +79,54 @@ export class AuthController {
 
     @Post('/login/email')
     @UseGuards(BasicTokenGuard)
+    @UseFilters(CommonExceptionFilter)
     async login(@Headers('authorization') rawToken: string) {
         const token = this.authUseCase.extractTokenFromHeader(rawToken, false);
         const credentials: AuthCredentialsDto = this.authUseCase.decodeBasicToken(token);
 
         let res = new AuthApiResponseDto();
         res.postLoginEmail = await this.authUseCase.loginWithEmail(credentials);
+
+        return res;
+    }
+
+    @Post('send-pin-code')
+    @UseInterceptors(TransactionInterceptor)
+    @UseFilters(CommonExceptionFilter)
+    async sendPinCode(@Body() body, @QueryRunner() qr: QR) {
+        /**reponse로 온 result의 response 안에
+         * result[response] : '250 2.0.0 OK ... gsmpt가 들어 있으면 성골
+         */
+        const { toEmail } = body;
+        const result = await this.authUseCase.sendPinCode(toEmail, qr);
+        let res = new AuthApiResponseDto();
+
+        console.log(result.response);
+        res.postSendPinCode = typeof result.response === 'string' ? result.response : '';
+        console.log(res.postSendPinCode);
+        return res;
+    }
+    //  response: '250 2.0.0 OK  1716551382 d2e1a72fcca58-6f8fcbea886sm952420b3a.137 - gsmtp',
+    @Post('compare/tempuser-pin-code')
+    async compareTempUserPinCode(@Body() body) {
+        const { email, pinCode } = body;
+        console.log(body);
+        const result = await this.tempUserUseCase.comparePinCodes({ email, pinCode });
+        let res = new AuthApiResponseDto();
+
+        console.log(`result ===> ${result}`);
+        if (res) {
+            res.getCompareTempUserPinCode = {
+                statusCode: 200,
+                message: '요청이 성공적으로 처리되었습니다.',
+                result,
+            };
+        }
+        res.getCompareTempUserPinCode = {
+            statusCode: 400,
+            message: 'pinCode가 알맞지 않습니다.',
+            result,
+        };
 
         return res;
     }

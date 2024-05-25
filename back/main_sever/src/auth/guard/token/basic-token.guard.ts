@@ -29,6 +29,6 @@ export class BasicTokenGuard implements CanActivate {
         const isExists = await this.userUseCase.hasExistedEmail(email);
 
         if (isExists) return true;
-        else throw new AuthException('EMAIL_NOT_FOUND', { message: 'BasicTokenGuard에서 발생' });
+        else throw new AuthException('EMAIL_NOT_FOUND', { describe: 'BasicTokenGuard에서 발생' });
     }
 }

@@ -18,16 +18,16 @@ export class CommonExceptionFilter implements ExceptionFilter {
         _exception.timestamp = new Date().toLocaleString('kr');
         _exception.path = request.url;
         const errCode = _exception.errorCode;
-        const exceptionRes = _exception.pastMsg.getResponse();
 
         switch (errCode) {
             case InterceptorExceptionCodeEnum.transaction:
                 response.status(_exception.getStatus()).json({
                     errorCode: _exception.pastMsg.errorCode,
-                    statusCode: _exception.pastMsg.getStatus(),
+                    statusCode: _exception.pastMsg.getStatus?.(),
                     timestamp: _exception.timestamp,
                     detail: {
-                        message: exceptionRes,
+                        message: _exception.pastMsg.getResponse?.(),
+                        describe: _exception.pastMsg.describe,
                     },
                     path: _exception.path,
                 });
@@ -39,8 +39,9 @@ export class CommonExceptionFilter implements ExceptionFilter {
                     statusCode: _exception.getStatus(),
                     timestamp: _exception.timestamp,
                     detail: {
-                        message: exceptionRes,
-                        pst: _exception.pastMsg.message,
+                        message: _exception.getResponse?.(),
+                        pst: _exception.pastMsg,
+                        describe: _exception.describe,
                     },
                     path: _exception.path,
                 });
