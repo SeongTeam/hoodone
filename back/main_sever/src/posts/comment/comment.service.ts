@@ -1,12 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm/dist/common';
 import { Repository } from 'typeorm/repository/Repository';
 import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
-
 import { UserModel } from 'src/users/entities/user.entity';
-
 import { COMMON_COMMENT_FIND_OPTION } from './const/comment-find-options.const';
 import { CommentModel } from './entities/comment.entity';
+import { Between } from 'typeorm';
+
 @Injectable()
 export class CommentsService {
     constructor(
@@ -37,6 +37,33 @@ export class CommentsService {
             ...COMMON_COMMENT_FIND_OPTION,
             where: {
                 post: { id: postId },
+            },
+            order: {
+                responseToId: 'ASC',
+                depth: 'ASC',
+                index: 'ASC',
+                createdAt: 'ASC',
+            },
+        });
+    }
+    async findCommentsByPostIdWithDepth(postId: number, depthRange: number[]) {
+        if (depthRange.length !== 2) {
+            throw new BadRequestException('depthRange is wrong');
+        }
+        if (depthRange[0] > depthRange[1]) {
+            throw new BadRequestException('depthRange is wrong');
+        }
+        return this.commentRepository.find({
+            ...COMMON_COMMENT_FIND_OPTION,
+            where: {
+                post: { id: postId },
+                depth: Between(depthRange[0], depthRange[1]),
+            },
+            order: {
+                responseToId: 'ASC',
+                depth: 'ASC',
+                index: 'ASC',
+                createdAt: 'ASC',
             },
         });
     }
@@ -79,11 +106,12 @@ export class CommentsService {
     async createReplyComment(
         author: UserModel,
         postId: number,
-        commentInfo: Pick<CommentModel, 'content' | 'responseToId' | 'depth'>,
+        commentInfo: Pick<CommentModel, 'content' | 'responseToId'>,
         qr: QueryRunner,
     ) {
         const repository = this._getRepository(qr);
         const responseToComment = await this.loadById(commentInfo.responseToId);
+        const depth = responseToComment.depth + 1;
         const _commentIDs = responseToComment.replyCommentIds;
 
         const newComment: CommentModel = repository.create({
@@ -94,6 +122,7 @@ export class CommentsService {
             index: _commentIDs.length,
             author,
             ...commentInfo,
+            depth,
         });
         return newComment;
     }

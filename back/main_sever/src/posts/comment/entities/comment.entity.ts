@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Matches } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ManyToOne } from 'typeorm/decorator/relations/ManyToOne';
 import { Column, Entity, JoinColumn } from 'typeorm';
 
@@ -46,6 +46,6 @@ export class CommentModel extends BaseModel {
     @IsNumber()
     index: number;
 
-    @Column({ name: 'response_to_id', default: -1 })
+    @Column({ name: 'response_to_id', default: 0 })
     responseToId: number;
 }

@@ -1,7 +1,10 @@
 export class CommentApiResponseDto {
-  getById?: object;
+    getById?: object;
 
-  post?: object;
+    post?: object;
 
-  postReply?: object;
+    postReply?: object;
+    getAllComments?: object[];
+    getCommentsByRange?: object;
+    getReplyComments?: object;
 }
