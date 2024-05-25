@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common/decorators';
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+    InternalServerErrorException,
+    NotFoundException,
+    BadRequestException,
+    Logger,
+} from '@nestjs/common';
 import { UserModel } from 'src/users/entities/user.entity';
 import { QueryRunner } from 'typeorm';
 
@@ -39,7 +44,7 @@ export class CommentUseCase {
     async createReplyComment(
         author: UserModel,
         postId: number, // todo 가능하면 createDto안에 집어 넣자
-        commentInfo: Pick<CommentModel, 'content' | 'responseToId' | 'depth'>,
+        commentInfo: Pick<CommentModel, 'content' | 'responseToId'>,
         qr: QueryRunner,
     ) {
         try {
@@ -50,7 +55,6 @@ export class CommentUseCase {
                 commentInfo,
                 qr,
             );
-            replyComment.depth++; // depth 값을 1 올려서 저장
 
             const newReplyComment = await this.commentService.save(replyComment, qr);
             this.commentService.appendReplyCommentId(
@@ -102,5 +106,54 @@ export class CommentUseCase {
 
     isCommentOwner(userId: number, commentId: number) {
         return this.commentService.isCommentOwner(userId, commentId);
+    }
+
+    getCommentsByPostId(postId: number) {
+        const comments = this.commentService.findCommentsByPostId(postId);
+
+        return comments;
+    }
+
+    async getGroupedCommentsByPostIdWithRange(postId: number, depthRange: number[]) {
+        const comments = await this.commentService.findCommentsByPostIdWithDepth(
+            postId,
+            depthRange,
+        );
+        const commentList = this.buildNestedComments(comments);
+
+        return commentList;
+    }
+
+    async getReplyComments(postId: number, responseToId: number, limit: number) {
+        const parentComment = await this.commentService.findById(responseToId);
+        const range = [parentComment.depth + 1, parentComment.depth + limit];
+
+        const comments = await this.commentService.findCommentsByPostIdWithDepth(postId, range);
+
+        const replyComment = this.buildNestedComments(comments, responseToId);
+
+        return replyComment;
+    }
+
+    buildNestedComments(comments: CommentModel[], parentId: number = 0) {
+        const rootCooments: CommentModel[] = [];
+        const commentMap: { [id: number]: CommentModel } = {};
+
+        //mapping
+        for (const comment of comments) {
+            commentMap[comment.id] = comment;
+            if (comment.responseToId === parentId) rootCooments.push(comment);
+        }
+
+        //build nested structure
+        for (const comment of comments) {
+            const parentComment = commentMap[comment.responseToId];
+            if (parentComment) {
+                if (!parentComment['replyComments']) parentComment['replyComments'] = [];
+                parentComment['replyComments'].push(comment);
+            }
+        }
+
+        return rootCooments;
     }
 }

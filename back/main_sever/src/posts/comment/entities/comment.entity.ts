@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Matches } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ManyToOne } from 'typeorm/decorator/relations/ManyToOne';
 import { Column, Entity, JoinColumn } from 'typeorm';
 

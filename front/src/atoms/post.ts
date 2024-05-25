@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-type authorType = {
+export type AuthorType = {
     email: string;
     nickname: string;
     profileImg: string;
@@ -17,7 +17,7 @@ export type PostType = {
     likeCount: number;
     commentCount: number;
     isPublished: boolean;
-    author: authorType;
+    author: AuthorType;
     commentID: number;
     thumbnailPublicID?: string;
     thumbnailURL?: string;

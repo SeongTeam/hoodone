@@ -12,6 +12,8 @@ import {
     forwardRef,
     Patch,
     Delete,
+    Logger,
+    Query,
 } from '@nestjs/common';
 import { QueryRunner as QR } from 'typeorm';
 
@@ -48,7 +50,7 @@ export class CommentsController {
         @QueryRunner() qr: QR,
     ) {
         let res = new CommentApiResponseDto();
-        res.getById = await this.commentUseCases.createComment(user, postId, createDto, qr);
+        res.post = await this.commentUseCases.createComment(user, postId, createDto, qr);
 
         return res;
     }
@@ -68,12 +70,52 @@ export class CommentsController {
         return res;
     }
 
+    /*
+    반환값 : nested comment 형식으로 그룹화된 comment list 반환
+    */
+    @Get('/range')
+    async getCommentsByRange(
+        @Param('postId', ParseIntPipe) postId: number,
+        @Query('depthBegin') depthBegin: number,
+        @Query('depthEnd') depthEnd: number,
+    ) {
+        const res = new CommentApiResponseDto();
+        const depthRange = [depthBegin, depthEnd];
+        res.getCommentsByRange = await this.commentUseCases.getGroupedCommentsByPostIdWithRange(
+            postId,
+            depthRange,
+        );
+        return res;
+    }
+
+    @Get('/all')
+    async getAllComments(@Param('postId', ParseIntPipe) postId: number) {
+        const res = new CommentApiResponseDto();
+        res.getAllComments = await this.commentUseCases.getCommentsByPostId(postId);
+
+        return res;
+    }
+    @Get('/reply')
+    async getReplyComments(
+        @Param('postId', ParseIntPipe) postId: number,
+        @Query('commentId', ParseIntPipe) commentId: number,
+        @Query('limit', ParseIntPipe) limit: number,
+    ) {
+        const res = new CommentApiResponseDto();
+        res.getReplyComments = await this.commentUseCases.getReplyComments(
+            postId,
+            commentId,
+            limit,
+        );
+        return res;
+    }
+
     /** Comment와 ResponseComment를 id로 찾는 API는 1개로 설정
      * Body.depth로 어떤 table에 접속할지 확인한다.
      */
-    @Get(':id')
+    @Get(':commentId')
     @IsPublic()
-    async getComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body) {
+    async getComment(@Param('commentId', ParseIntPipe) commentId: number) {
         let res = new CommentApiResponseDto();
         res.getById = await this.commentUseCases.getById(commentId);
 

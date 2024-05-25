@@ -5,15 +5,18 @@ import { basicFontSize } from "@/utils/chakra/fonts";
 import { customColors } from "@/utils/chakra/customColors";
 import  htmlReactParser  from "html-react-parser";
 import PostMenu from "../postMenu";
+import { CommentType } from "@/atoms/commen";
+import CommentArea from "@/components/comment/commentArea";
 
 type PostProps = {
     post: PostType | null
+    commentList : CommentType[]
 }
 
-const Post: React.FC<PostProps> = ({post}) => {
+const Post: React.FC<PostProps> = ({post, commentList}) => {
     const bg = customColors.black[300];
     const fontColor = customColors.white[300];
-    console.log("post Author", post);
+    
     return (
 
         post === null ? (
@@ -24,7 +27,7 @@ const Post: React.FC<PostProps> = ({post}) => {
                 border={"1px solid"}
                 borderColor={customColors.strokeColor[100]}>
                 <CardHeader> 
-                    <Flex>
+                    <Flex h="full">
                         <Text color={fontColor}>{`${post.author.nickname} ~~ ${post.createdAt}`}</Text>
                         <Spacer/>
                         <PostMenu post={post}/>
@@ -37,9 +40,8 @@ const Post: React.FC<PostProps> = ({post}) => {
                             {htmlReactParser(post.content)}
                         </Flex>
                 </CardBody>
-                <CardFooter>
-                    {/*<Comment/>*/}
-                    <Text color={fontColor}>commentList</Text>
+                <CardFooter flexDir={"column"} gap={"1rem"} >
+                    <CommentArea comments={commentList}/>
                 </CardFooter>
             </Card>
         )
