@@ -10,10 +10,9 @@ import CommentArea from "@/components/comment/commentArea";
 
 type PostProps = {
     post: PostType | null
-    commentList : CommentType[]
 }
 
-const Post: React.FC<PostProps> = ({post, commentList}) => {
+const Post: React.FC<PostProps> = ({post}) => {
     const bg = customColors.black[300];
     const fontColor = customColors.white[300];
     
@@ -41,7 +40,7 @@ const Post: React.FC<PostProps> = ({post, commentList}) => {
                         </Flex>
                 </CardBody>
                 <CardFooter flexDir={"column"} gap={"1rem"} >
-                    <CommentArea comments={commentList}/>
+                    <CommentArea postID={post.id}/>
                 </CardFooter>
             </Card>
         )

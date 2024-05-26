@@ -13,12 +13,12 @@ import InputReply from './InputReply';
 */
 type CommentItemProps = {
     comment: CommentType,
-    padding : number,
+    childrenReplyList: React.ReactNode,
 
 }
 const CommentItem : React.FC<CommentItemProps> = ({
     comment ,
-    padding,
+    childrenReplyList,
 }) => {
     const bg = customColors.black[200];
     const [commentData, setCommentData] = useState<CommentType>(comment);
@@ -68,10 +68,7 @@ const CommentItem : React.FC<CommentItemProps> = ({
             {isWriteReply && <InputReply handleAddReply={handleAddReply} handleCancelReply= {handleCancelReply}parentComment={commentData}/>}
             {isShowReply 
                 && 
-                <CommentItemList 
-                padding={padding + 2}
-                comments = {commentData.replyComments}
-                />
+                childrenReplyList
             }
         </Flex>
     );

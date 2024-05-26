@@ -4,9 +4,6 @@ import { PostType } from "@/atoms/post";
 import { getPostWithID } from "@/lib/server-only/postLib";
 import { Flex } from "@chakra-ui/react";
 import logger from "@/utils/log/logger";
-import CommentItemList from "@/components/comment/commenItemtList";
-import { CommentType } from "@/atoms/commen";
-import { getCommenWithRange } from "@/lib/server-only/commentLib";
 type PostPageProps = {
 
     params: {
@@ -32,18 +29,15 @@ const PostPage : NextPage<PostPageProps>  = async ( {
    logger.info('#PostPage Rendered', { message: params.postid });
 
     const post : PostType | null = await getPostWithID(params.postid, parseInt(searchParams.index));
-    const rootCommentID = 0;
-    const limit = 3;
-    const comments : CommentType[] | null = await getCommenWithRange(parseInt(params.postid), rootCommentID, limit);
-    
-    if(!post || !comments) {
-        logger.error(`post${params.postid} or comment not found`);
-        throw new ReferenceError(`post or comment not found`);
+   
+    if(!post ) {
+        logger.error(`post${params.postid} not found`);
+        throw new ReferenceError(`post not found`);
     }
 
     return (
         <Flex w={"full"} flexDir={"column"}>
-            <Post post={post} commentList={comments} />
+            <Post post={post}/>
         </Flex>
     );
 }

@@ -1,27 +1,26 @@
-"use client"
 import InputComment from "./InputComment";
 import CommentItemList from "./commenItemtList";
 import { CommentType } from "@/atoms/commen";
 import { Flex } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { getCommenWithRange } from "@/lib/server-only/commentLib";
 
 
 type CommentAreaProps = {
-    comments: CommentType[]
+    postID : number,
 }
 
 
-const CommentArea: React.FC<CommentAreaProps> = ({comments}) => {
-
-    const [commentList, setCommentList] = useState<CommentType[]>(comments);
-    const addComment = (newComment: CommentType) => {
-        setCommentList(prev => [...prev, newComment]);
-    }
-
+const CommentArea: React.FC<CommentAreaProps> = async ({postID,}) => {
+    
+    const rootCommentID = 0;
+    const limit = 3;
+    const comments : CommentType[] | null = await getCommenWithRange(postID, rootCommentID, limit);
+    
+    
     return (
         <Flex w="full" h="full" flexDirection={"column"} gap="1rem">
-            <InputComment handleAddComment={addComment} />
-            <CommentItemList comments={commentList}/>
+            <InputComment/>
+            <CommentItemList comments={comments}/>
         </Flex>
     )
 }

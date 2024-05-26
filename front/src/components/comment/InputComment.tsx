@@ -1,3 +1,4 @@
+"use client"
 import { useUserAccountWithSSR } from '@/atoms/userAccount';
 import { CommentType } from '@/atoms/commen';
 import React , { useState, useOptimistic } from 'react';
@@ -6,7 +7,6 @@ import { customColors } from '@/utils/chakra/customColors';
 import { AuthorType } from '@/atoms/post';
 import { leaveComment } from '@/server-actions/commentAction';
 import { useParams } from 'next/navigation';
-import { replyComment } from '@/server-actions/commentAction';
 
 
 /*TODO
@@ -14,11 +14,9 @@ import { replyComment } from '@/server-actions/commentAction';
     - ref: https://ko.react.dev/reference/react/useOptimistic#noun-labs-1201738-(2)
 */
 type InputCommentProps = {
-    handleAddComment: (comment: CommentType) => void
 };
 
 const InputComment : React.FC<InputCommentProps> = ({
-    handleAddComment,
 }) => {
 
     const buttonColor = customColors.link[100];
@@ -42,9 +40,6 @@ const InputComment : React.FC<InputCommentProps> = ({
                 setIsLoading(false);
                 return;
             }
-            
-
-            handleAddComment(newComment);
             
             console.log("newComment", newComment);
             setIsLoading(false);
