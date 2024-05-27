@@ -1,5 +1,5 @@
 import { Button, Flex, Input, Text, useColorModeValue } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { AuthModalState } from '@/atoms/authModal';
 import { useForm } from 'react-hook-form';
@@ -7,10 +7,21 @@ import { comparePinCode, requestCertifiedMail, signUp } from '@/server-actions/A
 import { extractErrorMessage } from '@/lib/server-only/message';
 import { ExceptionDto } from 'hoodone-shared';
 import { Timer } from './components/timer';
+import { useToast } from '@chakra-ui/react';
+enum PasswordLength {
+    MIN = 8,
+    MAX = 20,
+}
 
 const SignUp: React.FC = () => {
     const TIMER_MINUTE = 3;
     const TIMER_SECOND = 0;
+
+    const EMAIL_MAX_LEN = 40;
+    const PASSWORD_MIN_LEN = 8;
+    const PASSWORD_MAX_LEN = '20';
+    const NICKNAME_MIN_LEN = 2;
+    const NICKNAME_MAX_LEN = 10;
 
     interface IForm {
         email: string;
@@ -18,7 +29,7 @@ const SignUp: React.FC = () => {
         password: string;
         confirmPassword: string;
     }
-
+    const toast = useToast();
     const form = useForm<IForm>({
         mode: 'onSubmit',
         defaultValues: {
@@ -33,6 +44,7 @@ const SignUp: React.FC = () => {
     const [sec, _setSec] = useState(TIMER_SECOND);
 
     const [msg, setMsg] = useState('');
+    const [passwordMsg, setPasswordMsg] = useState('');
     const [authModalState, setAuthModalState] = useRecoilState(AuthModalState);
     const [error, setError] = useState('');
     const [certification, setCertification] = useState({
@@ -40,6 +52,12 @@ const SignUp: React.FC = () => {
         code: '1234',
         inputCode: '',
     });
+
+    // 유용성 검사
+    const [isName, setIsName] = useState<boolean>(false);
+    const [isEmail, setIsEmail] = useState<boolean>(false);
+    const [isPassword, setIsPassword] = useState<boolean>(false);
+    const [isPasswordConfirm, setIsPasswordConfirm] = useState<boolean>(false);
 
     const setMinute: Function = (minute: number | null) => {
         if (typeof minute == 'number') {
@@ -68,6 +86,7 @@ const SignUp: React.FC = () => {
                 console.log(`sign up success response-----`);
                 console.log(res);
                 // TODO 유저에게 회원가입 성공했다고 알려주기/ tost 메세지 이용?
+                showSuccessToast({ title: 'Sign Up Success' });
                 setAuthModalState((prev) => ({
                     ...prev,
                     isOpen: false,
@@ -77,7 +96,10 @@ const SignUp: React.FC = () => {
                 const exceptionData: ExceptionDto = res.response;
                 // message 값이 없을 수도 있음
                 const message = exceptionData.detail?.message ?? '';
+                console.log(message);
                 const extractedMessage = extractErrorMessage(message);
+
+                showErrorToast({ title: 'Fail!! Sign Up ', description: extractedMessage });
 
                 setMsg(`회원가입 오류 발생\n ${extractedMessage}`);
             }
@@ -92,8 +114,15 @@ const SignUp: React.FC = () => {
 
         if (error) setError(' error 발생');
 
+        if (!isPassword) {
+            showErrorToast({ title: 'Insecure Password' });
+        }
+
         if (password !== confirmPassword) {
             // TODO 토스트 메세지 설치후 사용하자
+            showErrorToast({
+                title: 'Password Do Not Match',
+            });
             setError('Password Do Not Match');
             console.log('login error Password Do Not Match');
             return;
@@ -116,6 +145,7 @@ const SignUp: React.FC = () => {
             const result = await comparePinCode(formData);
 
             if (result.ok) {
+                showSuccessToast({ title: 'Match PIN code' });
                 setCertification((prev) => ({
                     ...prev,
                     state: true,
@@ -138,21 +168,26 @@ const SignUp: React.FC = () => {
             try {
                 if (res.ok) {
                     console.log(`success request CertifiedMail`);
+                    showSuccessToast({ title: 'Success Send Mail' });
 
                     // TODO maill을 성공적으로 보냈다고 알려줌 / tost 메세지 이용?
                 } else {
-                    console.log(`else response-----`);
-
                     const exceptionData: ExceptionDto = res.response;
                     // message 값이 없을 수도 있음
                     const message = exceptionData.detail?.message ?? '';
                     const extractedMessage = extractErrorMessage(message);
+                    showErrorToast({
+                        title: '회원가입 오류 발생',
+                        description: extractedMessage,
+                    });
 
-                    setError(`이메일 전송 오류 발생\n ${extractedMessage}`);
+                    console.log(exceptionData);
+                    setError(`오류 발생\n ${extractedMessage}`);
                     return;
                 }
             } catch (err) {
-                console.log('send email error', error);
+                // console.log('send email error', error);
+                showErrorToast({ title: 'Error!! ' });
                 console.log(error);
                 return;
             }
@@ -171,11 +206,30 @@ const SignUp: React.FC = () => {
         }
     };
 
+    /** React.FormEventHandler<HTMLFormElement>를 event에 타입으로 사용하면
+     * event.target.name을 찾을 수 없어서 에러가 발생한다. */
+    const onChangeForm = (event: any) => {
+        const name = event.target.name;
+        const value = event.target.value;
+
+        // password 유용성
+        if (name === 'password') {
+            const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{3,}$/;
+
+            console.log(+value.length);
+            if (!passwordRegex.test(value) || +value.length < PASSWORD_MIN_LEN) {
+                setPasswordMsg('Numbers, letters, and special characters (!@#$%^&*+-=)');
+                setIsPassword(false);
+            } else {
+                setPasswordMsg('Secure Password');
+                setIsPassword(true);
+            }
+        }
+    };
     function checkValidEmail(email: string): boolean {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailRegex.test(email);
     }
-
     function onResendEmail() {
         /**TODO)  pop 창을 보여줘서 새로 보냈다라는 것을 알려주자*/
         if (min <= 0) {
@@ -223,14 +277,13 @@ const SignUp: React.FC = () => {
                             h="70px"
                             onClick={async () => {
                                 const toEmail = form.getValues('email');
-
                                 // 타이머가 작동 안했을 겨우 동작
-                                if (!isTimerStart) {
+                                if (checkValidEmail(toEmail) && !isTimerStart) {
                                     onSendEmail();
                                     setIsTimerStart(true);
                                     return;
                                 }
-                                onResendEmail();
+                                if (isTimerStart) onResendEmail();
                             }}
                         >
                             {isTimerStart ? 'Resend' : 'Send'}
@@ -254,7 +307,11 @@ const SignUp: React.FC = () => {
                     </Button>
                 </form>
             ) : (
-                <form onSubmit={form.handleSubmit(onSubmit)} className="form-modalPage">
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    onChange={onChangeForm}
+                    className="form-modalPage"
+                >
                     <Text textAlign="center" color="red" fontSize="10px">
                         {}
                     </Text>
@@ -269,13 +326,27 @@ const SignUp: React.FC = () => {
                         variant="oauth"
                         placeholder="Nickname..."
                         type="text"
-                        {...form.register('nickname', { required: true })}
+                        // maxlength="5"
+                        {...form.register('nickname', { required: true, max: 20 })}
                     />
+                    <div className="container">
+                        <Text
+                            textAlign="center"
+                            color={isPassword ? 'green' : 'red'}
+                            fontSize={isPassword ? '15pt' : '10pt'}
+                        >
+                            {passwordMsg}
+                        </Text>
+                    </div>
                     <Input
                         variant="oauth"
                         placeholder="Password..."
                         type="password"
-                        {...form.register('password', { required: true })}
+                        minLength={5}
+                        maxLength={10}
+                        {...form.register('password', {
+                            required: true,
+                        })}
                     />
                     <Input
                         variant="oauth"
@@ -317,5 +388,25 @@ const SignUp: React.FC = () => {
             </Flex>
         </>
     );
+
+    function showSuccessToast(content: { title: string; description?: string }) {
+        return toast({
+            title: content.title,
+            description: content.description,
+            status: 'success',
+            duration: 4000,
+            isClosable: true,
+        });
+    }
+
+    function showErrorToast(content: { title: string; description?: string }) {
+        return toast({
+            title: content.title,
+            description: content.description,
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+        });
+    }
 };
 export default SignUp;

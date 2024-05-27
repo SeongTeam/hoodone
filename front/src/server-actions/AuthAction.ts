@@ -27,7 +27,7 @@ export async function signUp(formData: FormData) {
         // TODO) formData 값 최소한으로 줄일 는 코드 찾아보기 3줄 오바
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
-        const nickname = formData.get('password') as string;
+        const nickname = formData.get('nickname') as string;
 
         const res = await fetch(`${backURL}/auth/signup`, {
             method: 'POST',
@@ -51,6 +51,9 @@ export async function signUp(formData: FormData) {
             ret.message = 'signUp fail ';
             const data = await res.json();
             const { detail, statusCode, timestamp } = data;
+            console.log('ddddd');
+
+            console.log(data);
             ret.response = { detail, statusCode, timestamp };
 
             return ret;
@@ -58,6 +61,7 @@ export async function signUp(formData: FormData) {
     } catch (e) {
         ret.message = `Authenication failed Because of Internal Server error.`;
         ret.response = { e };
+        console.log('signUp error');
         return ret;
     }
 }
@@ -155,13 +159,16 @@ export async function requestCertifiedMail(toEmail: string) {
         });
 
         if (res.ok) {
-            const responseData = await res.json();
+            const responseData: AuthApiResponseDto = await res.json();
+
             console.log(responseData);
 
             const message = responseData.postSendPinCode ?? '';
             if (extractStatusMessage(message)) {
                 ret.ok = true;
             }
+            const detail = { message: message };
+            ret.response = { detail };
 
             return ret;
         } else {
@@ -169,7 +176,7 @@ export async function requestCertifiedMail(toEmail: string) {
             ret.message = 'send email fail ';
             const data = await res.json();
             const { detail, statusCode, timestamp } = data;
-            ret.response = { detail, statusCode, timestamp };
+            ret.response = data;
 
             return ret;
         }
