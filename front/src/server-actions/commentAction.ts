@@ -6,19 +6,18 @@ import { CommentType } from '@/atoms/commen';
 import { assert } from 'console';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
+import { checkAccessToken } from '@/lib/server-only/authLib';
+import { validateAuth } from '@/lib/server-only/authLib';
 
 const backendURL = process.env.BACKEND_URL;
 
 export async function leaveComment(formData: FormData, postID: number) {
     const content = formData.get('content') as string;
     const body = { content };
-    const accessToken = cookies().get('accessToken')?.value;
-
-    if (!accessToken) {
-        throw new Error('accessToken is not exist');
-    }
 
     try {
+        const accessToken = await validateAuth();
+
         const res = await fetch(`${backendURL}/posts/${postID}/comments`, {
             method: 'POST',
             headers: {
@@ -53,13 +52,9 @@ export async function leaveReply(formData: FormData, postID: number, responseToI
     const content = formData.get('content') as string;
 
     const body = { content, responseToId };
-    const accessToken = cookies().get('accessToken')?.value;
-
-    if (!accessToken) {
-        throw new Error('accessToken is not exist');
-    }
 
     try {
+        const accessToken = await validateAuth();
         const res = await fetch(`${backendURL}/posts/${postID}/comments/reply`, {
             method: 'POST',
             headers: {

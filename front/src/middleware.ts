@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import jwtMiddleware from './app/middleware/jwt-middleware';
+import jwtMiddleware from './lib/middleware/jwt-middleware';
 
 export async function middleware(request: NextRequest) {
     console.log(`_____middleware working_____`);

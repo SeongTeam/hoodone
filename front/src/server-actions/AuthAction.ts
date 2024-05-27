@@ -6,6 +6,7 @@ import { AuthApiResponseDto } from 'hoodone-shared';
 import { type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import { extractStatusMessage } from '@/lib/server-only/message';
+import { setAccessTokenCookie, setRefreshTokenCookie } from '@/lib/server-only/authLib';
 
 const backURL = process.env.BACKEND_URL;
 
@@ -89,25 +90,8 @@ export async function signIn(formData: FormData) {
 
             const { accessToken, refreshToken } = responseData.postLoginEmail!;
 
-            cookies().set({
-                name: 'accessToken',
-                value: accessToken,
-                maxAge: 60 * 10,
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
-                path: '/',
-            });
-
-            cookies().set({
-                name: 'refreshToken',
-                value: refreshToken,
-                maxAge: 60 * 60 * 24,
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
-                path: '/',
-            });
+            setAccessTokenCookie(accessToken);
+            setRefreshTokenCookie(refreshToken);
 
             ret.ok = true;
         } else {
@@ -131,16 +115,6 @@ export async function signOut() {
     cookies().delete('refreshToken');
 }
 
-export async function serverActionTest(formData: FormData) {
-    cookies().set({
-        name: 'test',
-        value: `test111`,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/',
-    });
-}
 export async function requestCertifiedMail(toEmail: string) {
     const ret: responseData = { ok: false, message: '', response: {} };
     try {
