@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import { PostType } from '@/atoms/post';
 import { revalidateTag } from 'next/cache';
 import { assert } from 'console';
+import { validateAuth } from '@/lib/server-only/authLib';
 
 /*
 ref : https://www.youtube.com/watch?v=5L5YoFm1obk
@@ -94,8 +95,7 @@ export async function createPosts(formData: FormData) {
         /*TODO
         - token get 실패시, 홈이동 > 로그인 창 오픈.
         */
-        const accessToken = cookies().get('accessToken')?.value;
-        const refreshToken = cookies().get('refreshToken')?.value;
+        const accessToken = validateAuth();
 
         const res = await fetch(`${backendURL}/posts`, {
             method: 'POST',
