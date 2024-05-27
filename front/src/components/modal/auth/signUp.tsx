@@ -6,8 +6,12 @@ import { useForm } from 'react-hook-form';
 import { comparePinCode, requestCertifiedMail, signUp } from '@/server-actions/AuthAction';
 import { extractErrorMessage } from '@/lib/server-only/message';
 import { ExceptionDto } from 'hoodone-shared';
+import { Timer } from './components/timer';
 
 const SignUp: React.FC = () => {
+    const TIMER_MINUTE = 3;
+    const TIMER_SECOND = 0;
+
     interface IForm {
         email: string;
         nickname: string;
@@ -24,6 +28,10 @@ const SignUp: React.FC = () => {
             confirmPassword: '',
         },
     });
+    const [isTimerStart, setIsTimerStart] = useState(false);
+    const [min, _setMin] = useState(TIMER_MINUTE);
+    const [sec, _setSec] = useState(TIMER_SECOND);
+
     const [msg, setMsg] = useState('');
     const [authModalState, setAuthModalState] = useRecoilState(AuthModalState);
     const [error, setError] = useState('');
@@ -32,6 +40,20 @@ const SignUp: React.FC = () => {
         code: '1234',
         inputCode: '',
     });
+
+    const setMinute: Function = (minute: number | null) => {
+        if (typeof minute == 'number') {
+            _setMin(minute);
+        }
+        return min;
+    };
+
+    const setSecond: Function = (second: number | null) => {
+        if (typeof second == 'number') {
+            _setSec(second);
+        }
+        return sec;
+    };
 
     const createUserAccount = async (email: string, nickname: string, password: string) => {
         try {
@@ -109,10 +131,6 @@ const SignUp: React.FC = () => {
     };
 
     const onSendEmail = async () => {
-        function checkValidEmail(email: string): boolean {
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            return emailRegex.test(email);
-        }
         const toEmail = form.getValues('email');
         if (checkValidEmail(toEmail)) {
             console.log(toEmail);
@@ -153,6 +171,27 @@ const SignUp: React.FC = () => {
         }
     };
 
+    function checkValidEmail(email: string): boolean {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    }
+
+    function onResendEmail() {
+        /**TODO)  pop 창을 보여줘서 새로 보냈다라는 것을 알려주자*/
+        if (min <= 0) {
+            console.log(`시간 경과로  다시 email 검사를 해야 합니다.  새로고침을 눌러주세요`);
+        }
+        if (TIMER_MINUTE - 1 > min) {
+            console.log(`${min}: ${sec}`);
+            onSendEmail();
+
+            setMinute(TIMER_MINUTE);
+            setSecond(1); // UI를 위해서 1을 넣고 있습니다
+        } else {
+            console.log(`1분 경과되어야 다시 보낼 수 있습니다`);
+        }
+    }
+
     return (
         <>
             {certification.state === false ? (
@@ -182,13 +221,34 @@ const SignUp: React.FC = () => {
                             variant="oauth"
                             w="180px"
                             h="70px"
-                            onClick={() => {
-                                onSendEmail();
+                            onClick={async () => {
+                                const toEmail = form.getValues('email');
+
+                                // 타이머가 작동 안했을 겨우 동작
+                                if (!isTimerStart) {
+                                    onSendEmail();
+                                    setIsTimerStart(true);
+                                    return;
+                                }
+                                onResendEmail();
                             }}
                         >
-                            Send
+                            {isTimerStart ? 'Resend' : 'Send'}
                         </Button>
                     </Flex>
+                    <div>
+                        {isTimerStart ? (
+                            <Timer
+                                setSecond={setSecond}
+                                setMinute={setMinute}
+                                minute={min}
+                                second={sec}
+                                isStart={isTimerStart}
+                            />
+                        ) : (
+                            <></>
+                        )}
+                    </div>
                     <Button variant="oauth" type="submit">
                         Confirm
                     </Button>
