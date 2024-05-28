@@ -21,6 +21,7 @@ const CommentItem : React.FC<CommentItemProps> = ({
     childrenReplyList,
 }) => {
     const bg = customColors.black[200];
+    const borderColor = customColors.strokeColor[100];
     const [commentData, setCommentData] = useState<CommentType>(comment);
     const [isShowICon, setIsShowICon] = useState(false);
     const [isShowReply, setIsShowReply] = useState(false);
@@ -58,7 +59,12 @@ const CommentItem : React.FC<CommentItemProps> = ({
     
 
     return (
-        <Flex w="full" bg={bg} flexDir={"column"}>
+        <Flex 
+            w="full"
+            flexDir={"column"}
+            borderRadius={"15px"}
+            borderLeft={`3px solid ${borderColor}`}
+        >
             <Comment 
                 comment={commentData} 
                 handleReplyButtonClicked={handleWriteReply}

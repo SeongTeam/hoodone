@@ -27,17 +27,16 @@ const Comment : React.FC<CommentProps> = ({
     const content = comment.content;
     const author = comment.author.nickname || comment.author.email;
     const likeCount = comment.likeCount;
-    const bg = customColors.black[200];
     const timeAgo = comment.createdAt.toString();
-    const borderColor = customColors.strokeColor[100];
-    const buttonColor = customColors.black[300];
+    const buttonColor = customColors.black[200];
 
     return (
         <Flex 
             color={customColors.white[300]} 
-            border={`1px solid ${borderColor}`} 
             gap= "0.5rem"
             borderRadius={"15px"}
+            px={2}
+            py={1}
         >
             <Box>
                 <Text>{author}</Text>
@@ -50,14 +49,14 @@ const Comment : React.FC<CommentProps> = ({
                     onClick={handleShowReplyIconClicked}
                 />
             </Box>
-            <Flex flexDir={"column"} bg={bg} gap = "0.5rem">
+            <Flex flexDir={"column"} gap = "0.5rem">
                 <Flex>
                     <Text>{timeAgo}</Text>
                     <Spacer/>
                     {/*MenuIcon client component*/}
                 </Flex>
                 <Text fontSize={mdFontSize}>{content}</Text>
-                <Flex>
+                <Flex gap="0.5rem">
                     {/*Button need to be client component */}
                     <Button bg={buttonColor}>{likeCount}</Button>
                     <Button

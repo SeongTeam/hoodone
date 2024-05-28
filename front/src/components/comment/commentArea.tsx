@@ -20,7 +20,7 @@ const CommentArea: React.FC<CommentAreaProps> = async ({postID,}) => {
     return (
         <Flex w="full" h="full" flexDirection={"column"} gap="1rem">
             <InputComment/>
-            <CommentItemList comments={comments}/>
+            <CommentItemList comments={comments} isReplyList={false}/>
         </Flex>
     )
 }
