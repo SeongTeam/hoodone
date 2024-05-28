@@ -1,7 +1,7 @@
 import { useUserAccountWithSSR } from '@/atoms/userAccount';
 import { CommentType } from '@/atoms/commen';
 import React , { useState, useOptimistic } from 'react';
-import { Button,Flex, Input} from '@chakra-ui/react';
+import { Button,Flex, Input, Text, Textarea} from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import { AuthorType } from '@/atoms/post';
 import { leaveComment } from '@/server-actions/commentAction';
@@ -9,12 +9,8 @@ import { useParams } from 'next/navigation';
 import { leaveReply } from '@/server-actions/commentAction';
 
 
-/*TODO
-- useOptimistic 사용하여 사용자의 코멘트 즉각적으로 페이지에 반영하기
-    - ref: https://ko.react.dev/reference/react/useOptimistic#noun-labs-1201738-(2)
-*/
 type InputReplyProps = {
-    handleAddReply: (comment: CommentType) => void
+    handleAddReply: () => void
     handleCancelReply: () => void
     parentComment : CommentType
 };
@@ -37,45 +33,49 @@ const InputReply : React.FC<InputReplyProps> = ({
         formdata.append('content', content);
         setIsLoading(true);
         const postid = parseInt(params.postid);
-        leaveReply(formdata, postid , parentComment.id).then((newComment) => {
-
-            if(!newComment) {
-                setmsg('Comment failed');
-                console.log("failed", newComment);
-                setIsLoading(false);
-                return;
-            }
-            console.log("newComment", newComment);
-            handleAddReply(newComment);
+        leaveReply(formdata, postid , parentComment.id).then(() => {
             setIsLoading(false);
+            handleAddReply();
             
+        }).catch((err) => {
+            setmsg('Reply failed');
+            setIsLoading(false);
         });
+
+        setContent('');
     }
 
 
     return (
-        <Flex w="full" flexDirection={"row"}>
-            <Input
-                type='text'
+        <Flex w="full" flexDirection={"column"} gap={"0.5rem"}>
+            <Text color={customColors.error[100]}>{msg}</Text>
+            <Textarea
                 autoFocus
                 isDisabled={!userAccount.isLogin}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="Comment"
+                bg= {customColors.black[200]}
+                color={customColors.white[300]}
+                placeholder="Please, Leave a Reply"
                 _placeholder={{ color: "gray.500" }}
             >
-            </Input>
-            <Button
-                isLoading={isLoading}
-                onClick={() => handleLeaveInput()}
-            >
-                Comment
-            </Button>
-            <Button
-                onClick={() => handleCancelReply()}
-            >
-                Cancel
-            </Button>
+            </Textarea>
+            <Flex gap="0.5rem">
+                <Button
+                    isLoading={isLoading}
+                    onClick={() => handleLeaveInput()}
+                    color={customColors.black[300]}
+                    bg={buttonColor}
+                >
+                    Reply
+                </Button>
+                <Button
+                    onClick={() => handleCancelReply()}
+                    bg={customColors.black[200]}
+                >
+                    Cancel
+                </Button>
+            </Flex>
         </Flex>
     )  
 }

@@ -79,6 +79,7 @@ export async function leaveReply(formData: FormData, postID: number, responseToI
 
         const data: CommentApiResponseDto = await res.json();
         const comment = data.postReply as CommentType;
+        revalidateTag(`commentOnpost-${postID}`);
         return comment;
     } catch (error) {
         logger.error('leaveReply error', { message: error });

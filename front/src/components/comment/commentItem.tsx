@@ -4,7 +4,6 @@ import React, { useState} from 'react';
 import { Flex,  } from '@chakra-ui/react'
 import { customColors } from '@/utils/chakra/customColors';
 import Comment from './comment';
-import CommentItemList from './commenItemtList';
 import InputReply from './InputReply';
 
 /*TODO
@@ -20,15 +19,12 @@ const CommentItem : React.FC<CommentItemProps> = ({
     comment ,
     childrenReplyList,
 }) => {
-    const bg = customColors.black[200];
     const borderColor = customColors.strokeColor[100];
-    const [commentData, setCommentData] = useState<CommentType>(comment);
-    const [isShowICon, setIsShowICon] = useState(false);
     const [isShowReply, setIsShowReply] = useState(false);
     const [isWriteReply, setIsWriteReply] = useState(false);
 
     const handleShowReply = () => {
-        if(commentData.replyComments && commentData.replyComments.length > 0){
+        if(comment.replyComments && comment.replyComments.length > 0){
             setIsShowReply(!isShowReply);
         }
         else{
@@ -37,7 +33,7 @@ const CommentItem : React.FC<CommentItemProps> = ({
     }
 
     const handleWriteReply = () => {
-        if(commentData.replyComments && commentData.replyComments.length > 0){
+        if(comment.replyComments && comment.replyComments.length > 0){
             setIsWriteReply(!isWriteReply);
         }
         else{
@@ -47,13 +43,12 @@ const CommentItem : React.FC<CommentItemProps> = ({
     }
 
     const handleCancelReply = () => {
-        setIsWriteReply(!isWriteReply);
+        setIsWriteReply(false);
     }
 
-    const handleAddReply = (newReply : CommentType) => {
-        console.log("handleSendReply is clicked");
-        
-        setCommentData( (prev) => ({...prev, replyComments: [...prev.replyComments, newReply]}))
+    const handleAddReply = () => {
+        setIsWriteReply(false);
+        setIsShowReply(true);
     }
 
     
@@ -64,14 +59,16 @@ const CommentItem : React.FC<CommentItemProps> = ({
             flexDir={"column"}
             borderRadius={"15px"}
             borderLeft={`3px solid ${borderColor}`}
+            gap={"0.5rem"}
+            p={2}
         >
             <Comment 
-                comment={commentData} 
+                comment={comment} 
                 handleReplyButtonClicked={handleWriteReply}
                 handleShowReplyIconClicked={handleShowReply}
                 isShowReply={isShowReply}
             />
-            {isWriteReply && <InputReply handleAddReply={handleAddReply} handleCancelReply= {handleCancelReply}parentComment={commentData}/>}
+            {isWriteReply && <InputReply handleAddReply={handleAddReply} handleCancelReply= {handleCancelReply} parentComment={comment}/>}
             {isShowReply 
                 && 
                 childrenReplyList
