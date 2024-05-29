@@ -1,12 +1,40 @@
-import { Button, useToast } from '@chakra-ui/react';
+import { CreateToastFnReturn, useToast } from '@chakra-ui/react';
 
-export function showSimToast() {
-    const toast = useToast();
+export function showSuccessToast(
+    toast: CreateToastFnReturn,
+    content: { title: string; description?: string },
+) {
     return toast({
-        title: 'Account created.',
-        description: "We've created your account for you.",
+        title: content.title,
+        description: content.description,
         status: 'success',
-        duration: 9000,
+        duration: 4000,
+        isClosable: true,
+    });
+}
+
+export function showErrorToast(
+    toast: CreateToastFnReturn,
+    content: { title: string; description?: string },
+) {
+    return toast({
+        title: content.title,
+        description: content.description,
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+    });
+}
+
+export function showWarringToast(
+    toast: CreateToastFnReturn,
+    content: { title: string; description?: string },
+) {
+    return toast({
+        title: content.title,
+        description: content.description,
+        status: 'warning',
+        duration: 7000,
         isClosable: true,
     });
 }
