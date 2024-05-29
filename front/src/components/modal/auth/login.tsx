@@ -1,13 +1,14 @@
 'use client';
-import { Button, Flex, Input, Text, useColorModeValue } from '@chakra-ui/react';
+import { Button, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { AuthModalState } from '@/atoms/authModal';
 import { useUserAccountWithSSR } from '@/atoms/userAccount';
-import logger from '@/utils/log/logger';
-import { signIn } from '@/server-actions/AuthAction'
+import { signIn } from '@/server-actions/AuthAction';
 import { customColors } from '@/utils/chakra/customColors';
+import { useForm } from 'react-hook-form';
+import { CommonInput } from './components/input/common_input';
 
 type LoginProps = {};
 
@@ -15,6 +16,18 @@ type LoginProps = {};
 - Server Action 오류 처리 로직 구현
 */
 const Login: React.FC<LoginProps> = () => {
+    interface IForm {
+        email: string;
+        password: string;
+    }
+    const form = useForm<IForm>({
+        mode: 'onSubmit',
+        defaultValues: {
+            email: '',
+            password: '',
+        },
+    });
+
     const [authModalState, setAuthModelState] = useRecoilState(AuthModalState);
     const [userState, setUserState] = useUserAccountWithSSR();
     const [msg, setMsg] = useState('');
@@ -26,7 +39,6 @@ const Login: React.FC<LoginProps> = () => {
     const fontColor = customColors.white[100];
 
     const loginWithEmailAndPassword = async (email: string, password: string) => {
-        
         const formData = new FormData();
         formData.append('email', email);
         formData.append('password', password);
@@ -35,36 +47,31 @@ const Login: React.FC<LoginProps> = () => {
 
         console.log(`[loginWithEmailAndPassword]`, res);
 
-        if(res.ok) {
-        /*TODO
+        if (res.ok) {
+            /*TODO
         - nickname 등의 유저 정보를 서버에서 가져오는 로직 필요 
         */
-        setUserState((prev) => ({
-            ...prev,
-            email: email,
-            isLogin: true,
-        }));
-        setAuthModelState((prev) => ({
-            ...prev,
-            open: false,
-        }));
-    } else {
-        setMsg(res.message);
-    }
-
+            setUserState((prev) => ({
+                ...prev,
+                email: email,
+                isLogin: true,
+            }));
+            setAuthModelState((prev) => ({
+                ...prev,
+                open: false,
+            }));
+        } else {
+            setMsg(res.message);
+        }
     };
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        loginWithEmailAndPassword(loginForm.email, loginForm.password);
-    };
 
-    const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // update state
-        setLoginForm((prev) => ({
-            ...prev,
-            [event.target.name]: event.target.value,
-        }));
+        const email = form.getValues('email');
+        const password = form.getValues('password');
+
+        loginWithEmailAndPassword(email, password);
     };
 
     return (
@@ -72,22 +79,17 @@ const Login: React.FC<LoginProps> = () => {
             <Text textAlign="center" color="red" fontSize="10pt">
                 {msg}
             </Text>
-            <Input
-                variant="oauth"
-                required
-                name="email"
-                placeholder="Email..."
-                type="email"
-                onChange={onChange}
-            />
-            <Input
-                variant="oauth"
-                required
-                name="password"
-                placeholder="Password..."
-                type="password"
-                onChange={onChange}
-            />
+            <CommonInput
+                inputName="Email"
+                inputType="email"
+                formData={{ ...form.register('email', { required: true, max: 20 }) }}
+            ></CommonInput>
+            <CommonInput
+                inputName="Password"
+                inputType="password"
+                inputPlaceHolder="Enter password"
+                formData={{ ...form.register('password', { required: true, max: 20 }) }}
+            ></CommonInput>
             <Button variant="oauth" type="submit">
                 Log In
             </Button>
@@ -116,7 +118,6 @@ const Login: React.FC<LoginProps> = () => {
                 </Text>
             </Flex>
         </form>
-        
     );
 };
 export default Login;
