@@ -10,7 +10,6 @@ import {
     ModalOverlay,
     useDisclosure,
     Text,
-
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
@@ -24,7 +23,6 @@ import { customColors } from '@/utils/chakra/customColors';
 - accessToken 만료까지 User 로그인 상태 유지하도록 수정하기
   - 새로 고침시, 로그인 아이콘 변경되는 이슈 해결하기
 */
-  
 
 const AuthModal: React.FC = () => {
     //const { isOpen, onOpen, onClose } = useDisclosure();
