@@ -1,4 +1,4 @@
-import { Button, Flex, Input, Text, useColorModeValue } from '@chakra-ui/react';
+import { Button, Flex, Text } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { AuthModalState } from '@/atoms/authModal';
@@ -8,10 +8,9 @@ import { extractErrorMessage } from '@/lib/server-only/message';
 import { ExceptionDto } from 'hoodone-shared';
 import { Timer } from './components/timer';
 import { useToast } from '@chakra-ui/react';
-enum PasswordLength {
-    MIN = 8,
-    MAX = 20,
-}
+import { CommonInput } from './components/input/common_input';
+import { ButtonAndInput } from './components/input/button_and_inputs';
+import { showErrorToast, showSuccessToast, showWarringToast } from './components/toast/toast';
 
 const SignUp: React.FC = () => {
     const TIMER_MINUTE = 3;
@@ -28,8 +27,9 @@ const SignUp: React.FC = () => {
         nickname: string;
         password: string;
         confirmPassword: string;
+        pinCode: string;
     }
-    const toast = useToast();
+    const useToastOption = useToast();
     const form = useForm<IForm>({
         mode: 'onSubmit',
         defaultValues: {
@@ -37,6 +37,7 @@ const SignUp: React.FC = () => {
             nickname: '',
             password: '',
             confirmPassword: '',
+            pinCode: '',
         },
     });
     const [isTimerStart, setIsTimerStart] = useState(false);
@@ -86,7 +87,7 @@ const SignUp: React.FC = () => {
                 console.log(`sign up success response-----`);
                 console.log(res);
                 // TODO 유저에게 회원가입 성공했다고 알려주기/ tost 메세지 이용?
-                showSuccessToast({ title: 'Sign Up Success' });
+                showSuccessToast(useToastOption, { title: 'Sign Up Success' });
                 setAuthModalState((prev) => ({
                     ...prev,
                     isOpen: false,
@@ -99,7 +100,10 @@ const SignUp: React.FC = () => {
                 console.log(message);
                 const extractedMessage = extractErrorMessage(message);
 
-                showErrorToast({ title: 'Fail!! Sign Up ', description: extractedMessage });
+                showErrorToast(useToastOption, {
+                    title: 'Fail!! Sign Up ',
+                    description: extractedMessage,
+                });
 
                 setMsg(`회원가입 오류 발생\n ${extractedMessage}`);
             }
@@ -111,16 +115,21 @@ const SignUp: React.FC = () => {
 
     const onSubmit = async (data: IForm) => {
         const { email, nickname, password, confirmPassword } = data;
+        console.log(data);
 
-        if (error) setError(' error 발생');
+        if (error) {
+            setError(' error 발생');
+            return;
+        }
 
         if (!isPassword) {
-            showErrorToast({ title: 'Insecure Password' });
+            showErrorToast(useToastOption, { title: 'Insecure Password' });
+            return;
         }
 
         if (password !== confirmPassword) {
             // TODO 토스트 메세지 설치후 사용하자
-            showErrorToast({
+            showErrorToast(useToastOption, {
                 title: 'Password Do Not Match',
             });
             setError('Password Do Not Match');
@@ -132,26 +141,28 @@ const SignUp: React.FC = () => {
     };
 
     const onCertification = async (event: React.FormEvent<HTMLFormElement>) => {
-        // TODO영어와 숫자로 이루저지 않았다면 에러 발생
+        // TODO영어와 숫자로 이루어지지 않았다면 에러 발생
 
         event.preventDefault();
 
-        console.log(certification.inputCode);
+        console.log(form.getValues('pinCode'));
 
         const formData = new FormData();
         formData.append('email', form.getValues('email'));
-        formData.append('pinCode', certification.inputCode);
+        formData.append('pinCode', form.getValues('pinCode'));
         try {
             const result = await comparePinCode(formData);
 
             if (result.ok) {
-                showSuccessToast({ title: 'Match PIN code' });
+                showSuccessToast(useToastOption, { title: 'Match PIN code' });
                 setCertification((prev) => ({
                     ...prev,
                     state: true,
                 }));
+                return;
             }
 
+            showErrorToast(useToastOption, { title: 'Code Do Not Match' });
             setError('Code Do Not Match');
             return;
         } catch (e) {
@@ -168,7 +179,7 @@ const SignUp: React.FC = () => {
             try {
                 if (res.ok) {
                     console.log(`success request CertifiedMail`);
-                    showSuccessToast({ title: 'Success Send Mail' });
+                    showSuccessToast(useToastOption, { title: 'Success Send Mail' });
 
                     // TODO maill을 성공적으로 보냈다고 알려줌 / tost 메세지 이용?
                 } else {
@@ -176,7 +187,7 @@ const SignUp: React.FC = () => {
                     // message 값이 없을 수도 있음
                     const message = exceptionData.detail?.message ?? '';
                     const extractedMessage = extractErrorMessage(message);
-                    showErrorToast({
+                    showErrorToast(useToastOption, {
                         title: '회원가입 오류 발생',
                         description: extractedMessage,
                     });
@@ -187,22 +198,13 @@ const SignUp: React.FC = () => {
                 }
             } catch (err) {
                 // console.log('send email error', error);
-                showErrorToast({ title: 'Error!! ' });
+                showErrorToast(useToastOption, { title: 'Error!! ' });
                 console.log(error);
                 return;
             }
         } else {
             setError('email 형식이 이상합니다');
             return;
-        }
-    };
-
-    const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.name === 'inputCode') {
-            setCertification((prev) => ({
-                ...prev,
-                [event.target.name]: event.target.value,
-            }));
         }
     };
 
@@ -218,7 +220,7 @@ const SignUp: React.FC = () => {
 
             console.log(+value.length);
             if (!passwordRegex.test(value) || +value.length < PASSWORD_MIN_LEN) {
-                setPasswordMsg('Numbers, letters, and special characters (!@#$%^&*+-=)');
+                setPasswordMsg('use Numbers, letters, and special characters (!@#$%^&*+-=)');
                 setIsPassword(false);
             } else {
                 setPasswordMsg('Secure Password');
@@ -228,12 +230,16 @@ const SignUp: React.FC = () => {
     };
     function checkValidEmail(email: string): boolean {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
         return emailRegex.test(email);
     }
     function onResendEmail() {
         /**TODO)  pop 창을 보여줘서 새로 보냈다라는 것을 알려주자*/
         if (min <= 0) {
-            console.log(`시간 경과로  다시 email 검사를 해야 합니다.  새로고침을 눌러주세요`);
+            console.log('Please refresh your email due to timeout.');
+            showWarringToast(useToastOption, {
+                title: 'Please refresh your email due to timeout.',
+            });
         }
         if (TIMER_MINUTE - 1 > min) {
             console.log(`${min}: ${sec}`);
@@ -242,7 +248,7 @@ const SignUp: React.FC = () => {
             setMinute(TIMER_MINUTE);
             setSecond(1); // UI를 위해서 1을 넣고 있습니다
         } else {
-            console.log(`1분 경과되어야 다시 보낼 수 있습니다`);
+            showWarringToast(useToastOption, { title: 'Resending is available in 1 minute.' });
         }
     }
 
@@ -253,42 +259,28 @@ const SignUp: React.FC = () => {
                     <Text textAlign="center" color="red" fontSize="10px">
                         {error}
                     </Text>
-                    <Input
-                        variant="oauth"
-                        required
-                        placeholder="Email..."
-                        type="email"
-                        {...form.register('email', { required: true })}
-                    />
-                    <Flex w="592px" justifyContent="space-between">
-                        <Input
-                            variant="oauth"
-                            w="400px"
-                            h="70px"
-                            required
-                            name="inputCode"
-                            placeholder="1234"
-                            type="text"
-                            onChange={onChange}
-                        />
-                        <Button
-                            variant="oauth"
-                            w="180px"
-                            h="70px"
-                            onClick={async () => {
-                                const toEmail = form.getValues('email');
-                                // 타이머가 작동 안했을 겨우 동작
-                                if (checkValidEmail(toEmail) && !isTimerStart) {
-                                    onSendEmail();
-                                    setIsTimerStart(true);
-                                    return;
-                                }
-                                if (isTimerStart) onResendEmail();
-                            }}
-                        >
-                            {isTimerStart ? 'Resend' : 'Send'}
-                        </Button>
-                    </Flex>
+                    <CommonInput
+                        inputName="Email"
+                        formData={{ ...form.register('email', { required: true }) }}
+                        inputType="email"
+                    ></CommonInput>
+
+                    <ButtonAndInput
+                        inputName="Pin Code"
+                        inputType="text"
+                        formData={{ ...form.register('pinCode', { required: true }) }}
+                        buttonName={isTimerStart ? 'Resend' : 'Send'}
+                        onClickButton={() => {
+                            const toEmail = form.getValues('email');
+                            // 타이머가 작동 안했을 겨우 동작
+                            if (checkValidEmail(toEmail) && !isTimerStart) {
+                                onSendEmail();
+                                setIsTimerStart(true);
+                                return;
+                            }
+                            if (isTimerStart) onResendEmail();
+                        }}
+                    ></ButtonAndInput>
                     <div>
                         {isTimerStart ? (
                             <Timer
@@ -312,48 +304,39 @@ const SignUp: React.FC = () => {
                     onChange={onChangeForm}
                     className="form-modalPage"
                 >
-                    <Text textAlign="center" color="red" fontSize="10px">
-                        {}
-                    </Text>
-                    <Input
-                        variant="oauth"
-                        required
-                        placeholder={''}
-                        type="email"
+                    <CommonInput
+                        inputName="Email"
+                        inputType="email"
                         isDisabled={true}
-                    />
-                    <Input
-                        variant="oauth"
-                        placeholder="Nickname..."
-                        type="text"
-                        // maxlength="5"
-                        {...form.register('nickname', { required: true, max: 20 })}
-                    />
-                    <div className="container">
-                        <Text
-                            textAlign="center"
-                            color={isPassword ? 'green' : 'red'}
-                            fontSize={isPassword ? '15pt' : '10pt'}
-                        >
-                            {passwordMsg}
-                        </Text>
-                    </div>
-                    <Input
-                        variant="oauth"
-                        placeholder="Password..."
-                        type="password"
-                        minLength={5}
-                        maxLength={10}
-                        {...form.register('password', {
-                            required: true,
-                        })}
-                    />
-                    <Input
-                        variant="oauth"
-                        placeholder="Confirm Password..."
-                        type="password"
-                        {...form.register('confirmPassword', { required: true })}
-                    />
+                        formData={{ ...form.register('email', { required: true, max: 20 }) }}
+                    ></CommonInput>
+                    <CommonInput
+                        inputName="Nickname"
+                        inputType="text"
+                        formData={{ ...form.register('nickname', { required: true, max: 20 }) }}
+                    ></CommonInput>
+                    <CommonInput
+                        inputName="Password"
+                        inputType="password"
+                        inputPlaceHolder="Enter password"
+                        formData={{ ...form.register('password', { required: true, max: 20 }) }}
+                    ></CommonInput>
+                    <Text
+                        textAlign="center"
+                        color={isPassword ? 'green' : 'red'}
+                        fontSize={isPassword ? '15pt' : '10pt'}
+                        paddingLeft={5}
+                    >
+                        {passwordMsg}
+                    </Text>
+                    <CommonInput
+                        inputName="Confirm Password"
+                        inputType="password"
+                        inputPlaceHolder="Enter confirm password"
+                        formData={{
+                            ...form.register('confirmPassword', { required: true, max: 20 }),
+                        }}
+                    ></CommonInput>
                     <Text textAlign="center" color="red" fontSize="10pt">
                         {msg}
                     </Text>
@@ -388,25 +371,5 @@ const SignUp: React.FC = () => {
             </Flex>
         </>
     );
-
-    function showSuccessToast(content: { title: string; description?: string }) {
-        return toast({
-            title: content.title,
-            description: content.description,
-            status: 'success',
-            duration: 4000,
-            isClosable: true,
-        });
-    }
-
-    function showErrorToast(content: { title: string; description?: string }) {
-        return toast({
-            title: content.title,
-            description: content.description,
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-        });
-    }
 };
 export default SignUp;
