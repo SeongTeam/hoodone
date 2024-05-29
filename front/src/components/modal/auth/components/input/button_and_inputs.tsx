@@ -31,7 +31,6 @@ export const ButtonAndInput: React.FC<ButtonAndInputProps> = (props: ButtonAndIn
             </Text>
             <Flex w="592px" justifyContent="space-between">
                 {props.isUsedPasswordButton == true ? (
-
                     <InputGroup size="md">
                         <Input
                             variant="oauth"
