@@ -83,6 +83,22 @@ export class CommentUseCase {
         return await this.commentService.save(comment, qr);
     }
 
+    async softdelete(commentId: number, qr: QueryRunner) {
+        const comment: CommentModel = await this.commentService.loadById(commentId);
+
+        if (!comment) {
+            throw new NotFoundException(
+                `UseCase.softdelete 실행x , commentId:${commentId}를 찾을 수 없음`,
+            );
+        }
+        comment.content = '';
+        comment.isUserDelete = true;
+
+        const deletedComment = this.commentService.save(comment, qr);
+
+        return deletedComment;
+    }
+
     async delete(commentId: number, qr: QueryRunner) {
         const comment: CommentModel = await this.commentService.loadById(commentId);
 
@@ -93,11 +109,7 @@ export class CommentUseCase {
             );
         }
 
-        //TODO 삭제할 댓글에 대댓글이 있다면 어떻게 할 것인가?
-        if (comment.replyCommentIds.length > 0) {
-            return false;
-        }
-        return await this.commentService.delete(comment.id, qr);
+        return await this.commentService.delete(comment, qr);
     }
 
     getById(commentId: number) {
