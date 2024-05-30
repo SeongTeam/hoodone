@@ -5,7 +5,7 @@ import { Button,Flex, Input, Text, Textarea} from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import { AuthorType } from '@/atoms/post';
 import { leaveComment } from '@/server-actions/commentAction';
-import { useParams } from 'next/navigation';
+import { useParams , usePathname} from 'next/navigation';
 import { leaveReply } from '@/server-actions/commentAction';
 
 
@@ -27,13 +27,14 @@ const InputReply : React.FC<InputReplyProps> = ({
     const [ isLoading, setIsLoading ] = useState(false);
     const [ msg, setmsg ] = useState('');
     const params = useParams<{postid:string; } >();
+    const path = usePathname();
 
     const handleLeaveInput = () => {
         const formdata = new FormData();
         formdata.append('content', content);
         setIsLoading(true);
         const postid = parseInt(params.postid);
-        leaveReply(formdata, postid , parentComment.id).then(() => {
+        leaveReply(formdata, postid , parentComment.id , path).then(() => {
             setIsLoading(false);
             handleAddReply();
             

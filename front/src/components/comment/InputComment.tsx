@@ -6,7 +6,7 @@ import { Button,Flex, Input} from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import { AuthorType } from '@/atoms/post';
 import { leaveComment } from '@/server-actions/commentAction';
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 
 
 /*TODO
@@ -25,6 +25,7 @@ const InputComment : React.FC<InputCommentProps> = ({
     const [ isLoading, setIsLoading ] = useState(false);
     const [ msg, setmsg ] = useState('');
     const params = useParams<{postid:string; } >();
+    const path = usePathname();
 
     const handleLeaveInput = () => {
         console.log("handleLeaveInput is clicked", content);
@@ -32,7 +33,7 @@ const InputComment : React.FC<InputCommentProps> = ({
         formdata.append('content', content);
         setIsLoading(true);
         const postid = parseInt(params.postid);
-        leaveComment(formdata, postid).then((newComment) => {
+        leaveComment(formdata, postid, path).then((newComment) => {
 
             if(!newComment) {
                 setmsg('Comment failed');

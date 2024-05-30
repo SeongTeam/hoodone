@@ -1,43 +1,56 @@
 "use client"
-import { CommentType } from '@/atoms/commen';
+import { CommentType, CommentClass } from '@/atoms/commen';
 import React, { useState} from 'react';
 import { Flex,  } from '@chakra-ui/react'
 import { customColors } from '@/utils/chakra/customColors';
 import Comment from './comment';
 import InputReply from './InputReply';
+import { useRouter, useParams, useSearchParams } from 'next/navigation'
 
-/*TODO
-- 버그 수정
-    bug ) reply가 없는 최상위 코멘트에는 reply 버튼 클릭해도 inputReply 미출력됨
-*/
+
+
 type CommentItemProps = {
     comment: CommentType,
     childrenReplyList: React.ReactNode,
+    isWritingOnCurrentPage: boolean,
 
 }
 const CommentItem : React.FC<CommentItemProps> = ({
     comment ,
     childrenReplyList,
+    isWritingOnCurrentPage,
 }) => {
     const borderColor = customColors.strokeColor[100];
     const [isShowReply, setIsShowReply] = useState(false);
     const [isWriteReply, setIsWriteReply] = useState(false);
+    const commentInstance = new CommentClass(comment);
+    const router = useRouter();
+    const params = useParams<{ postid: string}>();
+    const searchParams = useSearchParams();
+    
+    const navigateToCommentPage = () => {
+        const commentid = comment.id;
+        const index = searchParams.get('index');
+        const postId = params.postid;
+        const path = `/post/${postId}/comment/${commentid}?index=${index}`;
+        router.push(path);
+    }
 
     const handleShowReply = () => {
-        if(comment.replyComments && comment.replyComments.length > 0){
+        if(commentInstance.isAccessableReply()){
             setIsShowReply(!isShowReply);
         }
-        else{
-            alert("move page for read more reply");
+        else if(commentInstance.isHaveReply()){
+            navigateToCommentPage();
         }
     }
 
     const handleWriteReply = () => {
-        if(comment.replyComments && comment.replyComments.length > 0){
+        if(isWritingOnCurrentPage){
             setIsWriteReply(!isWriteReply);
         }
         else{
-            alert("move page for write reply");
+            navigateToCommentPage();
         }
 
     }
@@ -63,7 +76,7 @@ const CommentItem : React.FC<CommentItemProps> = ({
             p={2}
         >
             <Comment 
-                comment={comment} 
+                commentInstance={commentInstance} 
                 handleReplyButtonClicked={handleWriteReply}
                 handleShowReplyIconClicked={handleShowReply}
                 isShowReply={isShowReply}

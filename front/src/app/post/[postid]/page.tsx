@@ -29,7 +29,7 @@ const PostPage : NextPage<PostPageProps>  = async ( {
    logger.info('#PostPage Rendered', { message: params.postid });
 
     const post : PostType | null = await getPostWithID(params.postid, parseInt(searchParams.index));
-   
+
     if(!post ) {
         logger.error(`post${params.postid} not found`);
         throw new ReferenceError(`post not found`);

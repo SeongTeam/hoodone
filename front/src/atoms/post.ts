@@ -18,7 +18,6 @@ export type PostType = {
     commentCount: number;
     isPublished: boolean;
     author: AuthorType;
-    commentID: number;
     thumbnailPublicID?: string;
     thumbnailURL?: string;
     linkedPostURL?: string;
