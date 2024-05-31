@@ -10,6 +10,7 @@ import {
     UseInterceptors,
     UseFilters,
     Get,
+    Patch,
 } from '@nestjs/common';
 import { QueryRunner as QR } from 'typeorm';
 
@@ -93,17 +94,17 @@ export class AuthController {
     @Post('send-pin-code')
     @UseInterceptors(TransactionInterceptor)
     @UseFilters(CommonExceptionFilter)
-    async sendPinCode(@Body() body, @QueryRunner() qr: QR) {
+    async sendSignUpPinCode(@Body() body, @QueryRunner() qr: QR) {
         /**reponse로 온 result의 response 안에
          * result[response] : '250 2.0.0 OK ... gsmpt가 들어 있으면 성골
          */
         const { toEmail } = body;
-        const result = await this.authUseCase.sendPinCode(toEmail, qr);
+        const result = await this.authUseCase.sendSingUpPinCode(toEmail, qr);
         let res = new AuthApiResponseDto();
 
         console.log(result.response);
-        res.postSendPinCode = typeof result.response === 'string' ? result.response : '';
-        console.log(res.postSendPinCode);
+        res.sendSignUpPinCode = typeof result.response === 'string' ? result.response : '';
+        console.log(res.sendSignUpPinCode);
         return res;
     }
     //  response: '250 2.0.0 OK  1716551382 d2e1a72fcca58-6f8fcbea886sm952420b3a.137 - gsmtp',

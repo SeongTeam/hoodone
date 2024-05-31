@@ -129,7 +129,7 @@ export class AuthUseCase {
         };
     }
 
-    async sendPinCode(toEmail: string, qr: QueryRunner) {
+    async sendSingUpPinCode(toEmail: string, qr: QueryRunner) {
         try {
             const pinCode = await this.tempUserUseCase.generatePinCode();
 
