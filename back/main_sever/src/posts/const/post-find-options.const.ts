@@ -5,7 +5,7 @@ import { PostModel } from '../entities/post.entity';
 export const COMMON_POST_FIND_OPTION: FindManyOptions<PostModel> = {
     relations: {
         author: true,
-        comments: true,
+        comments: false,
     },
     select: {
         deletedAt: false,
