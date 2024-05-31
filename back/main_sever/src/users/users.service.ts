@@ -51,6 +51,7 @@ export class UsersService {
                 tempUser = await repository.create({
                     ...userDtoData,
                     isVerfied: false,
+                    updatedAt: new Date().toLocaleString('kr'),
                 });
             }
         } catch (e) {

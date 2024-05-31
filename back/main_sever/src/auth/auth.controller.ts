@@ -118,13 +118,13 @@ export class AuthController {
         if (res) {
             res.getCompareTempUserPinCode = {
                 statusCode: 200,
-                message: '요청이 성공적으로 처리되었습니다.',
+                message: 'Your request has been processed successfully.',
                 result,
             };
         }
         res.getCompareTempUserPinCode = {
             statusCode: 400,
-            message: 'pinCode가 알맞지 않습니다.',
+            message: 'Not a valid pinCode',
             result,
         };
 
