@@ -31,9 +31,14 @@ export class TempUserUseCase {
     async comparePinCodes(userInfo: Pick<TempUserModel, 'email' | 'pinCode'>) {
         const tempUser = await this.userService.getTempUserByEmail(userInfo.email);
 
+        const now = new Date();
+        const updatedAt = new Date(tempUser.updatedAt);
+        const diff = now.getTime() - updatedAt.getTime();
+
         if (!tempUser) throw new NotFoundException('no tempUser in the DB that matches email');
 
-        if (userInfo.pinCode === tempUser.pinCode) return true;
+        if (diff < 180000 && userInfo.pinCode === tempUser.pinCode) return true;
+        // if (userInfo.pinCode === tempUser.pinCode) return true;
 
         return false;
     }
