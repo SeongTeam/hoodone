@@ -139,6 +139,6 @@ export class CommentsController {
     @UseGuards(AccessTokenGuard, CommentOwnerGuard, RoleGuard)
     @UseInterceptors(TransactionInterceptor)
     delete(@Param('id', ParseIntPipe) id: number, @QueryRunner() qr: QR) {
-        return this.commentUseCases.delete(id, qr);
+        return this.commentUseCases.softdelete(id, qr);
     }
 }

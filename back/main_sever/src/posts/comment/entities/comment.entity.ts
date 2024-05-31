@@ -48,4 +48,7 @@ export class CommentModel extends BaseModel {
 
     @Column({ name: 'response_to_id', default: 0 })
     responseToId: number;
+
+    @Column({ name: 'is_deleted', default: false })
+    isUserDelete: boolean;
 }

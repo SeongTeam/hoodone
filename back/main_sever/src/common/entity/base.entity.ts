@@ -18,6 +18,7 @@ export abstract class BaseModel {
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;
 
+    // presents when softDelete() is executed
     @DeleteDateColumn({ name: 'deleted_at' })
     deletedAt!: Date | null;
 }

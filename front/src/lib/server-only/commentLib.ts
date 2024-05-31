@@ -6,7 +6,16 @@ import assert from 'assert';
 
 const backendURL = process.env.BACKEND_URL;
 
-export const getCommentByID = async (postID: string, commentID: string) => {
+function getConfigConst() {
+    const initialRootCommentID = 0;
+    const depthLimit = 3;
+    const initialDepth = 0;
+    const replyDepthLimit = 5;
+
+    return { initialRootCommentID, depthLimit, initialDepth, replyDepthLimit };
+}
+
+export const getCommentByID = async (postID: number, commentID: number) => {
     try {
         const res = await fetch(`${backendURL}/posts/${postID}/comments/${commentID}`);
         if (!res.ok) {
@@ -22,7 +31,7 @@ export const getCommentByID = async (postID: string, commentID: string) => {
     }
 };
 
-export const getCommenWithRange = async (postID: number, offset: number, limit: number) => {
+const getCommenWithRange = async (postID: number, offset: number, limit: number) => {
     try {
         const res = await fetch(
             `${backendURL}/posts/${postID}/comments/range?depthBegin=${offset}&depthEnd=${
@@ -47,7 +56,10 @@ export const getCommenWithRange = async (postID: number, offset: number, limit: 
     }
 };
 
-export const getReplyComment = async (PostID: number, commentID: number, limit: number) => {
+/*TODO
+- Reply Comment Cache revalidate 로직 구현하기
+*/
+const getReplyComment = async (PostID: number, commentID: number, limit: number) => {
     try {
         const res = await fetch(
             `${backendURL}/posts/${PostID}/comments/reply?commentId=${commentID}&limit=${limit}`,
@@ -64,3 +76,49 @@ export const getReplyComment = async (PostID: number, commentID: number, limit: 
         return null;
     }
 };
+
+export const getCommentsWithReply = async (PostID: number, commentID: number) => {
+    const { replyDepthLimit } = getConfigConst();
+    const commentPromise = getCommentByID(PostID, commentID);
+    const replyCommentsPromise = getReplyComment(PostID, commentID, replyDepthLimit);
+
+    const [comment, replyComments] = await Promise.all([commentPromise, replyCommentsPromise]);
+
+    if (!comment) {
+        throw new Error('comment not found');
+    }
+
+    if (!replyComments) {
+        throw new Error('replyComments not found');
+    }
+
+    comment.replyComments = replyComments;
+
+    return comment;
+};
+
+export const getInitialComments = async (postID: number) => {
+    const { depthLimit } = getConfigConst();
+    const initialOffset = 0;
+    const comments = await getCommenWithRange(postID, initialOffset, depthLimit);
+    return comments;
+};
+
+export const isLeafCommentOfPage = (componentDepth: number, commentDepth: number) => {
+    const { depthLimit, replyDepthLimit } = getConfigConst();
+    const commentPageDepthLimit = replyDepthLimit + 1;
+
+    if (componentDepth === commentDepth) {
+        //path is '/post/[postid]'
+        return componentDepth % depthLimit !== depthLimit - 1;
+    } else {
+        //path is '/post/[postid]/comment/[commentid]'
+        return componentDepth % commentPageDepthLimit !== commentPageDepthLimit - 1;
+    }
+};
+
+export function getCommentListConfig() {
+    const rootComponentDepth = 0;
+
+    return { rootComponentDepth };
+}

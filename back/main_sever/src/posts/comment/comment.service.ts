@@ -127,9 +127,14 @@ export class CommentsService {
         return newComment;
     }
 
-    async delete(postId: number, qr: QueryRunner) {
+    async delete(comment: CommentModel, qr: QueryRunner) {
         const repository = this._getRepository(qr);
-        return await repository.delete(postId);
+        return await repository.softRemove(comment);
+    }
+
+    async deletePermanently(commentId: number, qr: QueryRunner) {
+        const repository = this._getRepository(qr);
+        return await repository.delete(commentId);
     }
     /** 수정 삭제 시에는 loadById()를 사용 */
     async loadById(id: number) {

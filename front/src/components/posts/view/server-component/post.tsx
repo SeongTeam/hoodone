@@ -7,16 +7,17 @@ import  htmlReactParser  from "html-react-parser";
 import PostMenu from "../postMenu";
 import { CommentType } from "@/atoms/commen";
 import CommentArea from "@/components/comment/commentArea";
+import logger from "@/utils/log/logger";
 
 type PostProps = {
     post: PostType | null
-    commentList : CommentType[]
+    rootCommentID?: number
 }
 
-const Post: React.FC<PostProps> = ({post, commentList}) => {
+const Post: React.FC<PostProps> = ({post, rootCommentID}) => {
     const bg = customColors.black[300];
     const fontColor = customColors.white[300];
-    
+    logger.info(`Post ${post?.id} is called with rootCommentID ${rootCommentID}`);
     return (
 
         post === null ? (
@@ -41,7 +42,7 @@ const Post: React.FC<PostProps> = ({post, commentList}) => {
                         </Flex>
                 </CardBody>
                 <CardFooter flexDir={"column"} gap={"1rem"} >
-                    <CommentArea comments={commentList}/>
+                    <CommentArea postID={post.id} rootCommentID={rootCommentID}/>
                 </CardFooter>
             </Card>
         )
