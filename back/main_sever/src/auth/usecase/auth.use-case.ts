@@ -8,7 +8,7 @@ import { UserModel } from 'src/users/entities/user.entity';
 
 import { AuthService } from '../auth.service';
 import { AuthCredentialsDto } from '../dto/auth-credential.dto';
-import { Logger } from '@nestjs/common';
+import { ConflictException, Logger, UnauthorizedException } from '@nestjs/common';
 import { MailUseCase } from 'src/mail/usecase/mail.usecase';
 import { TempUserUseCase } from 'src/users/usecase/temp-user.case';
 
@@ -140,6 +140,33 @@ export class AuthUseCase {
         } catch (e) {
             console.log(e);
             return e;
+        }
+    }
+
+    async sendPasswordResetLink(toEmail: string, qr: QueryRunner) {
+        /**TODO 디음에 pincode가 아닌 link로 로직을 바꾸자 */
+
+        try {
+            const pinCode = await this.tempUserUseCase.generatePinCode();
+            const link = '';
+            const now = new Date().toLocaleTimeString('kr');
+
+            const user = await this.userUseCase.getUserByEmail(toEmail);
+            const updateResult = await this.userUseCase.updateUserData(
+                user.id,
+                {
+                    nickname: undefined,
+                    verificationToken: `${pinCode}:${now}`,
+                },
+                qr,
+            );
+
+            if (updateResult.affected != 1) {
+                throw new ConflictException('userUseCase.updateUserData() 실행 에러');
+            }
+            return this.mailUseCase.sendCertificationPinCode(toEmail, pinCode);
+        } catch (e) {
+            throw new ConflictException('sendPasswordResetLink 동작 에러');
         }
     }
 }

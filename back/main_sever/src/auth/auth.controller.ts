@@ -11,6 +11,8 @@ import {
     UseFilters,
     Get,
     Patch,
+    NotFoundException,
+    BadRequestException,
 } from '@nestjs/common';
 import { QueryRunner as QR } from 'typeorm';
 
@@ -28,6 +30,8 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { Logger } from '@nestjs/common';
 import { TempUserUseCase } from 'src/users/usecase/temp-user.case';
 import { retry } from 'rxjs';
+import { ResetPasswordRequestDto } from './dto/reset-password-request.dto';
+import { emit } from 'process';
 
 @Controller('auth')
 export class AuthController {
@@ -130,5 +134,39 @@ export class AuthController {
         };
 
         return res;
+    }
+
+    @Patch('reset-password')
+    @UseInterceptors(TransactionInterceptor)
+    @UseFilters(CommonExceptionFilter)
+    async resetPassword(@Body(ValidationPipe) dto: ResetPasswordRequestDto, @QueryRunner() qr: QR) {
+        const { email, password, pinCode } = dto;
+
+        const user = await this.userUseCase.getUserByEmail(email);
+        const split = user.verificationToken.split(':');
+
+        if (!user) {
+            throw new NotFoundException('존재하지 않는 ID 입니다');
+        }
+
+        if (split[0] != pinCode) {
+            throw new BadRequestException('pinCode가 맞지 않습니다');
+        }
+        const result = await this.userUseCase.resetPassword({ password, id: user.id }, qr);
+        return result;
+    }
+
+    @Patch('send-password-reset-link')
+    @UseInterceptors(TransactionInterceptor)
+    async sendPasswordResetLink(@Body() body: { toEmail: string }, @QueryRunner() qr: QR) {
+        /**TODO 디음에 pincode가 아닌 link로 로직을 바꾸자 */
+        const { toEmail } = body;
+        const isExist = await this.userUseCase.hasExistedEmail(toEmail);
+
+        if (!isExist) {
+            throw new NotFoundException('존재하지 않는 유저 입니다');
+        }
+
+        return this.authUseCase.sendPasswordResetLink(toEmail, qr);
     }
 }
