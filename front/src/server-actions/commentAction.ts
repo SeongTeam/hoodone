@@ -88,3 +88,36 @@ export async function leaveReply(
         return null;
     }
 }
+
+export async function deleteComment(postID: number, commentID: number, path: string) {
+    const accessToken = cookies().get('accessToken')?.value;
+
+    if (!accessToken) {
+        throw new Error('accessToken is not exist');
+    }
+
+    try {
+        const res = await fetch(`${backendURL}/posts/${postID}/comments/${commentID}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        if (!res.ok) {
+            logger.error('deleteComment response error', {
+                message: `target post: ${postID}, response :${JSON.stringify(res.body)}, status : ${
+                    res.status
+                }`,
+            });
+            throw new Error('deleteComment response error');
+        }
+
+        revalidatePath(path);
+
+        return commentID;
+    } catch (error) {
+        logger.error('deleteComment error', { message: error });
+        return null;
+    }
+}
