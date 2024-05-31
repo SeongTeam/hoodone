@@ -11,4 +11,5 @@ export const DEFAULT_CREATE_USER_OPTION: DeepPartial<UserModel> = {
     userReportCount: 0,
     userReportedCount: 0,
     roles: [RoleType.USER],
+    verificationToken: '',
 };
