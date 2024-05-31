@@ -73,7 +73,6 @@ const CommentItem : React.FC<CommentItemProps> = ({
             borderRadius={"15px"}
             borderLeft={`3px solid ${borderColor}`}
             gap={"0.5rem"}
-            p={2}
         >
             <Comment 
                 commentInstance={commentInstance} 

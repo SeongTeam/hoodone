@@ -1,7 +1,7 @@
 import React from 'react'
 import { CommentType } from '@/atoms/commen';
 import CommentItem from './commentItem';
-import { Flex } from '@chakra-ui/react';
+import { Flex, Box } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import { isLeafCommentOfPage } from '@/lib/server-only/commentLib';
 import logger from '@/utils/log/logger';
@@ -20,12 +20,11 @@ const CommentItemList : React.FC<CommentItemListProps> = ({ comments, componentD
     const margin = componentDepth === 0 ? 0 : 4;
 
     return (
-
+        <Box maxW="100%" pl={margin} overflow="hidden">
         <Flex 
             w="full"
             h="full"
             flexDirection={"column"}  
-            ml={margin} 
         >
             {comments.map((comment, index) => {
                     return <CommentItem 
@@ -36,6 +35,7 @@ const CommentItemList : React.FC<CommentItemListProps> = ({ comments, componentD
                             />
             })}
         </Flex>
+        </Box>
     )
 }
 

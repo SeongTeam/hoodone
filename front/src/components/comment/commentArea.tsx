@@ -1,7 +1,7 @@
 import InputComment from "./InputComment";
 import CommentItemList from "./commenItemtList";
 import { CommentType} from "@/atoms/commen";
-import { Flex } from "@chakra-ui/react";
+import { Flex, Box } from "@chakra-ui/react";
 import { getInitialComments, getCommentsWithReply, getCommentListConfig } from "@/lib/server-only/commentLib";
 import logger from "@/utils/log/logger";
 
@@ -25,12 +25,14 @@ const CommentArea: React.FC<CommentAreaProps> = async ({postID, rootCommentID}) 
     const { rootComponentDepth } = getCommentListConfig();
 
     return (
+        <Box maxW="100%" overflow="hidden" border={"1px solid red"}>
         <Flex w="full" h="full" flexDirection={"column"} gap="1rem">
             { isCommentsPage ? 
                 <InputComment/>
             : null}
                 <CommentItemList comments={comments} componentDepth={rootComponentDepth}/>
         </Flex>
+        </Box>
     )
 }
 
