@@ -82,6 +82,7 @@ const Login: React.FC<LoginProps> = () => {
             <CommonInput
                 inputName="Email"
                 inputType="email"
+                inputPlaceHolder="Enter email"
                 formData={{ ...form.register('email', { required: true, max: 20 }) }}
             ></CommonInput>
             <CommonInput
