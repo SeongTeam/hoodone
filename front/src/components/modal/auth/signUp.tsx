@@ -117,11 +117,6 @@ const SignUp: React.FC = () => {
         const { email, nickname, password, confirmPassword } = data;
         console.log(data);
 
-        if (error) {
-            setError(' error 발생');
-            return;
-        }
-
         if (!isPassword) {
             showErrorToast(useToastOption, { title: 'Insecure Password' });
             return;

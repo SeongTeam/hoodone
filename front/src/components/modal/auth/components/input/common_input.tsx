@@ -29,7 +29,6 @@ export const CommonInput: React.FC<CommonInputProps> = (props: CommonInputProps)
                 {inputName}
             </Text>
             {props.isUsedPasswordButton == true ? (
-
                 <InputGroup size="md">
                     <Input
                         variant="oauth"
