@@ -13,6 +13,7 @@ export type CommentType = {
     replyCommentIds: number[];
     replyComments: CommentType[];
     depth: number;
+    isUserDelete: boolean;
 };
 
 interface CommentState {

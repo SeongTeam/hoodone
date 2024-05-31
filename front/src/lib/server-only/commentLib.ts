@@ -106,13 +106,14 @@ export const getInitialComments = async (postID: number) => {
 
 export const isLeafCommentOfPage = (componentDepth: number, commentDepth: number) => {
     const { depthLimit, replyDepthLimit } = getConfigConst();
+    const commentPageDepthLimit = replyDepthLimit + 1;
 
     if (componentDepth === commentDepth) {
         //path is '/post/[postid]'
         return componentDepth % depthLimit !== depthLimit - 1;
     } else {
         //path is '/post/[postid]/comment/[commentid]'
-        return componentDepth % replyDepthLimit !== replyDepthLimit - 1;
+        return componentDepth % commentPageDepthLimit !== commentPageDepthLimit - 1;
     }
 };
 
