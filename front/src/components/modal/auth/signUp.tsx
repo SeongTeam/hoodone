@@ -319,6 +319,7 @@ const SignUp: React.FC = () => {
                         inputName="Password"
                         inputType="password"
                         inputPlaceHolder="Enter password"
+                        isUsedPasswordButton={true}
                         formData={{ ...form.register('password', { required: true, max: 20 }) }}
                     ></CommonInput>
                     <Text
@@ -333,6 +334,7 @@ const SignUp: React.FC = () => {
                         inputName="Confirm Password"
                         inputType="password"
                         inputPlaceHolder="Enter confirm password"
+                        isUsedPasswordButton={true}
                         formData={{
                             ...form.register('confirmPassword', { required: true, max: 20 }),
                         }}

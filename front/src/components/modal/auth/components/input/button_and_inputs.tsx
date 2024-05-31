@@ -9,6 +9,7 @@ type ButtonAndInputProps = {
     inputPlaceHolder?: string;
     onClickButton: MouseEventHandler<HTMLButtonElement> | undefined;
     isDisabled?: boolean;
+    isUsedPasswordButton?: boolean;
     formData?: any;
 };
 
@@ -29,7 +30,8 @@ export const ButtonAndInput: React.FC<ButtonAndInputProps> = (props: ButtonAndIn
                 {inputName}
             </Text>
             <Flex w="592px" justifyContent="space-between">
-                {inputType === 'password' ? (
+                {props.isUsedPasswordButton == true ? (
+
                     <InputGroup size="md">
                         <Input
                             variant="oauth"

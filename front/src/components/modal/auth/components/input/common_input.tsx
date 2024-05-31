@@ -1,4 +1,5 @@
 import { Button, Flex, Input, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
+import { tree } from 'next/dist/build/templates/app-page';
 import React from 'react';
 import { MouseEventHandler } from 'react';
 
@@ -7,6 +8,7 @@ type CommonInputProps = {
     inputType: React.HTMLInputTypeAttribute | undefined;
     inputPlaceHolder?: string;
     isDisabled?: boolean;
+    isUsedPasswordButton?: boolean;
     formData?: any;
 };
 
@@ -26,7 +28,8 @@ export const CommonInput: React.FC<CommonInputProps> = (props: CommonInputProps)
             <Text paddingBottom={1} color="white" fontSize="20px" as="i">
                 {inputName}
             </Text>
-            {inputType === 'password' ? (
+            {props.isUsedPasswordButton == true ? (
+
                 <InputGroup size="md">
                     <Input
                         variant="oauth"
