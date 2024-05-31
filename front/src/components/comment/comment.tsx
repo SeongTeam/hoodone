@@ -5,7 +5,7 @@ import { SlPlus , SlMinus } from "react-icons/sl";
 import React, { useState } from "react";
 import { customColors } from "@/utils/chakra/customColors";
 import { mdFontSize } from "@/utils/chakra/fonts";
-
+import CommentMenu from "./commentMenu";
 
 
 type CommentProps = {
@@ -54,8 +54,9 @@ const Comment : React.FC<CommentProps> = ({
             <Flex flexDir={"column"} gap = "0.5rem">
                 <Flex>
                     <Text>{timeAgo}</Text>
-                    <Spacer/>
-                    {/*MenuIcon client component*/}
+                    <Spacer />
+                    <CommentMenu commentInstance={commentInstance}/>
+
                 </Flex>
                 <Text fontSize={mdFontSize}>{content}</Text>
                 <Flex gap="0.5rem">
