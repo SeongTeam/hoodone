@@ -5,6 +5,7 @@ import { AuthException } from 'src/common/exception/auth-exception';
 import { UsersService } from 'src/users/users.service';
 
 import { UserModel } from '../entities/user.entity';
+import { BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class UserUseCase {
@@ -21,10 +22,15 @@ export class UserUseCase {
         const isEmailExisted: boolean = await this.hasExistedEmail(userInfo.email);
         const isNicknameExisted: boolean = await this.hasExistedNickname(userInfo.nickname);
 
-        if (!(isEmailExisted || isNicknameExisted)) {
-            return this.userService.createUser(userInfo, qr);
+        try {
+            if (!(isEmailExisted || isNicknameExisted)) {
+                console.log('createNewUser 실행');
+                return this.userService.createUser(userInfo, qr);
+            }
+            return null;
+        } catch (e) {
+            throw e;
         }
-        return null;
     }
 
     /** true면 존재하는 이메일, false면 존재하지 않는 이메일 */
@@ -58,5 +64,34 @@ export class UserUseCase {
             throw new AuthException('EMAIL_NOT_FOUND');
         }
         return existingUser;
+    }
+    async updateUserData(
+        id: number,
+        userData: Pick<UserModel, 'nickname' | 'verificationToken'>,
+        qr: QueryRunner,
+    ) {
+        try {
+            console.log('updateUserInfo userUseCase');
+            console.log(userData);
+
+            return await this.userService.updateUser(id, { password: undefined, ...userData }, qr);
+        } catch (e) {
+            throw new BadRequestException('UserUseCase updateUserData 에러');
+        }
+    }
+
+    async resetPassword(userData: Pick<UserModel, 'id' | 'password'>, qr: QueryRunner) {
+        const { id, password } = userData;
+
+        try {
+            return this.userService.updateUser(
+                id,
+                { nickname: undefined, verificationToken: undefined, password },
+                qr,
+            );
+        } catch (e) {
+            console.log(e);
+            throw new BadRequestException('비밀번호 초괴화 실패');
+        }
     }
 }

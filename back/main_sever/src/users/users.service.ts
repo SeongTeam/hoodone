@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { QueryRunner, Repository } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { QueryRunner, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { AuthException } from 'src/common/exception/auth-exception';
@@ -73,17 +73,49 @@ export class UsersService {
 
         try {
             user = userRepository.create({
-                nickname: nickname,
+                nickname,
                 email,
                 password,
                 ...DEFAULT_CREATE_USER_OPTION,
             });
+
+            return await userRepository.save(user);
         } catch (e) {
+            console.log(e);
             throw new AuthException('ACCOUNT_CREATION_FAILED', {
                 describe: 'UserService.createUser()에서 error',
             });
         }
-        return await userRepository.save(user);
+    }
+
+    async updateUser(
+        userId: number,
+        userDtoData: Pick<UserModel, 'password' | 'nickname' | 'verificationToken'>,
+        qr?: QueryRunner,
+    ): Promise<UpdateResult> {
+        const { nickname, verificationToken } = userDtoData;
+
+        try {
+            const userRepository = this._getUsersRepository(qr);
+            const now: string = new Date().toLocaleString('kr');
+
+            const result: UpdateResult = await userRepository.update(
+                { id: userId },
+                { ...userDtoData, updatedAt: now },
+            );
+
+            return result;
+        } catch (e) {
+            throw new NotFoundException(e);
+        }
+    }
+    resetPassword(userInfo: Pick<UserModel, 'id' | 'password'>, qr: QueryRunner) {
+        const { password, id } = userInfo;
+
+        const userRepository = this._getUsersRepository(qr);
+        const now: string = new Date().toLocaleString('kr');
+
+        return userRepository.update({ id: id }, { password, updatedAt: now });
     }
 
     async getAllUsers() {

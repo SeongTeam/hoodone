@@ -1,6 +1,7 @@
 import { PickType } from '@nestjs/mapped-types';
 import { IsEmail, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 import { emailValidationMessage } from 'src/common/validation-message/email-validation.message';
+import { passwordValidationMessage } from 'src/common/validation-message/password-vaildation.message';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { UserModel } from 'src/users/entities/user.entity';
 
@@ -16,7 +17,7 @@ export class AuthCredentialsDto {
     @MaxLength(20)
     //영어랑 숫자만 가능한 유효성 체크
     @Matches(/^[a-zA-Z0-9]*$/, {
-        message: 'password only accepts english and number',
+        message: passwordValidationMessage,
     })
     password: string;
 }

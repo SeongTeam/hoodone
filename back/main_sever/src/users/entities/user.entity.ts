@@ -57,6 +57,10 @@ export class UserModel extends BaseModel {
     @Column({ name: 'user_reported_count' })
     userReportedCount: number;
 
+    @Column({ name: 'verification_token' })
+    @IsString()
+    verificationToken: string; // 비밀번호 초기화 와 같은 임시로 토큰이 필요할 겨우 사용
+
     // // 좋아요를 누른 게시판
     // @Expose()
     // @OneToMany(() => PostModel, (post) => post.author)

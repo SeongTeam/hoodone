@@ -1,7 +1,5 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm/dist/common';
-import { Repository } from 'typeorm/repository/Repository';
-import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
@@ -27,12 +25,11 @@ export class MailService {
                 })
                 .catch((err) => {
                     console.log(err);
-                    throw new BadRequestException(' this.mailerService.sendMail');
+                    throw new BadRequestException(`${to} this.mailerService.sendMail`);
                 });
             return result;
         } catch (e) {
             console.log(e);
-            console.log('12345678i9');
 
             throw new BadRequestException(' this.mailerService.sendMail');
         }
@@ -41,20 +38,3 @@ export class MailService {
         return Math.floor(100000 + Math.random() * 900000).toString();
     }
 }
-
-// async sendEmail(){
-
-//  mailerService
-//                 .sendMail({
-//                     to: `sjm4126@naver.com`,
-//                     subject: 'Test email',
-//                     text: 'Hello, world!',
-//                     context: {
-//                         pinCode,
-//                         // // pinCode: pinCode.toString(),
-//                         // pinCode: '1234',
-//                     },
-//                     template: './email',
-//                 })
-
-//             }

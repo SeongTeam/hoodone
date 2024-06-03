@@ -5,11 +5,7 @@ import { passwordValidationMessage } from 'src/common/validation-message/passwor
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { UserModel } from 'src/users/entities/user.entity';
 
-/** 회원가입 때 사용할 DTO ['nickName', 'email', 'password']  */
-export class RegisterUserDto extends PickType(UserModel, ['nickname', 'email', 'password']) {
-    @IsString({ message: stringValidationMessage })
-    nickname: string; // 1) 유일무이 하지만 수정가능한 정보
-
+export class ResetPasswordRequestDto extends PickType(UserModel, ['email', 'password']) {
     @IsString({ message: stringValidationMessage })
     @IsEmail({}, { message: emailValidationMessage })
     email: string; // 1) 유일무이한 값이 될 것
@@ -22,4 +18,9 @@ export class RegisterUserDto extends PickType(UserModel, ['nickname', 'email', '
         message: passwordValidationMessage,
     })
     password: string;
+
+    @IsString()
+    @MinLength(6)
+    @MaxLength(8)
+    pinCode: string;
 }
