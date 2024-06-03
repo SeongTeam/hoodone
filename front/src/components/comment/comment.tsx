@@ -1,6 +1,6 @@
 "use client"
 import { Flex,Box,Text,Spacer,IconButton, Button } from "@chakra-ui/react"
-import { CommentType , CommentClass } from "@/atoms/commen";
+import { CommentType , CommentClass } from "@/atoms/comment";
 import { SlPlus , SlMinus } from "react-icons/sl";
 import React, { useState } from "react";
 import { customColors } from "@/utils/chakra/customColors";

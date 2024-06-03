@@ -1,6 +1,6 @@
 "use client"
 import { useUserAccountWithSSR } from '@/atoms/userAccount';
-import { CommentType } from '@/atoms/commen';
+import { CommentType } from '@/atoms/comment';
 import React , { useState, useOptimistic } from 'react';
 import { Button,Flex, Input} from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';

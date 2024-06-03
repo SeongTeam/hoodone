@@ -1,6 +1,6 @@
 import InputComment from "./InputComment";
 import CommentItemList from "./commenItemtList";
-import { CommentType} from "@/atoms/commen";
+import { CommentType} from "@/atoms/comment";
 import { Flex, Box } from "@chakra-ui/react";
 import { getInitialComments, getCommentsWithReply, getCommentListConfig } from "@/lib/server-only/commentLib";
 import logger from "@/utils/log/logger";

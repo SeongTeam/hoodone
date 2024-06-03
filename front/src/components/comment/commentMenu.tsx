@@ -1,5 +1,5 @@
 import React from "react"
-import { CommentClass } from "@/atoms/commen";
+import { CommentClass } from "@/atoms/comment";
 import { Flex, IconButton, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { SlOptions } from "react-icons/sl";
 import { deleteComment } from "@/server-actions/commentAction";

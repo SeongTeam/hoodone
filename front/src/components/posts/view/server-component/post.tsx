@@ -5,7 +5,7 @@ import { basicFontSize } from "@/utils/chakra/fonts";
 import { customColors } from "@/utils/chakra/customColors";
 import  htmlReactParser  from "html-react-parser";
 import PostMenu from "../postMenu";
-import { CommentType } from "@/atoms/commen";
+import { CommentType } from "@/atoms/comment";
 import CommentArea from "@/components/comment/commentArea";
 import logger from "@/utils/log/logger";
 

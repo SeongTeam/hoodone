@@ -2,7 +2,7 @@
 
 import logger from '@/utils/log/logger';
 import { CommentApiResponseDto } from 'hoodone-shared';
-import { CommentType } from '@/atoms/commen';
+import { CommentType } from '@/atoms/comment';
 import { assert } from 'console';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';

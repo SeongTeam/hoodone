@@ -1,5 +1,5 @@
 "use client"
-import { CommentType, CommentClass } from '@/atoms/commen';
+import { CommentType, CommentClass } from '@/atoms/comment';
 import React, { useState} from 'react';
 import { Flex,  } from '@chakra-ui/react'
 import { customColors } from '@/utils/chakra/customColors';
