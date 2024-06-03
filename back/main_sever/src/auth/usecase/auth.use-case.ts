@@ -149,14 +149,14 @@ export class AuthUseCase {
         try {
             const pinCode = await this.tempUserUseCase.generatePinCode();
             const link = '';
-            const now = new Date().toLocaleTimeString('kr');
+            const now = new Date();
 
             const user = await this.userUseCase.getUserByEmail(toEmail);
             const updateResult = await this.userUseCase.updateUserData(
                 user.id,
                 {
                     nickname: undefined,
-                    verificationToken: `${pinCode}:${now}`,
+                    verificationToken: `${pinCode}||${now}`,
                 },
                 qr,
             );

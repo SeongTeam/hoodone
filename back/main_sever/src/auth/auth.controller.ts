@@ -106,9 +106,7 @@ export class AuthController {
         const result = await this.authUseCase.sendSingUpPinCode(toEmail, qr);
         let res = new AuthApiResponseDto();
 
-        console.log(result.response);
         res.sendSignUpPinCode = typeof result.response === 'string' ? result.response : '';
-        console.log(res.sendSignUpPinCode);
         return res;
     }
     //  response: '250 2.0.0 OK  1716551382 d2e1a72fcca58-6f8fcbea886sm952420b3a.137 - gsmtp',
@@ -140,33 +138,47 @@ export class AuthController {
     @UseInterceptors(TransactionInterceptor)
     @UseFilters(CommonExceptionFilter)
     async resetPassword(@Body(ValidationPipe) dto: ResetPasswordRequestDto, @QueryRunner() qr: QR) {
+        /**`TODO 추후에 링크로 사용할 로직이기에 controller에서 기능을 정의했습니다. */
         const { email, password, pinCode } = dto;
 
         const user = await this.userUseCase.getUserByEmail(email);
-        const split = user.verificationToken.split(':');
+        const split = user.verificationToken.split('||');
+        const targetTime: Date = new Date(`${split[1]}`);
+        const currentTime: Date = new Date();
+        const timeDifferenceInMinutes: number = Math.abs(
+            (currentTime.getTime() - targetTime.getTime()) / (1000 * 60),
+        );
 
         if (!user) {
             throw new NotFoundException('존재하지 않는 ID 입니다');
         }
 
-        if (split[0] != pinCode) {
-            throw new BadRequestException('pinCode가 맞지 않습니다');
+        if (split[0] != pinCode || timeDifferenceInMinutes > 5) {
+            throw new BadRequestException('유요하지 않은 pinCode');
         }
+
         const result = await this.userUseCase.resetPassword({ password, id: user.id }, qr);
         return result;
     }
 
     @Patch('send-password-reset-link')
     @UseInterceptors(TransactionInterceptor)
+    @UseFilters(CommonExceptionFilter)
     async sendPasswordResetLink(@Body() body: { toEmail: string }, @QueryRunner() qr: QR) {
         /**TODO 디음에 pincode가 아닌 link로 로직을 바꾸자 */
         const { toEmail } = body;
         const isExist = await this.userUseCase.hasExistedEmail(toEmail);
 
+        let res = new AuthApiResponseDto();
+
         if (!isExist) {
             throw new NotFoundException('존재하지 않는 유저 입니다');
         }
 
-        return this.authUseCase.sendPasswordResetLink(toEmail, qr);
+        const result = await this.authUseCase.sendPasswordResetLink(toEmail, qr);
+
+        res.sendPasswordResetLink = typeof result.response === 'string' ? result.response : '';
+
+        return res;
     }
 }
