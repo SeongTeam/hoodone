@@ -3,7 +3,7 @@ import { Box, Flex } from "@chakra-ui/react";
 import CommentItem from '../commentItem';
 import { CommentType } from '@/atoms/comment';
 import { getInitialComments, getCommentsWithReply, getCommentListConfig, isLeafCommentOfPage} from '@/lib/server-only/commentLib';
-import CommentItemList from './commenItemtList';
+import CommentItemList from './commentItemtList';
 
 type RootCommentItemListProps = {
     postID: number;
