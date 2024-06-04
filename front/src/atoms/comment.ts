@@ -39,4 +39,8 @@ export class CommentClass {
     isAccessableReply() {
         return this.comment.replyComments && this.comment.replyComments.length > 0;
     }
+
+    isDeleted() {
+        return this.comment.isUserDelete;
+    }
 }
