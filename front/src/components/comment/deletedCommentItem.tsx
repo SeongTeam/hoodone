@@ -1,8 +1,8 @@
 import React from 'react';
 import { CommentClass } from '@/atoms/comment';
-import { Box, IconButton, Flex, Text, Spacer } from '@chakra-ui/react';
-import { SlPlus, SlMinus } from "react-icons/sl";
+import { Box, Flex, Text, Spacer } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
+import ReplyToggleButton from './replyToggleButton';
 
 type DeletedCommentProps = {
     commentInstance: CommentClass;
@@ -45,27 +45,5 @@ const DeletedCommentItem: React.FC<DeletedCommentProps> = ({
         </Flex>
     );
 };
-
-type ReplyToggleButtonProps = {
-    isShowReply: boolean;
-    handleShowReplyIconClicked: () => void;
-    fontSize: string;
-};
-
-const ReplyToggleButton: React.FC<ReplyToggleButtonProps> = ({
-    isShowReply,
-    handleShowReplyIconClicked,
-    fontSize
-}) => (
-    <IconButton
-        isRound={true}
-        aria-label="Toggle Reply Comments"
-        icon={isShowReply ? <SlMinus size={fontSize} /> : <SlPlus size={fontSize} />}
-        onClick={handleShowReplyIconClicked}
-        size="sm"
-        bg="none"
-        border="none"
-    />
-);
 
 export default DeletedCommentItem;
