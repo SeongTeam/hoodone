@@ -1,4 +1,4 @@
-import InputComment from "./InputComment";
+import InputComment from "../InputComment";
 import CommentItemList from "./commenItemtList";
 import { CommentType} from "@/atoms/comment";
 import { Flex, Box } from "@chakra-ui/react";

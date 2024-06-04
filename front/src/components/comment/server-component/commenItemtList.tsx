@@ -1,6 +1,6 @@
 import React from 'react'
 import { CommentType } from '@/atoms/comment';
-import CommentItem from './commentItem';
+import CommentItem from '../commentItem';
 import { Flex, Box } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import { isLeafCommentOfPage } from '@/lib/server-only/commentLib';

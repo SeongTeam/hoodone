@@ -6,7 +6,7 @@ import { customColors } from "@/utils/chakra/customColors";
 import  htmlReactParser  from "html-react-parser";
 import PostMenu from "../postMenu";
 import { CommentType } from "@/atoms/comment";
-import CommentArea from "@/components/comment/commentArea";
+import CommentArea from "@/components/comment/server-component/commentArea";
 import logger from "@/utils/log/logger";
 
 type PostProps = {
