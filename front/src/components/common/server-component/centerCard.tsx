@@ -3,7 +3,6 @@ import React, { Suspense } from "react";
 import { getCachedPaginatedPosts } from "@/lib/server-only/postLib";
 import { PostType } from "@/atoms/post";
 import PostList from "@/components/posts/view/postList";
-import { testComponent } from "@/lib/example"
 import LoadMorePosts from "@/components/posts/view/loadMorePosts";
 
 type CenterCardProps = {
