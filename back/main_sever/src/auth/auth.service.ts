@@ -55,6 +55,7 @@ export class AuthService {
             secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
             complete: true,
         });
+        console.log(decoded);
 
         /**
          * sub: id
@@ -66,7 +67,7 @@ export class AuthService {
         }
         const newToken: string = this.signToken(
             {
-                ...decoded,
+                ...decoded.payload,
             },
             isRefreshToken,
         );
