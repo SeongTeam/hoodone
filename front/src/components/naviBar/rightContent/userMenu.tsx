@@ -15,7 +15,8 @@ import React from 'react';
 
 import { useRouter } from 'next/navigation';
 import { useRecoilState } from 'recoil';
-import { useUserAccountWithSSR , defaultUserAccount  } from '@/atoms/userAccount';
+import { useUserAccountWithSSR  } from "@/hooks/userAccount";
+import { defaultUserAccount } from '@/atoms/userAccount';
 import { customColors } from '@/utils/chakra/customColors';
 import { signOut } from '@/server-actions/AuthAction';
 

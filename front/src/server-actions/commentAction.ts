@@ -85,13 +85,8 @@ export async function leaveReply(
 }
 
 export async function deleteComment(postID: number, commentID: number, path: string) {
-    const accessToken = cookies().get('accessToken')?.value;
-
-    if (!accessToken) {
-        throw new Error('accessToken is not exist');
-    }
-
     try {
+        const accessToken = await validateAuth();
         const res = await fetch(`${backendURL}/posts/${postID}/comments/${commentID}`, {
             method: 'DELETE',
             headers: {

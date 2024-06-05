@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { AuthModalState } from '@/atoms/authModal';
-import { useUserAccountWithSSR } from '@/atoms/userAccount';
+import { useUserAccountWithSSR } from "@/hooks/userAccount";
 import { signIn } from '@/server-actions/AuthAction';
 import { customColors } from '@/utils/chakra/customColors';
 import { useForm } from 'react-hook-form';
@@ -45,15 +45,11 @@ const Login: React.FC<LoginProps> = () => {
 
         const res = await signIn(formData);
 
-        console.log(`[loginWithEmailAndPassword]`, res);
-
         if (res.ok) {
-            /*TODO
-        - nickname 등의 유저 정보를 서버에서 가져오는 로직 필요 
-        */
+            const nickname = res.response.nickname;
             setUserState((prev) => ({
                 ...prev,
-                email: email,
+                nickname: nickname,
                 isLogin: true,
             }));
             setAuthModelState((prev) => ({

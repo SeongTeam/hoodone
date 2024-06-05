@@ -83,7 +83,7 @@ export class AuthUseCase {
 
     async loginWithEmail(
         loginInfo: Pick<UserModel, 'email' | 'password'>,
-    ): Promise<{ accessToken: string; refreshToken: string }> {
+    ): Promise<{ nickname: string; accessToken: string; refreshToken: string }> {
         const existingUser = await this.userUseCase.getUserByEmail(loginInfo.email);
         let accessToken, refreshToken;
         Logger.log(`loginWithEmail() =>>> ${JSON.stringify(existingUser)}`);
@@ -98,6 +98,7 @@ export class AuthUseCase {
         }
 
         return {
+            nickname: existingUser.nickname,
             accessToken,
             refreshToken,
         };
