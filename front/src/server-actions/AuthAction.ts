@@ -68,7 +68,7 @@ export async function signUp(formData: FormData) {
 }
 
 export async function signIn(formData: FormData) {
-    const ret: responseData = { ok: false, message: '', response: {} };
+    const ret: responseData = { ok: false, message: '', response: { nickname: '' } };
     try {
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
@@ -92,11 +92,11 @@ export async function signIn(formData: FormData) {
             const responseData: AuthApiResponseDto = await res.json();
             logger.info('Backend Response', { message: responseData });
 
-            const { accessToken, refreshToken } = responseData.postLoginEmail!;
+            const { nickname, accessToken, refreshToken } = responseData.postLoginEmail!;
 
             setAccessTokenCookie(accessToken);
             setRefreshTokenCookie(refreshToken);
-
+            ret.response = { nickname };
             ret.ok = true;
         } else {
             const data = await res.json();

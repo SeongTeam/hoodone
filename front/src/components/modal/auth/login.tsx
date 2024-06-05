@@ -45,15 +45,11 @@ const Login: React.FC<LoginProps> = () => {
 
         const res = await signIn(formData);
 
-        console.log(`[loginWithEmailAndPassword]`, res);
-
         if (res.ok) {
-            /*TODO
-        - nickname 등의 유저 정보를 서버에서 가져오는 로직 필요 
-        */
+            const nickname = res.response.nickname;
             setUserState((prev) => ({
                 ...prev,
-                email: email,
+                nickname: nickname,
                 isLogin: true,
             }));
             setAuthModelState((prev) => ({

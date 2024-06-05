@@ -9,6 +9,7 @@ export class AuthApiResponseDto {
     };
 
     postLoginEmail?: {
+        nickname: string;
         refreshToken: string;
         accessToken: string;
     };

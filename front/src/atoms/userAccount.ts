@@ -4,16 +4,14 @@ import { persistAtom } from '@/utils/recoil/recoild-persist';
 import { useEffect, useState } from 'react';
 
 export interface userAccountState {
-    email: string; // identifier
-    nickName: string;
+    nickname: string; // identifier
     isLogin: boolean;
     status: 'activated' | 'suspended' | 'banned';
     profileImg: string;
 }
 
 export const defaultUserAccount: userAccountState = {
-    email: '',
-    nickName: '',
+    nickname: '',
     isLogin: false,
     status: 'activated',
     profileImg: '',
