@@ -14,7 +14,7 @@ import {
 import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { AuthModalState } from '@/atoms/authModal';
-import { useUserAccountWithSSR } from '@/atoms/userAccount';
+import { useUserAccountWithSSR } from "@/hooks/userAccount";
 import AuthInput from './authInput';
 import ResetPassword from './resetPassword';
 import { customColors } from '@/utils/chakra/customColors';

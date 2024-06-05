@@ -3,7 +3,7 @@
 import { Box, Stack } from "@chakra-ui/react";
 import CreatePostForm from "@/components/posts/create/createPostForm";
 import { useRecoilState } from "recoil";
-import { useUserAccountWithSSR } from "@/atoms/userAccount";
+import { useUserAccountWithSSR } from "@/hooks/userAccount";
 
 
 export default function CreatePostPage() {

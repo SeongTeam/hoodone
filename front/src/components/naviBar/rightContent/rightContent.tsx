@@ -5,7 +5,7 @@ import UserMenu from './userMenu';
 import AuthButtons from './authButtons';
 import { useRecoilState } from 'recoil';
 import AuthModal from '@/components/modal/auth/authModal';
-import { useUserAccountWithSSR } from '@/atoms/userAccount';
+import { useUserAccountWithSSR } from "@/hooks/userAccount";
 
 const RightContent: React.FC = () => {
     const [user, setUser] = useUserAccountWithSSR();

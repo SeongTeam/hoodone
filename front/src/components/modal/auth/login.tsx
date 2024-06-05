@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { AuthModalState } from '@/atoms/authModal';
-import { useUserAccountWithSSR } from '@/atoms/userAccount';
+import { useUserAccountWithSSR } from "@/hooks/userAccount";
 import { signIn } from '@/server-actions/AuthAction';
 import { customColors } from '@/utils/chakra/customColors';
 import { useForm } from 'react-hook-form';
