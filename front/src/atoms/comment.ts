@@ -5,7 +5,6 @@ export type CommentType = {
     id: number;
     author: AuthorType;
     content: string;
-    post: PostType;
     updatedAt: Date;
     createdAt: Date;
     likeCount: number;

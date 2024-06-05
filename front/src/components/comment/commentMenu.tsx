@@ -4,6 +4,7 @@ import { Flex, IconButton, Menu, MenuButton, MenuList, MenuItem } from "@chakra-
 import { SlOptions } from "react-icons/sl";
 import { deleteComment } from "@/server-actions/commentAction";
 import { usePathname , useParams } from "next/navigation";
+import { useIsOwner } from "@/hooks/userAccount";
 
 type CommentMenuType = {
     commentInstance: CommentClass
@@ -21,6 +22,7 @@ type CommentMenuType = {
 const CommentMenu : React.FC<CommentMenuType> = ({commentInstance}) => {
     const path = usePathname();
     const params = useParams<{ postid: string}>();
+    const isOwner = useIsOwner(commentInstance.getComment().author.nickname);
 
     const handleReport = () => {
         alert('Report');
@@ -49,10 +51,15 @@ const CommentMenu : React.FC<CommentMenuType> = ({commentInstance}) => {
                 <MenuItem onClick={handleReport}>
                     Report
                 </MenuItem>
-                <MenuItem onClick={handleEdit}>
+                <MenuItem 
+                    hidden={!isOwner}
+                    onClick={handleEdit}>
                     Edit
                 </MenuItem>
-                <MenuItem onClick={handleDelete}>
+                <MenuItem 
+                    hidden={!isOwner}
+                    onClick={handleDelete}
+                >
                     Delete
                 </MenuItem>
 

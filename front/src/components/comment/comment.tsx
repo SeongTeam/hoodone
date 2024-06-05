@@ -6,6 +6,8 @@ import { customColors } from "@/utils/chakra/customColors";
 import { mdFontSize } from "@/utils/chakra/fonts";
 import CommentMenu from "./commentMenu";
 import ReplyToggleButton from "./replyToggleButton";
+import { useIsOwner, useUserAccountWithSSR } from "@/hooks/userAccount";
+import { SP } from "next/dist/shared/lib/utils";
 
 
 type CommentProps = {
@@ -33,8 +35,7 @@ const Comment : React.FC<CommentProps> = ({
     const timeAgo = comment.createdAt.toString();
     const buttonColor = customColors.black[200];
     const hasReplies = commentInstance.isHaveReply();
-
-
+    const isCommentOwner = useIsOwner(comment.author.nickname);
     return (
         <Flex 
             color={customColors.white[300]} 
@@ -42,9 +43,12 @@ const Comment : React.FC<CommentProps> = ({
             borderRadius={"15px"}
             px={2}
             py={1}
+            border={ isCommentOwner ? "1px solid" : "none"}
+            borderColor={isCommentOwner ? customColors.white[100] : "none"}
+            borderLeft="none"
         >
             <Flex width={"10%"} justifyContent={"space-between"} flexDir={"column"} >
-                <Text>{author}</Text>
+                <Text >{author}</Text>
                 <Spacer/>
                 {hasReplies&&<ReplyToggleButton
                     isShowReply={isShowReply}
@@ -68,6 +72,7 @@ const Comment : React.FC<CommentProps> = ({
                     >Reply</Button>
                 </Flex>
             </Flex>
+            <Spacer/>
         </Flex>
     );
 }
