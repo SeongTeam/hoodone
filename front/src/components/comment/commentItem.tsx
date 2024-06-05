@@ -1,11 +1,12 @@
 "use client"
-import { CommentType, CommentClass } from '@/atoms/commen';
+import { CommentType, CommentClass } from '@/atoms/comment';
 import React, { useState} from 'react';
 import { Flex,  } from '@chakra-ui/react'
 import { customColors } from '@/utils/chakra/customColors';
 import Comment from './comment';
 import InputReply from './InputReply';
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
+import DeletedCommentItem from './deletedCommentItem';
 
 
 
@@ -74,12 +75,17 @@ const CommentItem : React.FC<CommentItemProps> = ({
             borderLeft={`3px solid ${borderColor}`}
             gap={"0.5rem"}
         >
-            <Comment 
-                commentInstance={commentInstance} 
-                handleReplyButtonClicked={handleWriteReply}
-                handleShowReplyIconClicked={handleShowReply}
-                isShowReply={isShowReply}
-            />
+            {commentInstance.isDeleted() ?
+                <DeletedCommentItem commentInstance={commentInstance} isShowReply={isShowReply} handleShowReplyIconClicked={handleShowReply}/> 
+            : 
+                <Comment 
+                    commentInstance={commentInstance} 
+                    handleReplyButtonClicked={handleWriteReply}
+                    handleShowReplyIconClicked={handleShowReply}
+                    isShowReply={isShowReply}
+                />
+
+            } 
             {isWriteReply && <InputReply handleAddReply={handleAddReply} handleCancelReply= {handleCancelReply} parentComment={comment}/>}
             {isShowReply 
                 && 

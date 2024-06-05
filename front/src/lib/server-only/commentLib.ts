@@ -1,7 +1,7 @@
 import 'server-only';
 import logger from '@/utils/log/logger';
 import { CommentApiResponseDto } from 'hoodone-shared';
-import { CommentType } from '@/atoms/commen';
+import { CommentType } from '@/atoms/comment';
 import assert from 'assert';
 
 const backendURL = process.env.BACKEND_URL;
