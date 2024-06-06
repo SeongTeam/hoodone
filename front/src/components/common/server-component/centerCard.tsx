@@ -17,8 +17,6 @@ type CenterCardProps = {
 - Infinite scroll 구현하기
     */
 const CenterCard: React.FC = async () => {
-    const initialPage = 1;
-    const postList : PostType[] | null = await getCachedPaginatedPosts(initialPage);
     
     return (
         <Flex
@@ -29,13 +27,7 @@ const CenterCard: React.FC = async () => {
             pt ="1rem"
             flexDir={"column"}
         >
-            {postList && postList.length > 0 ?
-                <>
-                    <PostList postList={postList}   />
-                    <LoadMorePosts/>
-                </>
-                :<Text>no post</Text>
-            }
+            <LoadMorePosts />
         </Flex>
     );
 }

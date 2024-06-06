@@ -18,15 +18,12 @@ cloudinary.config({
 });
 */
 
-/*TODO
-- @/lib/* 로 옮기기
-  - server Action 내에서는 fetch 요청이 캐싱되지 않으므로 비효울적.
-- Next Sever에서 posts[] 메모리에 저장 구현
-  - client가 특정 post에 접근시도시, next server에 저장된 post[]에서 탐색후 반환
-- Post 가져오는 로직 최적화 하기
-  option1) Next Sever의 post[]에서 postID 탐색하여 가져오도록 수정 고려
-  option2) Next Cache 활용
-*/
+export const getPostLibConfig = () => {
+    const defaultLimit = 5;
+    const initialOffset = 0;
+
+    return { defaultLimit, initialOffset };
+};
 
 export async function getAllPosts() {
     try {
@@ -47,18 +44,11 @@ export async function getAllPosts() {
 }
 
 export async function getPostWithIDFromCache(id: string, PostsPos: number) {
+    const { defaultLimit } = getPostLibConfig();
+
     try {
         const offset = Math.floor(PostsPos / defaultLimit) + 1;
-        const [postsIniitalpage, postsLoadMorepage] = await Promise.all([
-            getCachedPaginatedPosts(offset),
-            getCachedPaginatedPosts(offset + 1),
-        ]);
-
-        if (!postsIniitalpage && !postsLoadMorepage) {
-            throw new Error(`both pages are falsy. (id: ${id} , PostsPos: ${PostsPos})`);
-        }
-
-        const posts = [...(postsIniitalpage || []), ...(postsLoadMorepage || [])];
+        const posts = await getCachedPaginatedPosts(offset, defaultLimit);
 
         assert(Array.isArray(posts));
 
@@ -101,9 +91,7 @@ export async function getPostWithID(id: string, PostsPos: number) {
         const cacheData = getPostWithIDFromCache(id, PostsPos);
         const backendData = getPostWithIDFromServer(id);
 
-        const [cache, backend] = await Promise.all([cacheData, backendData]);
-
-        const post = cache ?? backend;
+        const post = await Promise.race([cacheData, backendData]);
 
         assert(post !== undefined, 'post shoulde be defined or null');
         return post;
@@ -113,42 +101,34 @@ export async function getPostWithID(id: string, PostsPos: number) {
     }
 }
 
-const defaultLimit = 5;
-export async function getPaginatedPosts(
-    offset: number,
-    limit: number = defaultLimit,
-): Promise<PostType[] | null> {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const res = await fetch(
-                `${backendURL}/posts/paginated?offset=${offset}&limit=${limit}`,
-            );
+export async function getPaginatedPosts(offset: number, limit: number) {
+    try {
+        const res = await fetch(`${backendURL}/posts/paginated?offset=${offset}&limit=${limit}`);
 
-            if (!res.ok) {
-                logger.error('getPaginatedPosts error', {
-                    message: `(offset: ${offset}, limit: ${limit}) ${JSON.stringify(res.body)} ${
-                        res.status
-                    }`,
-                });
-                reject(new Error('getPaginatedPosts error'));
-            }
-
-            const dto: PostApiResponseDto = await res.json();
-            const data = dto.getPaginatedPosts as PostType[];
-
-            resolve(data);
-        } catch (error) {
-            logger.error('Error getPaginatedPosts', { message: error });
-            resolve(null);
+        if (!res.ok) {
+            logger.error('getPaginatedPosts error', {
+                message: `(offset: ${offset}, limit: ${limit}) ${JSON.stringify(res.body)} ${
+                    res.status
+                }`,
+            });
+            throw new Error('getPaginatedPosts error');
         }
-    });
+
+        const dto: PostApiResponseDto = await res.json();
+        const data = dto.getPaginatedPosts as PostType[];
+
+        return data;
+    } catch (error) {
+        logger.error('Error getPaginatedPosts', { message: error });
+        return null;
+    }
 }
 
 /*TODO
 - unstable_cache() 안정성 확인 후, 사용 유지 고려하기
 */
 export const getCachedPaginatedPosts = unstable_cache(
-    async (offset: number) => getPaginatedPosts(offset),
+    async (offset: number, limit: number) => getPaginatedPosts(offset, limit),
     ['posts-paginated'],
     { tags: ['all-posts'] },
 );
