@@ -21,6 +21,7 @@ import { off } from "process";
 
 
 const INITIAL_OFFSET = 2;
+const BatchSize = 1;
 const getPaginatedPostsFromAPI = async (offset: number) => {
     const res = await fetch(`http://localhost:4000/api/posts?offset=${offset}`)
     const posts = res.json();
@@ -47,8 +48,8 @@ const LoadMorePosts : React.FC = ( ) => {
             console.log("try state");
             const newPosts = await getPaginatedPostsFromAPI(offset);
             setPosts(posts => [...posts, ...newPosts]);
-            setOffset(prev => prev++);
-            if(newPosts.length <= 0) setHasMore(true);
+            setOffset(prev => prev + BatchSize);
+            if(newPosts.length <= 0) setHasMore(false);
         }
         catch(error){
             console.log(error);
