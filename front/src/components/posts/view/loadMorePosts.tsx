@@ -17,10 +17,9 @@ import { PostType } from "@/atoms/post";
     - Using motion.div on Server component. 
 */
 const INITIAL_OFFSET = 1;
-const LIMIT = 4;
 const BatchSize = 1;
-const getPaginatedPostsFromAPI = async (offset: number,limit : number) => {
-    const res = await fetch(`http://localhost:4000/api/posts?offset=${offset}&limit=${limit}`)
+const getPaginatedPostsFromAPI = async (offset: number) => {
+    const res = await fetch(`http://localhost:4000/api/posts?offset=${offset}`)
     const posts = res.json();
     return posts;
 }
@@ -38,7 +37,7 @@ const LoadMorePosts : React.FC = ( ) => {
         }
         setIsLoading(true);
         try{
-            const newPosts = await getPaginatedPostsFromAPI(offset,LIMIT);
+            const newPosts = await getPaginatedPostsFromAPI(offset);
             setPosts(posts => [...posts, ...newPosts]);
             setOffset(prev => prev + BatchSize);
             if(newPosts.length <= 0) setHasMore(false);
