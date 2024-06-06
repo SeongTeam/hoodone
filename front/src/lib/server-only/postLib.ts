@@ -148,7 +148,7 @@ export async function getPaginatedPosts(
 - unstable_cache() 안정성 확인 후, 사용 유지 고려하기
 */
 export const getCachedPaginatedPosts = unstable_cache(
-    async (offset: number) => getPaginatedPosts(offset),
+    async (offset: number, limit: number) => getPaginatedPosts(offset, limit),
     ['posts-paginated'],
     { tags: ['all-posts'] },
 );

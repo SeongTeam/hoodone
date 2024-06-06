@@ -15,7 +15,13 @@ export async function GET(req: NextRequest) {
         if (!offset) {
             throw new Error('offset or limit not found');
         }
-        const posts: PostType[] | null = await getCachedPaginatedPosts(parseInt(offset));
+        if (!limit) {
+            throw new Error('offset or limit not found');
+        }
+        const posts: PostType[] | null = await getCachedPaginatedPosts(
+            parseInt(offset),
+            parseInt(limit),
+        );
 
         return NextResponse.json(posts);
     } catch (error) {
