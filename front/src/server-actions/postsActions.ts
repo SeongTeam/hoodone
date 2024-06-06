@@ -95,7 +95,7 @@ export async function createPosts(formData: FormData) {
         /*TODO
         - token get 실패시, 홈이동 > 로그인 창 오픈.
         */
-        const accessToken = validateAuth();
+        const accessToken = await validateAuth();
 
         const res = await fetch(`${backendURL}/posts`, {
             method: 'POST',
@@ -118,5 +118,5 @@ export async function createPosts(formData: FormData) {
     }
 
     revalidateTag('all-posts');
-    //redirect("/");
+    redirect('/');
 }
