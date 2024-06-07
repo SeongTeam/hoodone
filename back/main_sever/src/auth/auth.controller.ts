@@ -157,7 +157,7 @@ export class AuthController {
             throw new BadRequestException('유요하지 않은 pinCode');
         }
 
-        const result = await this.userUseCase.resetPassword({ password, id: user.id }, qr);
+        const result = await this.authUseCase.resetPassword({ password, id: user.id }, qr);
         return result;
     }
 
