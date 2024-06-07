@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { CommonInput } from './components/input/common_input';
 import { ButtonAndInput } from './components/input/button_and_inputs';
 import { showErrorToast, showSuccessToast } from './components/toast/toast';
+import { resetPassword, sendRegisterEmail } from '@/server-actions/AuthAction';
 
 const ResetPassword: React.FC = () => {
     const PASSWORD_MIN_LEN = 8;
@@ -31,27 +32,19 @@ const ResetPassword: React.FC = () => {
 
     const [isPassword, setIsPassword] = useState<boolean>(false);
     const [isSendEmail, setIsSendEmail] = useState(false);
-    // const [resetSuccess, setResetSucees] = useState(false);
 
     const [error, setError] = useState('');
 
     const onSendResetEmail = async () => {
-        const toEmail = form.getValues('email');
         try {
-            const response = await fetch(`/api/auth/registered-email/`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    toEmail,
-                }),
-                next: { revalidate: 60 },
-            });
+            const formData = new FormData();
+            formData.append('toEmail', form.getValues('email'));
 
-            const res = await response.json();
+            const res = await sendRegisterEmail(formData);
+
             console.log(res);
-            if (res.ok) {
+
+            if (res?.ok) {
                 showSuccessToast(useToastOption, { title: 'Success Send Mail!!' });
                 setIsSendEmail(true);
             } else {
@@ -62,37 +55,24 @@ const ResetPassword: React.FC = () => {
             showErrorToast(useToastOption, { title: 'Check your email address' });
         }
 
-        console.log('ssssss');
-        console.log(toEmail);
+        console.log('onSendResetEmail work');
     };
 
     const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        const email = form.getValues('email');
-        const password = form.getValues('password');
-        const pinCode = form.getValues('pinCode');
-
         try {
             if (!isPassword) {
                 return;
             }
-            const response = await fetch(`/api/auth/reset-password/`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email,
-                    password,
-                    pinCode,
-                }),
-                next: { revalidate: 60 },
-            });
 
-            const res = await response.json();
+            const formData = new FormData();
+            formData.append('email', form.getValues('email'));
+            formData.append('password', form.getValues('password'));
+            formData.append('pinCode', form.getValues('pinCode'));
+
+            const res = await resetPassword(formData);
+
             console.log(res);
-            if (res.ok) {
+            if (res?.ok) {
                 showSuccessToast(useToastOption, { title: 'Reset Success ' });
                 setAuthModalState((prev) => ({
                     ...prev,
