@@ -137,7 +137,7 @@ export async function requestCertifiedMail(toEmail: string) {
 
             console.log(responseData);
 
-            const message = responseData.postSendPinCode ?? '';
+            const message = responseData.sendSignUpPinCode ?? '';
             if (extractStatusMessage(message)) {
                 ret.ok = true;
             }
@@ -201,5 +201,72 @@ export async function comparePinCode(formData: FormData) {
         ret.message = `Internal Server error.`;
         ret.response = { e };
         return ret;
+    }
+}
+
+export async function sendRegisterEmail(formData: FormData) {
+    const ret: responseData = { ok: false, message: '', response: {} };
+    const toEmail = formData.get('toEmail') as string;
+    logger.info('register PATCH route.ts', {
+        message: `PATCH resiter 호출 성공 ${toEmail}`,
+    });
+    try {
+        const response: Response = await fetch(`${backURL}/auth/send-password-reset-link`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                toEmail,
+            }),
+            next: { revalidate: 100 },
+        });
+
+        if (response.ok) {
+            const res = await response.json();
+            const responseData: AuthApiResponseDto = res;
+
+            ret.ok = true;
+            ret.response = { result: responseData.sendPasswordResetLink };
+            return ret;
+        } else {
+        }
+    } catch (e) {}
+}
+
+export async function resetPassword(formData: FormData) {
+    const ret: responseData = { ok: false, message: '', response: {} };
+
+    const email = formData.get('email') as string;
+    const pinCode = formData.get('pinCode') as string;
+    const password = formData.get('password') as string;
+
+    try {
+        const response: Response = await fetch(`${backURL}/auth/reset-password`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email,
+                pinCode,
+                password,
+            }),
+            next: { revalidate: 100 },
+        });
+
+        const res = await response.json();
+
+        if (response.ok) {
+            const responseData: AuthApiResponseDto = res;
+
+            ret.ok = true;
+            ret.message = 'Reset  password successful';
+            ret.response = { result: responseData.resetPassword };
+            return ret;
+        } else {
+        }
+    } catch (e) {
+        console.log(e);
     }
 }
