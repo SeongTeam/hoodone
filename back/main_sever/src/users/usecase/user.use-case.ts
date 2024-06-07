@@ -65,33 +65,30 @@ export class UserUseCase {
         }
         return existingUser;
     }
+
     async updateUserData(
         id: number,
         userData: Pick<UserModel, 'nickname' | 'verificationToken'>,
         qr: QueryRunner,
     ) {
         try {
-            console.log('updateUserInfo userUseCase');
-            console.log(userData);
-
             return await this.userService.updateUser(id, { password: undefined, ...userData }, qr);
         } catch (e) {
             throw new BadRequestException('UserUseCase updateUserData 에러');
         }
     }
 
-    async resetPassword(userData: Pick<UserModel, 'id' | 'password'>, qr: QueryRunner) {
-        const { id, password } = userData;
-
+    /**user password를 바꾸는 함수는 보언을 위해서  updateUserData와 따로 사용합니다*/
+    async updateUserPassword(id: number, userData: Pick<UserModel, 'password'>, qr: QueryRunner) {
+        const { password } = userData;
         try {
-            return this.userService.updateUser(
+            return await this.userService.updateUser(
                 id,
                 { nickname: undefined, verificationToken: undefined, password },
                 qr,
             );
         } catch (e) {
-            console.log(e);
-            throw new BadRequestException('비밀번호 초괴화 실패');
+            throw new BadRequestException('UserUseCase  updateUserPassword 에러');
         }
     }
 }

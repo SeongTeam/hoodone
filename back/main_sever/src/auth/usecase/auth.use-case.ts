@@ -8,7 +8,7 @@ import { UserModel } from 'src/users/entities/user.entity';
 
 import { AuthService } from '../auth.service';
 import { AuthCredentialsDto } from '../dto/auth-credential.dto';
-import { ConflictException, Logger, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Logger } from '@nestjs/common';
 import { MailUseCase } from 'src/mail/usecase/mail.usecase';
 import { TempUserUseCase } from 'src/users/usecase/temp-user.case';
 
@@ -144,9 +144,8 @@ export class AuthUseCase {
         }
     }
 
+    /**TODO 디음에 pincode가 아닌 link로 로직을 바꾸자 */
     async sendPasswordResetLink(toEmail: string, qr: QueryRunner) {
-        /**TODO 디음에 pincode가 아닌 link로 로직을 바꾸자 */
-
         try {
             const pinCode = await this.tempUserUseCase.generatePinCode();
             const link = '';
@@ -168,6 +167,18 @@ export class AuthUseCase {
             return this.mailUseCase.sendCertificationPinCode(toEmail, pinCode);
         } catch (e) {
             throw new ConflictException('sendPasswordResetLink 동작 에러');
+        }
+    }
+
+    async resetPassword(userData: Pick<UserModel, 'id' | 'password'>, qr: QueryRunner) {
+        const { id, password } = userData;
+        const hashedPassword = await this.authService.inCodingPassword({ password });
+
+        try {
+            this.userUseCase.updateUserPassword(id, { password: hashedPassword }, qr);
+        } catch (e) {
+            console.log(e);
+            throw new BadRequestException('비밀번호 초기화 실패');
         }
     }
 }
