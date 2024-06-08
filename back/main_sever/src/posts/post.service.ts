@@ -199,4 +199,20 @@ export class PostsService {
         console.log(data);
         return data;
     }
+
+    async getPostFromBoard(boardId: number, offset: number, limit: number) {
+        const posts = this.postsRepository.find({
+            ...COMMON_POST_FIND_OPTION,
+            where: {
+                boardId: boardId,
+                isPublished: true,
+            },
+            skip: limit * (offset - 1),
+            take: limit,
+            order: {
+                createdAt: 'DESC',
+            },
+        });
+        return posts;
+    }
 }

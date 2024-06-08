@@ -9,8 +9,15 @@ import { PostsService } from './post.service';
 import { PostsController } from './post.controller';
 import { PostModel } from './entities/post.entity';
 import { PostsUseCases } from './usecase/post.use-case';
+import { BoardModule } from 'src/boards/boards.module';
 @Module({
-    imports: [TypeOrmModule.forFeature([PostModel]), AuthModule, UsersModule, CommonModule],
+    imports: [
+        TypeOrmModule.forFeature([PostModel]),
+        AuthModule,
+        UsersModule,
+        CommonModule,
+        BoardModule,
+    ],
     controllers: [PostsController],
 
     providers: [PostsService, PostsUseCases],
