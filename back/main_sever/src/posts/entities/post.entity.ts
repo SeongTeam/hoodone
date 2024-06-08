@@ -39,4 +39,7 @@ export class PostModel extends BaseModel {
 
     @OneToMany(() => CommentModel, (comment) => comment.post)
     comments: CommentModel[];
+
+    @Column({ name: 'board_id', default: 0 })
+    boardId: number;
 }

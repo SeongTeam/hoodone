@@ -11,6 +11,7 @@ import { BaseModel } from 'src/common/entity/base.entity';
 import { PostModel } from 'src/posts/entities/post.entity';
 import { CommentModel } from 'src/posts/comment/entities/comment.entity';
 import { RoleType } from '../const/role.type';
+import { BoardModel } from 'src/boards/entities/board.entity';
 
 export enum UserModelStatus {
     ACTIVE,
@@ -57,7 +58,7 @@ export class UserModel extends BaseModel {
     @Column({ name: 'user_reported_count' })
     userReportedCount: number;
 
-    @Column({ name: 'verification_token' })
+    @Column({ name: 'verification_token', default: '' })
     @IsString()
     verificationToken: string; // 비밀번호 초기화 와 같은 임시로 토큰이 필요할 겨우 사용
 
@@ -73,4 +74,7 @@ export class UserModel extends BaseModel {
     @Expose()
     @OneToMany(() => CommentModel, (comment) => comment.author)
     comments: CommentModel[];
+
+    @OneToMany(() => BoardModel, (board) => board.author)
+    boards: BoardModel[];
 }

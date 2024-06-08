@@ -7,7 +7,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
 import { CommonModule } from 'src/common/common.module';
-import { BoardsModule } from 'src/boards/boards.module';
+import { BoardModule } from 'src/boards/boards.module';
 import { TypeormConfig } from 'src/configs/typeorm.config';
 import { PostsModule } from 'src/posts/post.module';
 
@@ -66,7 +66,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         AuthModule,
         UsersModule,
         CommonModule,
-        BoardsModule,
+        BoardModule,
         PostsModule,
         CommentModule,
     ],

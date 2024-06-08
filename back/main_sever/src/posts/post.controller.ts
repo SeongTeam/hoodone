@@ -19,6 +19,7 @@ import { Roles } from 'src/users/decorator/roles.decorator';
 import { RoleType } from 'src/users/const/role.type';
 import { RoleGuard } from '../auth/guard/role.guard';
 import { Logger } from '@nestjs/common';
+import { BoardUseCase } from 'src/boards/usecase/board.use-case';
 
 /*TODO
 - Comment list 미포함하여 반환하도록 수정
@@ -26,7 +27,10 @@ import { Logger } from '@nestjs/common';
 */
 @Controller('posts')
 export class PostsController {
-    constructor(private readonly postUseCase: PostsUseCases) {}
+    constructor(
+        private readonly postUseCase: PostsUseCases,
+        private readonly boardUseCase: BoardUseCase,
+    ) {}
 
     /*TODO
     - Image URL 저장 추가하기
@@ -100,5 +104,44 @@ export class PostsController {
     @UseInterceptors(TransactionInterceptor)
     delete(@Param('id', ParseIntPipe) id: number, @QueryRunner() qr: QR) {
         return this.postUseCase.delete(id, qr);
+    }
+
+    /*TODO
+    - 프로토타입 로직 유지 혹은 다른 함수에 병합 고려
+    */
+    @Get('/board/:boardId')
+    async getPostsByBoardId(@Param('boardId', ParseIntPipe) boardId: number) {
+        return await this.postUseCase.getPostFromBoard(boardId, 1, 10);
+    }
+
+    @Post('/board/:boardId')
+    @Roles(RoleType.USER, RoleType.ADMIN)
+    @UseGuards(AccessTokenGuard, RoleGuard)
+    @UseInterceptors(TransactionInterceptor)
+    async addPost(
+        @User('id') userId: number,
+        @Param('boardId', ParseIntPipe) boardId: number,
+        @Body() body: CreatePostDto,
+        @QueryRunner() qr: QR,
+    ) {
+        /*TODO
+        - Post 생성시, boardID로 설정하도록 생성로직 변경필요
+        - post 생성 후, board에서 생성된 postid 추가 필요
+        */
+        //await this.boardUseCase.addPost(boardId, newPost.id, qr);
+    }
+
+    @Patch('/board/migration')
+    @Roles(RoleType.USER, RoleType.ADMIN)
+    @UseGuards(AccessTokenGuard, RoleGuard)
+    @UseInterceptors(TransactionInterceptor)
+    async patchBoardMigration(@Body() body, @QueryRunner() qr: QR) {
+        const { boardIdList, postIdList } = body;
+        /*TODO
+        - 특정 post 리스트를 board에 옮기는 로직 구현 필요.
+        - srcboard 에서 dstBoard로 옮기는가
+        - 서로다른 board에있는 postf를 특정 dstBoard로 옮기는가
+        필요하다면, 여러개 작성 필요
+        */
     }
 }

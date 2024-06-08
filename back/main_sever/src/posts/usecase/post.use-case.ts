@@ -91,4 +91,8 @@ export class PostsUseCases {
     getPaginatedPosts(offset: number, limit: number) {
         return this.postService.getPaginatedPosts(offset, limit);
     }
+
+    getPostFromBoard(boardId: number, offset: number, limit: number) {
+        return this.postService.getPostFromBoard(boardId, offset, limit);
+    }
 }
