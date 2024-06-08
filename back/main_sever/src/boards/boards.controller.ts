@@ -1,34 +1,81 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { BoardsService } from './boards.service';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    UseGuards,
+    UseInterceptors,
+    Logger,
+    BadRequestException,
+    ParseIntPipe,
+} from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
+import { AccessTokenGuard } from 'src/auth/guard/token/access-token.guard';
+import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
+import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
+import { User } from 'src/users/decorator/user.decorator';
+import { QueryRunner as QR } from 'typeorm';
+import { AccessLevel } from './entities/board.entity';
+import { BoardUseCase } from './usecase/board.use-case';
 
-@Controller('boards')
-export class BoardsController {
-    constructor(private readonly boardsService: BoardsService) {}
+@Controller('board')
+export class BoardController {
+    constructor(private readonly boardUseCase: BoardUseCase) {}
 
-    @Post()
-    create(@Body() createBoardDto: CreateBoardDto) {
-        return this.boardsService.create(createBoardDto);
-    }
-
-    @Get()
+    /*TODO
+    - Route 경로 정리하기
+    */
+    @Get('/all')
     findAll() {
-        return this.boardsService.findAll();
+        return this.boardUseCase.getAll();
     }
 
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.boardsService.findOne(+id);
+    @Get('find/deleted')
+    findDeleted() {
+        return this.boardUseCase.getDeletedAll();
     }
 
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateBoardDto: UpdateBoardDto) {
-        return this.boardsService.update(+id, updateBoardDto);
+    @Get('/:id')
+    findOne(@Param('id', ParseIntPipe) id: number) {
+        return this.boardUseCase.getOneById(id);
     }
 
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.boardsService.remove(+id);
+    @Post('/admin')
+    @UseGuards(AccessTokenGuard)
+    @UseInterceptors(TransactionInterceptor)
+    create(
+        @User('id') userId: number,
+        @Body() createBoardDto: CreateBoardDto,
+        @QueryRunner() qr: QR,
+    ) {
+        Logger.log('create board', { message: createBoardDto });
+        const { name, accessLevel: strifiedAccessLevel } = createBoardDto;
+
+        if (!this.isValidAccessLevel(strifiedAccessLevel)) {
+            Logger.log('invalid access level', { message: strifiedAccessLevel });
+            throw new BadRequestException('Invalid access level');
+        }
+        const accessLevel = AccessLevel[strifiedAccessLevel];
+        Logger.log('accessLevel', { message: accessLevel });
+        const boardInfo = { name, accessLevel };
+
+        Logger.log('create board', { message: boardInfo });
+        return this.boardUseCase.create(userId, boardInfo, qr);
+    }
+
+    //AccessLevel 혹은 다른 모듈에 내장하기
+    private isValidAccessLevel(key: string): key is keyof typeof AccessLevel {
+        return Object.keys(AccessLevel).includes(key);
+    }
+
+    @Delete('/admin/:id')
+    @UseGuards(AccessTokenGuard)
+    @UseInterceptors(TransactionInterceptor)
+    delete(@Param('id', ParseIntPipe) id: number, @QueryRunner() qr: QR) {
+        return this.boardUseCase.softDeleteBoard(id, qr);
     }
 }
