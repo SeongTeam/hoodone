@@ -54,11 +54,9 @@ export class CommentsController {
         @Body() createDto: CreateCommentDto,
         @QueryRunner() qr: QR,
     ) {
+        let res = new CommentApiResponseDto();
         try {
-            const { content } = createDto;
-            let res = new CommentApiResponseDto();
-
-            res.post = await this.commentUseCases.createComment(user, postId, { content }, qr);
+            res.post = await this.commentUseCases.createComment(user, postId, createDto, qr);
             return res;
         } catch (e) {
             console.log(e);
