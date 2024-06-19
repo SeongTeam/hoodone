@@ -8,10 +8,12 @@ import { lengthValidationMessage } from 'src/common/validation-message/length-va
 import { passwordValidationMessage } from 'src/common/validation-message/password-vaildation.message';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { BaseModel } from 'src/common/entity/base.entity';
-import { PostModel } from 'src/posts/entities/post.entity';
-import { CommentModel } from 'src/posts/comment/entities/comment.entity';
 import { RoleType } from '../const/role.type';
 import { BoardModel } from 'src/boards/entities/board.entity';
+import { PostModel } from 'src/posts/entities/post.entity';
+import { CommentModel } from 'src/posts/-comment/entities/comment.entity';
+import { QuestPostModel } from 'src/posts/entities/quest_post.entity';
+import { SbPostModel } from 'src/posts/entities/sb_post.entity';
 
 export enum UserModelStatus {
     ACTIVE,
@@ -68,8 +70,11 @@ export class UserModel extends BaseModel {
     // likedPosts: PostModel[];
 
     @Expose()
-    @OneToMany(() => PostModel, (post) => post.author)
-    posts: PostModel[];
+    @OneToMany(() => QuestPostModel, (post) => post.author)
+    questPosts: QuestPostModel[];
+
+    @OneToMany(() => SbPostModel, (post) => post.author)
+    sbPosts: PostModel[];
 
     @Expose()
     @OneToMany(() => CommentModel, (comment) => comment.author)
