@@ -33,7 +33,8 @@ export class TransactionInterceptor implements NestInterceptor {
             catchError(async (e) => {
                 await qr.rollbackTransaction();
                 await qr.release();
-                console.log('트랜잭션 실행 에러 발생'); // todo log로직 middle ware로 이동
+                console.log('트랜잭션 실행 에러 발생'); //
+                console.log(e); // todo log로직 middle ware로 이동
                 throw new InterceptorException({
                     message: 'TransactionInterceptor에서 에러 발생',
                     pastMsg: e,
