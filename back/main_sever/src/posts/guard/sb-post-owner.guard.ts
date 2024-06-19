@@ -10,10 +10,11 @@ import { Request } from 'express';
 import { RoleType } from 'src/users/const/role.type';
 import { UserModel } from 'src/users/entities/user.entity';
 import { PostsUseCases } from '../usecase/post.use-case';
+import { PostType } from '../pips/post-id.pip';
 
 /** post의 작성자 인지 확인합니다. 만약 ADMIN이라면 true를 반환 */
 @Injectable()
-export class PostOwnerGuard implements CanActivate {
+export class SbPostOwnerGuard implements CanActivate {
     constructor(private readonly postUseCase: PostsUseCases) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -39,7 +40,10 @@ export class PostOwnerGuard implements CanActivate {
             throw new BadRequestException('PostOwnerGuard) Post ID가 파라미터로 제공 돼야합니다.');
         }
 
-        const isOk = await this.postUseCase.isPostOwner(user.id, parseInt(id));
+        const isOk = await this.postUseCase.isPostOwner(user.id, {
+            id: parseInt(id),
+            postType: PostType.SB,
+        });
 
         if (!isOk) {
             throw new ForbiddenException('PostOwnerGuard) 권한이 없습니다.');

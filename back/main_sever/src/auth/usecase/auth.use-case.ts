@@ -147,6 +147,7 @@ export class AuthUseCase {
     /**TODO 디음에 pincode가 아닌 link로 로직을 바꾸자 */
     async sendPasswordResetLink(toEmail: string, qr: QueryRunner) {
         try {
+            // TODO tempUserUseCase 말고 emailUseCase로 변경
             const pinCode = await this.tempUserUseCase.generatePinCode();
             const link = '';
             const now = new Date();

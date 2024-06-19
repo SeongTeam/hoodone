@@ -1,32 +1,40 @@
-import { PostApiResponseDto } from 'hoodone-shared';
-import { ParseIntPipe, DefaultValuePipe, ValidationPipe } from '@nestjs/common/pipes';
-import { Controller, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common/decorators/core';
-import { Body, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common/decorators/http';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Headers,
+    Param,
+    Patch,
+    Post,
+    Query,
+    UseGuards,
+    UseInterceptors,
+} from '@nestjs/common/decorators';
+import { PostsUseCases } from '../usecase/post.use-case';
+import { BoardUseCase } from 'src/boards/usecase/board.use-case';
+import { User } from 'src/users/decorator/user.decorator';
+import { CreatePostDto } from '../dto/create-post.dto';
+import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { QueryRunner as QR } from 'typeorm';
-
 import { AccessTokenGuard } from 'src/auth/guard/token/access-token.guard';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
-import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
-import { User } from 'src/users/decorator/user.decorator';
-
-import { CreatePostDto } from './dto/create-post.dto';
-import { GetPaginatedPostsQueryDTO } from './dto/get-paginated-posts.dto';
-import { PostsUseCases } from './usecase/post.use-case';
+import { PostApiResponseDto } from 'hoodone-shared/dist/response-dto/post-api-reponse.dto';
+import { GetPaginatedPostsQueryDTO } from '../dto/get-paginated-posts.dto';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
-import { PostOwnerGuard } from './guard/post-owner.guard';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { ParseIntPipe, ValidationPipe } from '@nestjs/common/pipes';
 import { Roles } from 'src/users/decorator/roles.decorator';
 import { RoleType } from 'src/users/const/role.type';
-import { RoleGuard } from '../auth/guard/role.guard';
-import { Logger } from '@nestjs/common';
-import { BoardUseCase } from 'src/boards/usecase/board.use-case';
+import { QuestPostOwnerGuard } from '../guard/quest-post-owner.guard';
+import { RoleGuard } from 'src/auth/guard/role.guard';
+import { UpdatePostDto } from '../dto/update-post.dto';
 
 /*TODO
 - Comment list 미포함하여 반환하도록 수정
     - front의 infinite scroll 동작시 fetch를 감소시켜야하므로 수정 필요
 */
-@Controller('posts')
-export class PostsController {
+@Controller('quests')
+export class QuestPostsController {
     constructor(
         private readonly postUseCase: PostsUseCases,
         private readonly boardUseCase: BoardUseCase,
@@ -40,21 +48,20 @@ export class PostsController {
     @UseInterceptors(TransactionInterceptor)
     async post(@User('id') userId: number, @Body() body: CreatePostDto, @QueryRunner() qr: QR) {
         // 로직 실행
-        const newPost = await this.postUseCase.create(userId, body, qr);
+        console.log(body);
+        const newPost = await this.postUseCase.createQuest(userId, body, qr);
 
         return newPost;
     }
 
-    /*TODO 
-    - 가져오는 포스트를 정렬하는 기능을 추가 [최신, 인기, 조회수 등등]
-    */
     @Get('/all')
-    async getAllPosts() {
+    async getAll() {
         const res = new PostApiResponseDto();
-        res.getAll = await this.postUseCase.getAll();
+        res.getAll = await this.postUseCase.getAllQuests();
         return res;
     }
 
+    /** TODO paginated 구현 quest와 sb 나눌 것인지 논의*/
     @Get('/paginated')
     async getPaginatedPosts(
         @Query(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
@@ -70,40 +77,40 @@ export class PostsController {
     // TODO 복수와 단수를 반환하는 API를 만들고
     // 복수를 반환할때 Query string을 사용하는 로직 추가
     @Get()
-    async getPostsByEmail(@Query('email') userEmail: string) {
+    async getQuestsByEmail(@Query('email') userEmail: string) {
         let res = new PostApiResponseDto();
-        res.getAll = await this.postUseCase.getPostsByEmail(userEmail);
+        res.getAll = await this.postUseCase.getQuestsByEmail(userEmail);
 
         return res;
     }
 
-    @Get(':id')
+    @Get('/:id')
     @IsPublic()
     async getById(@Param('id', ParseIntPipe) id: number) {
         let res = new PostApiResponseDto();
-        res.getById = await this.postUseCase.getById(id);
+        res.getById = await this.postUseCase.getQuestById(id);
 
         return res;
     }
 
-    @Patch(':id')
+    @Patch('/:id')
     @Roles(RoleType.USER, RoleType.ADMIN)
-    @UseGuards(AccessTokenGuard, PostOwnerGuard, RoleGuard)
+    @UseGuards(AccessTokenGuard, QuestPostOwnerGuard, RoleGuard)
     @UseInterceptors(TransactionInterceptor)
-    async patchPost(
+    async patch(
         @Param('id', ParseIntPipe) id: number,
         @Body() body: UpdatePostDto,
         @QueryRunner() qr: QR,
     ) {
-        return this.postUseCase.update(id, body);
+        return this.postUseCase.updateQuest(id, body);
     }
 
-    @Delete(':id')
+    @Delete('/quest:id')
     @Roles(RoleType.USER, RoleType.ADMIN)
-    @UseGuards(AccessTokenGuard, PostOwnerGuard, RoleGuard)
+    @UseGuards(AccessTokenGuard, QuestPostOwnerGuard, RoleGuard)
     @UseInterceptors(TransactionInterceptor)
-    delete(@Param('id', ParseIntPipe) id: number, @QueryRunner() qr: QR) {
-        return this.postUseCase.delete(id, qr);
+    deleteQuest(@Param('id', ParseIntPipe) id: number, @QueryRunner() qr: QR) {
+        return this.postUseCase.deleteQuest(id, qr);
     }
 
     /*TODO

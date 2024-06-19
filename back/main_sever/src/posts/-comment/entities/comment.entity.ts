@@ -5,7 +5,8 @@ import { Column, Entity, JoinColumn } from 'typeorm';
 import { BaseModel } from 'src/common/entity/base.entity';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { UserModel } from 'src/users/entities/user.entity';
-import { PostModel } from 'src/posts/entities/post.entity';
+import { QuestPostModel } from 'src/posts/entities/quest_post.entity';
+import { SbPostModel } from 'src/posts/entities/sb_post.entity';
 
 @Entity('comment')
 export class CommentModel extends BaseModel {
@@ -13,9 +14,13 @@ export class CommentModel extends BaseModel {
     @JoinColumn({ name: 'user_id' })
     author: UserModel;
 
-    @ManyToOne(() => PostModel, (post) => post.comments, {})
-    @JoinColumn({ name: 'post_id' })
-    post: PostModel;
+    @ManyToOne(() => QuestPostModel, (post) => post.comments, { nullable: true })
+    @JoinColumn({ name: 'quest_post_id' })
+    questPost: QuestPostModel;
+
+    @ManyToOne(() => SbPostModel, (post) => post.comments, { nullable: true })
+    @JoinColumn({ name: 'sb_post_id' })
+    sbtPost: SbPostModel;
 
     @Column()
     @IsNotEmpty()

@@ -1,7 +1,8 @@
 import { PartialType, PickType } from '@nestjs/mapped-types';
-import { IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { CreateCommentDto } from './create-comment.dto';
+import { Column } from 'typeorm/decorator/columns/Column';
 
 export class UpdateCommentDto extends PartialType(CreateCommentDto) {
     @IsString({

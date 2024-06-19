@@ -32,40 +32,50 @@ import { RoleType } from 'src/users/const/role.type';
 import { RoleGuard } from 'src/auth/guard/role.guard';
 import { CommentOwnerGuard } from './guard/comment-owner.guard';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { PostId, PostIdPip, PostType } from '../pips/post-id.pip';
 
+/** 
+
+TODO comment는 controller까지 분리하여서 사용, 
+1. comment도 model을 나눠서 사용한다. 하지만 유저는 그런 것을 느끼지 못하게 만들단
+* */
 @Controller('posts/:postId/comments')
 export class CommentsController {
     constructor(
         @Inject(forwardRef(() => CommentUseCase))
         private readonly commentUseCases: CommentUseCase,
     ) {}
-
     @Post()
     @UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
     async postComment(
         @User() user: UserModel,
-        @Param('postId', ParseIntPipe) postId: number,
+        @Param('postId', PostIdPip) postId: PostId,
         @Body() createDto: CreateCommentDto,
         @QueryRunner() qr: QR,
     ) {
-        let res = new CommentApiResponseDto();
-        res.post = await this.commentUseCases.createComment(user, postId, createDto, qr);
+        try {
+            const { content } = createDto;
+            let res = new CommentApiResponseDto();
 
-        return res;
+            res.post = await this.commentUseCases.createComment(user, postId, { content }, qr);
+            return res;
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     @Post('/reply')
     @UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
     async postReplyComment(
-        @Param('postId', ParseIntPipe) postId: number,
-        @Body() creatDto: CreateReplyCommentDto,
+        @Param('postId', PostIdPip) postId: PostId,
+        @Body() createDto: CreateReplyCommentDto,
         @User() user: UserModel,
         @QueryRunner() qr: QR,
     ) {
         let res = new CommentApiResponseDto();
-        res.postReply = await this.commentUseCases.createReplyComment(user, postId, creatDto, qr);
+        res.postReply = await this.commentUseCases.createReplyComment(user, postId, createDto, qr);
 
         return res;
     }

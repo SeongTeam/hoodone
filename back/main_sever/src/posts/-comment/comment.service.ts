@@ -36,7 +36,7 @@ export class CommentsService {
         return this.commentRepository.find({
             ...COMMON_COMMENT_FIND_OPTION,
             where: {
-                post: { id: postId },
+                // post: { id: postId },
             },
             order: {
                 responseToId: 'ASC',
@@ -56,7 +56,7 @@ export class CommentsService {
         return this.commentRepository.find({
             ...COMMON_COMMENT_FIND_OPTION,
             where: {
-                post: { id: postId },
+                // post: { id: postId },
                 depth: Between(depthRange[0], depthRange[1]),
             },
             order: {
@@ -85,12 +85,24 @@ export class CommentsService {
      */
     async createComment(
         author: UserModel,
-        postId: number,
         commentInfo: Pick<CommentModel, 'content'>,
+        postId: { questId?: number; sbId?: number },
     ) {
+        const { questId, sbId } = postId;
+
+        // TODO 새로운 exception 정의하지
+        if (questId && sbId) {
+            throw new BadRequestException(
+                'createComment(), questId, sbId가 들어 있으면 안됩니다. 1개만 들어 있어야 합니다. ',
+            );
+        }
+
         const newComment: CommentModel = this.commentRepository.create({
-            post: {
-                id: postId,
+            questPost: {
+                id: questId,
+            },
+            sbtPost: {
+                id: sbId,
             },
             index: 0, // TODO): post의 댓글 리스트 갯수 만큼 index를 증가시켜야 한다.
             depth: 0,
@@ -105,18 +117,32 @@ export class CommentsService {
      */
     async createReplyComment(
         author: UserModel,
-        postId: number,
         commentInfo: Pick<CommentModel, 'content' | 'responseToId'>,
+        postId: { questId?: number; sbId?: number },
         qr: QueryRunner,
     ) {
+        const { questId, sbId } = postId;
         const repository = this._getRepository(qr);
         const responseToComment = await this.loadById(commentInfo.responseToId);
         const depth = responseToComment.depth + 1;
         const _commentIDs = responseToComment.replyCommentIds;
 
+        if (questId && sbId) {
+            throw new BadRequestException(
+                'createReplyComment(), questId, sbId가 들어 있으면 안됩니다. 1개만 들어 있어야 합니다. ',
+            );
+        }
+
+        if (!(questId && sbId)) {
+            throw new BadRequestException('questId, sbId에 값이 모두 비어 있습니다 ');
+        }
+
         const newComment: CommentModel = repository.create({
-            post: {
-                id: postId,
+            questPost: {
+                id: questId,
+            },
+            sbtPost: {
+                id: sbId,
             },
             responseToId: commentInfo.responseToId,
             index: _commentIDs.length,
