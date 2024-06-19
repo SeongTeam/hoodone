@@ -6,6 +6,12 @@ import { SbPostModel } from './sb_post.entity';
 
 @Entity('quest_post')
 export class QuestPostModel extends PostModel {
+    @ManyToOne(() => UserModel, (user) => user.questPosts, {
+        nullable: false,
+    })
+    @JoinColumn({ name: 'user_id' })
+    author: UserModel;
+
     @OneToMany(() => SbPostModel, (sbPost) => sbPost.parentPost)
     sbPosts: SbPostModel[];
 

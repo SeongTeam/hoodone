@@ -9,12 +9,6 @@ export class PostModel extends BaseModel {
     // 1) UsersModel과 연동한다 Foreign Key를 이용해서
     // 2) null이 될 수 없다.
     //
-    @ManyToOne(() => UserModel, (user) => user.posts, {
-        nullable: false,
-    })
-    @JoinColumn({ name: 'user_id' })
-    author: UserModel;
-
     @Column()
     @IsString({
         message: stringValidationMessage,
