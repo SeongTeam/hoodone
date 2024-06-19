@@ -32,6 +32,7 @@ import { RoleType } from 'src/users/const/role.type';
 import { RoleGuard } from 'src/auth/guard/role.guard';
 import { CommentOwnerGuard } from './guard/comment-owner.guard';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { PostId, PostIdPip, PostType } from '../pips/post-id.pip';
 
 /** 
 
@@ -49,22 +50,15 @@ export class CommentsController {
     @UseInterceptors(TransactionInterceptor)
     async postComment(
         @User() user: UserModel,
-        @Param('postId', ParseIntPipe) postId: number,
+        @Param('postId', PostIdPip) postId: PostId,
         @Body() createDto: CreateCommentDto,
         @QueryRunner() qr: QR,
     ) {
         try {
-            const { isQuestPost, content } = createDto;
+            const { content } = createDto;
             let res = new CommentApiResponseDto();
-            console.log(`${postId} ${user.email}, ${isQuestPost}`);
 
-            res.post = await this.commentUseCases.createComment(
-                user,
-                postId,
-                isQuestPost,
-                { content },
-                qr,
-            );
+            res.post = await this.commentUseCases.createComment(user, postId, { content }, qr);
             return res;
         } catch (e) {
             console.log(e);
@@ -75,20 +69,14 @@ export class CommentsController {
     @UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
     async postReplyComment(
-        @Param('postId', ParseIntPipe) postId: number,
+        @Param('postId', PostIdPip) postId: PostId,
         @Body() createDto: CreateReplyCommentDto,
         @User() user: UserModel,
         @QueryRunner() qr: QR,
     ) {
-        const { isQuestPost } = createDto;
         let res = new CommentApiResponseDto();
-        res.postReply = await this.commentUseCases.createReplyComment(
-            user,
-            postId,
-            isQuestPost,
-            createDto,
-            qr,
-        );
+        res.postReply = await this.commentUseCases.createReplyComment(user, postId, createDto, qr);
+
         return res;
     }
 

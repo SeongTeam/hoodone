@@ -5,13 +5,6 @@ import { Transform } from 'class-transformer';
 import { Column } from 'typeorm/decorator/columns/Column';
 
 export class CreateReplyCommentDto extends PickType(CommentModel, ['content', 'responseToId']) {
-    @Column()
-    @IsBoolean()
-    isQuestPost: boolean;
-
-    // @IsNotEmpty()
-    // content: string;
-
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => {

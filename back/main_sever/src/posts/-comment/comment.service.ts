@@ -86,8 +86,7 @@ export class CommentsService {
     async createComment(
         author: UserModel,
         commentInfo: Pick<CommentModel, 'content'>,
-        // postId?: number ,
-        postId?: { questId?: number; sbId?: number },
+        postId: { questId?: number; sbId?: number },
     ) {
         const { questId, sbId } = postId;
 
@@ -99,9 +98,6 @@ export class CommentsService {
         }
 
         const newComment: CommentModel = this.commentRepository.create({
-            // post: {
-            //     id: postId,
-            // },
             questPost: {
                 id: questId,
             },
@@ -121,19 +117,33 @@ export class CommentsService {
      */
     async createReplyComment(
         author: UserModel,
-        postId: number,
         commentInfo: Pick<CommentModel, 'content' | 'responseToId'>,
+        postId: { questId?: number; sbId?: number },
         qr: QueryRunner,
     ) {
+        const { questId, sbId } = postId;
         const repository = this._getRepository(qr);
         const responseToComment = await this.loadById(commentInfo.responseToId);
         const depth = responseToComment.depth + 1;
         const _commentIDs = responseToComment.replyCommentIds;
 
+        if (questId && sbId) {
+            throw new BadRequestException(
+                'createReplyComment(), questId, sbId가 들어 있으면 안됩니다. 1개만 들어 있어야 합니다. ',
+            );
+        }
+
+        if (!(questId && sbId)) {
+            throw new BadRequestException('questId, sbId에 값이 모두 비어 있습니다 ');
+        }
+
         const newComment: CommentModel = repository.create({
-            // post: {
-            //     id: postId,
-            // },
+            questPost: {
+                id: questId,
+            },
+            sbtPost: {
+                id: sbId,
+            },
             responseToId: commentInfo.responseToId,
             index: _commentIDs.length,
             author,

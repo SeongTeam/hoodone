@@ -12,6 +12,7 @@ import { CommentsService } from '../comment.service';
 import { CommentModel } from '../entities/comment.entity';
 import { PostsUseCases } from 'src/posts/usecase/post.use-case';
 import { UpdateCommentDto } from '../dto/update-comment.dto';
+import { PostId, PostType } from 'src/posts/pips/post-id.pip';
 
 @Injectable()
 export class CommentUseCase {
@@ -22,26 +23,26 @@ export class CommentUseCase {
 
     async createComment(
         author: UserModel,
-        postId: number,
-        isQuestPost: boolean,
+        postId: PostId,
         commentInfo: Pick<CommentModel, 'content'>,
         qr?: QueryRunner,
     ) {
-        let _comment: CommentModel;
+        let comment: CommentModel;
+        const { id, postType } = postId;
         try {
             // isQuestPost을 기준으로 현재 들어온 id가 어떤 post의 id인지 확인합니다
-            if (isQuestPost) {
-                _comment = await this.commentService.createComment(author, commentInfo, {
-                    questId: postId,
+            if (postType === PostType.QUEST) {
+                comment = await this.commentService.createComment(author, commentInfo, {
+                    questId: id,
                 });
             } else {
-                _comment = await this.commentService.createComment(author, commentInfo, {
-                    sbId: postId,
+                comment = await this.commentService.createComment(author, commentInfo, {
+                    sbId: id,
                 });
             }
 
-            const newComment = this.commentService.save(_comment, qr);
-            await this.postUseCase.incrementCommentCount(postId, qr, isQuestPost);
+            const newComment = this.commentService.save(comment, qr);
+            await this.postUseCase.incrementCommentCount(postId, qr);
 
             return newComment;
         } catch (e) {
@@ -52,19 +53,40 @@ export class CommentUseCase {
 
     async createReplyComment(
         author: UserModel,
-        postId: number, // todo 가능하면 createDto안에 집어 넣자
-        isQuestPost: boolean,
+        postId: PostId,
         commentInfo: Pick<CommentModel, 'content' | 'responseToId'>,
         qr: QueryRunner,
     ) {
+        const { id, postType } = postId;
+        let replyComment: CommentModel;
         try {
             // depth의 값에 따라서 댓글 관계가 확인 0이면 댓글, depth가 1이상이면 대댓글
-            const replyComment: CommentModel = await this.commentService.createReplyComment(
-                author,
-                postId,
-                commentInfo,
-                qr,
-            );
+            // const replyComment: CommentModel = await this.commentService.createReplyComment(
+            //     author,
+            //     postId,
+            //     commentInfo,
+            //     qr,
+            // );
+
+            if (postType === PostType.QUEST) {
+                replyComment = await this.commentService.createReplyComment(
+                    author,
+                    commentInfo,
+                    {
+                        questId: id,
+                    },
+                    qr,
+                );
+            } else {
+                replyComment = await this.commentService.createReplyComment(
+                    author,
+                    commentInfo,
+                    {
+                        sbId: id,
+                    },
+                    qr,
+                );
+            }
 
             const newReplyComment = await this.commentService.save(replyComment, qr);
             this.commentService.appendReplyCommentId(
@@ -72,7 +94,7 @@ export class CommentUseCase {
                 newReplyComment.responseToId,
             );
 
-            await this.postUseCase.incrementCommentCount(postId, qr, isQuestPost);
+            await this.postUseCase.incrementCommentCount(postId, qr);
 
             return newReplyComment;
         } catch (e) {
