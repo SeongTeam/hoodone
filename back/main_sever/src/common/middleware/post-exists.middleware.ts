@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { QuestPostsService } from 'src/posts/-quest/quest_post.service';
+import { PostsService } from 'src/posts/post.service';
 
 @Injectable()
-export class SbExistsMiddelware implements NestMiddleware {
-    constructor(private readonly postService: QuestPostsService) {}
+export class PostExistsMiddelware implements NestMiddleware {
+    constructor(private readonly postService: PostsService) {}
 
     async use(req: Request, res: Response, next: NextFunction) {
         const postId = req.params.postId;

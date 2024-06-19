@@ -3,27 +3,25 @@ import { InjectRepository } from '@nestjs/typeorm/dist/common';
 import { Repository } from 'typeorm/repository/Repository';
 import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
-import { QUEST_POST_FIND_OPTION } from '../const/post-find-options.const';
-import { QuestPostModel } from '../entities/quest_post.entity';
-import { UpdatePostDto } from '../dto/update-post.dto';
-import { PostModel } from '../entities/post.entity';
-import { postCreateOption } from '../const/post-create-options.const';
+import { COMMON_POST_FIND_OPTION } from './const/post-find-options.const';
+import { PostModel } from './entities/post.entity';
+import { UpdatePostDto } from './dto/update-post.dto';
 @Injectable()
-export class QuestPostsService {
+export class PostsService {
     constructor(
-        @InjectRepository(QuestPostModel)
-        private readonly postsRepository: Repository<QuestPostModel>,
+        @InjectRepository(PostModel)
+        private readonly postsRepository: Repository<PostModel>,
     ) {}
 
-    async findAll(): Promise<QuestPostModel[]> {
+    async findAll(): Promise<PostModel[]> {
         return this.postsRepository.find({
-            ...QUEST_POST_FIND_OPTION,
+            ...COMMON_POST_FIND_OPTION,
         });
     }
     /**TODO 삭제한 게시물 비공개 게시물을 볼 수 있는 기능 추가 */
-    getPublishedPostsByUserEmail(userEmail: string): Promise<QuestPostModel[]> {
+    getPublishedPostsByUserEmail(userEmail: string): Promise<PostModel[]> {
         return this.postsRepository.find({
-            ...QUEST_POST_FIND_OPTION,
+            ...COMMON_POST_FIND_OPTION,
             where: {
                 author: {
                     email: userEmail, //  nickname은 변경이 가능 email은 불변값
@@ -36,9 +34,9 @@ export class QuestPostsService {
     /** 매계변수id와 동일한 post를 보내줍니다.
      * 만약 post가 없다면 ` NotFoundException()` 실행
      */
-    async findById(id: number): Promise<QuestPostModel> {
-        const post: QuestPostModel = await this.postsRepository.findOne({
-            ...QUEST_POST_FIND_OPTION,
+    async findById(id: number): Promise<PostModel> {
+        const post: PostModel = await this.postsRepository.findOne({
+            ...COMMON_POST_FIND_OPTION,
             where: {
                 id,
                 isPublished: true,
@@ -58,38 +56,31 @@ export class QuestPostsService {
      */
     async create(
         authorId: number,
-        contentInfo: Pick<PostModel, 'title' | 'content' | 'imgUrl'>,
+        commentInfo: Pick<PostModel, 'title' | 'content'>,
         qr?: QueryRunner,
     ) {
-        try {
-            const _repository = this._getRepository(qr);
+        const _repository = this._getRepository(qr);
 
-            // 1) create -> 저장할 객체를 생성한다.
-            const createdPost: QuestPostModel = _repository.create({
-                author: {
-                    id: authorId,
-                },
-                ...contentInfo,
-                ...postCreateOption,
-            });
-            return createdPost;
-        } catch (e) {
-            console.log('create post error');
-            console.log(e);
-        }
+        // 1) create -> 저장할 객체를 생성한다.
+        const createdPost: PostModel = _repository.create({
+            author: {
+                id: authorId,
+            },
+            ...commentInfo,
+            likeCount: 0,
+            commentCount: 0,
+            isPublished: true,
+        });
+
+        return createdPost;
     }
 
-    async save(post: QuestPostModel, qr: QueryRunner) {
-        try {
-            const repository = this._getRepository(qr);
-            // 2) save -> 객체를 저장한다. (create 메서드에서 생성한 객체로)
-            const newPost = await repository.save(post);
+    async save(post: PostModel, qr: QueryRunner) {
+        const repository = this._getRepository(qr);
+        // 2) save -> 객체를 저장한다. (create 메서드에서 생성한 객체로)
+        const newPost = await repository.save(post);
 
-            return newPost;
-        } catch (e) {
-            console.log(e);
-            console.log('post save');
-        }
+        return newPost;
     }
     async updatePost(postId: number, postDto: UpdatePostDto) {
         const { title, content } = postDto;
@@ -189,12 +180,12 @@ export class QuestPostsService {
     }
 
     _getRepository(qr?: QueryRunner) {
-        return qr ? qr.manager.getRepository<QuestPostModel>(QuestPostModel) : this.postsRepository;
+        return qr ? qr.manager.getRepository<PostModel>(PostModel) : this.postsRepository;
     }
 
     async getPaginatedPosts(offset: number, limit: number) {
         const data = this.postsRepository.find({
-            ...QUEST_POST_FIND_OPTION,
+            ...COMMON_POST_FIND_OPTION,
             where: {
                 isPublished: true,
             },
@@ -211,7 +202,7 @@ export class QuestPostsService {
 
     async getPostFromBoard(boardId: number, offset: number, limit: number) {
         const posts = this.postsRepository.find({
-            ...QUEST_POST_FIND_OPTION,
+            ...COMMON_POST_FIND_OPTION,
             where: {
                 boardId: boardId,
                 isPublished: true,

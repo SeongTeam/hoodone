@@ -23,15 +23,13 @@ export class AuthService {
      * 유요한 token이면 email을 포함한 유저 정보(보안이 필요없는 정보)를 기입한 토큰 반환
      *  아니라면, `JWT_INVALID_TOKEN` Exception 실행*/
     verifyToken(token: string): object {
-        let isExpired: Boolean = false;
         try {
-            isExpired = this.isTokenExpired(token);
-
             return this.jwtService.verify(token, {
                 secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
             });
         } catch (e) {
             // 만료되 토큰일 경우
+            const isExpired = this.isTokenExpired(token);
             if (isExpired) {
                 throw new AuthException('JWT_EXPIRED');
             }
@@ -108,7 +106,7 @@ export class AuthService {
         const newToken = this.jwtService.sign(payload, {
             secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
             // seconds
-            expiresIn: isRefreshToken ? 36000 : 3600, // 토큰 타입에 따라 기간을 다르게 설정
+            expiresIn: isRefreshToken ? 3600 : 300, // 토큰 타입에 따라 기간을 다르게 설정
         });
 
         return newToken;

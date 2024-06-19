@@ -4,8 +4,7 @@ import { CommentModel } from '../entities/comment.entity';
 export const COMMON_COMMENT_FIND_OPTION: FindManyOptions<CommentModel> = {
     relations: {
         author: true,
-        questPost: true,
-        sbtPost: true,
+        post: true,
     },
     select: {
         deletedAt: false,
@@ -14,14 +13,8 @@ export const COMMON_COMMENT_FIND_OPTION: FindManyOptions<CommentModel> = {
             id: true,
             nickname: true,
         },
-        questPost: {
-            positiveCount: true,
-            negativeCount: true,
-            title: true,
-        },
-        sbtPost: {
-            positiveCount: true,
-            negativeCount: true,
+        post: {
+            likeCount: true,
             title: true,
         },
     },

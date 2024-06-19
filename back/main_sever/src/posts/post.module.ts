@@ -1,29 +1,26 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
 import { CommonModule } from 'src/common/common.module';
 
+import { PostsService } from './post.service';
+import { PostsController } from './post.controller';
+import { PostModel } from './entities/post.entity';
 import { PostsUseCases } from './usecase/post.use-case';
 import { BoardModule } from 'src/boards/boards.module';
-import { QuestPostModel } from './entities/quest_post.entity';
-import { SbPostModel } from './entities/sb_post.entity';
-import { QuestPostsController as QuestPostController } from './-quest/quest.controller';
-import { SbPostsController as SbPostController } from './-sb-post/sb_post.controller';
-import { QuestPostsService } from './-quest/quest_post.service';
-import { SbPostsService } from './-sb-post/sb_post.service';
-
 @Module({
     imports: [
-        TypeOrmModule.forFeature([QuestPostModel, SbPostModel]),
+        TypeOrmModule.forFeature([PostModel]),
         AuthModule,
         UsersModule,
         CommonModule,
         BoardModule,
     ],
-    controllers: [QuestPostController, SbPostController],
+    controllers: [PostsController],
 
-    providers: [QuestPostsService, SbPostsService, PostsUseCases],
+    providers: [PostsService, PostsUseCases],
     exports: [PostsUseCases],
 })
 export class PostsModule {}
