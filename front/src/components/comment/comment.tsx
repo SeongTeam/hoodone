@@ -3,7 +3,7 @@ import { Flex,Text,Spacer, Button } from "@chakra-ui/react"
 import {  CommentClass } from "@/atoms/comment";
 import React, { useState } from "react";
 import { customColors } from "@/utils/chakra/customColors";
-import { mdFontSize } from "@/utils/chakra/fonts";
+import { mdFontSize } from "@/utils/chakra/foundations/fonts";
 import CommentMenu from "./commentMenu";
 import ReplyToggleButton from "./replyToggleButton";
 import { useIsOwner, useUserAccountWithSSR } from "@/hooks/userAccount";

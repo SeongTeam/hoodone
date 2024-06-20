@@ -1,6 +1,6 @@
 import { Flex, Icon, Text, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
-import { basicFontSize , mdFontSize} from "@/utils/chakra/fonts";
+import { basicFontSize , mdFontSize} from "@/utils/chakra/foundations/fonts";
 import { customColors } from "@/utils/chakra/customColors";
 
 export type TabItem = {

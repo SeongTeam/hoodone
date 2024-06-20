@@ -2,7 +2,7 @@
 import { PostType, postState  } from "@/atoms/post";
 import { Button, Flex ,IconButton, Menu, MenuButton, MenuItem, MenuList, Text, Spacer} from "@chakra-ui/react";
 import { customColors } from "@/utils/chakra/customColors";
-import { basicFontSize } from "@/utils/chakra/fonts";
+import { basicFontSize } from "@/utils/chakra/foundations/fonts";
 import { HamburgerIcon, ArrowDownIcon,ArrowUpIcon , ChatIcon } from "@chakra-ui/icons";
 import React from "react";
 import { useRouter } from "next/navigation";
