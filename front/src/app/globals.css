@@ -44,3 +44,12 @@
   width: 40px;
   height: 40px;
 }
+
+/* For preventing from layout shift
+reference : https://iconify.design/docs/iconify-icon/#layout-shift
+*/
+iconify-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+}
