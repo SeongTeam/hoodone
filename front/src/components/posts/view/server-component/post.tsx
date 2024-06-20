@@ -1,7 +1,7 @@
 import { PostType } from "@/atoms/post";
 import React from "react";
 import { Card, CardBody, CardFooter, CardHeader, Flex,Spacer ,Text } from "@chakra-ui/react";
-import { basicFontSize } from "@/utils/chakra/fonts";
+import { basicFontSize } from "@/utils/chakra/foundations/fonts";
 import { customColors } from "@/utils/chakra/customColors";
 import  htmlReactParser  from "html-react-parser";
 import PostMenu from "../postMenu";

@@ -1,7 +1,7 @@
 import type { ComponentStyleConfig } from '@chakra-ui/theme';
 import { inputAnatomy } from '@chakra-ui/anatomy';
 import { customColors } from '../customColors';
-import { basicFontSize as oauthFontSize } from '../fonts';
+import { basicFontSize as oauthFontSize } from '../foundations/fonts';
 
 //refer https://chakra-ui.com/docs/styled-system/customize-theme
 import { createMultiStyleConfigHelpers, defineStyle } from '@chakra-ui/styled-system';

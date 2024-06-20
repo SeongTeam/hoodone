@@ -16,20 +16,9 @@ export default function Home() {
   return (
     <>
       <main>
-        <Flex gap="1rem" >
-          <Box w="50rem">
-            <h1>SideBar</h1>
-          </Box>
-          <Spacer/>
-          <Flex w="full">
+        <Box w="full" >
             <CenterCard/>
-          </Flex>
-          <Spacer/>
-          <Box w="50rem">
-            <h1>Right Side </h1>
-          </Box>
-        </Flex>
-
+        </Box>
       </main>
     </>
   );
