@@ -1,23 +1,19 @@
-import Post from "@/components/posts/view/server-component/post";
-import { NextPage } from "next";
-import { PostType } from "@/atoms/post";
-import { getPostWithID } from "@/lib/server-only/postLib";
-import { Flex } from "@chakra-ui/react";
-import logger from "@/utils/log/logger";
-type PostPageProps = {
-
+import Post from '@/components/posts/view/server-component/post';
+import { NextPage } from 'next';
+import { PostType } from '@/atoms/post';
+import { getPostWithID } from '@/lib/server-only/postLib';
+import { Flex } from '@chakra-ui/react';
+import logger from '@/utils/log/logger';
+type QuestPageProps = {
     params: {
-        postid: string
-    }
+        postid: string;
+    };
     searchParams: {
-        index: string
-    }
-}
+        index: string;
+    };
+};
 
-const PostPage : NextPage<PostPageProps>  = async ( {
-    params,
-    searchParams
-}) => {
+const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => {
     /* TODO
     - 2가지 시나리오에 대한 post data cache 고려하기
         1. post list item 클릭 > 해당 페이지 진입
@@ -26,20 +22,20 @@ const PostPage : NextPage<PostPageProps>  = async ( {
     - comment 로등 동안 표출될 UI 구현하기 ( suspense)
     - commentlist 업데이트 시 revalidate에 의해 PostPage가 RE-SSR되는 현상 최적화 하기 
     */
-   logger.info('#PostPage Rendered', { message: params.postid });
+    logger.info('#PostPage Rendered', { message: params.postid });
 
-    const post : PostType | null = await getPostWithID(params.postid, parseInt(searchParams.index));
+    const post: PostType | null = await getPostWithID(params.postid, parseInt(searchParams.index));
 
-    if(!post ) {
+    if (!post) {
         logger.error(`post${params.postid} not found`);
         throw new ReferenceError(`post not found`);
     }
 
     return (
-        <Flex w={"full"} flexDir={"column"}>
-            <Post post={post}/>
+        <Flex w={'full'} flexDir={'column'}>
+            <Post post={post} />
         </Flex>
     );
-}
+};
 
-export default PostPage;
+export default QuestPage;

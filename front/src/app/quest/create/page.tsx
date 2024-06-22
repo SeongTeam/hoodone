@@ -6,7 +6,7 @@ import { useUserAccountWithSSR } from '@/hooks/userAccount';
 import { customColors } from '@/utils/chakra/customColors';
 import CreateRuleBox from '@/components/posts/create/postFormat/subComponent/createRuleBox';
 
-export default function CreatePostPage() {
+export default function CreateQuestPage() {
     const [user, setUser] = useUserAccountWithSSR();
 
     return (
