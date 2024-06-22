@@ -12,10 +12,12 @@ import { createPosts } from '@/server-actions/postsActions';
 import { AddIcon, AttachmentIcon } from '@chakra-ui/icons';
 
 import { showErrorToast } from '@/components/modal/auth/components/toast/toast';
+import { contentTexts, titleTexts } from './postFormat/const/texts';
 
 type CreatePostFormProps = {
     userAccount: userAccountState;
     communityImageURL?: string;
+    isQuestPost: boolean;
 };
 
 const formTabs = [
@@ -27,7 +29,7 @@ const formTabs = [
     },
 ];
 
-const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount }) => {
+const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount, isQuestPost }) => {
     const useToastOption = useToast();
     const [selectedTab, setSelectTab] = useState(formTabs[0].ID);
     const [newPost, setNewPost] = useState<PostType>({ title: '', content: '' } as PostType);
@@ -71,7 +73,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount }) => {
         const formData = new FormData();
         formData.append('title', title);
         formData.append('content', content);
-        formData.append('isQuest', 'true');
+        formData.append('isQuest', `${isQuestPost}`);
 
         const result = await createPosts(formData);
         console.log(result);
@@ -92,6 +94,8 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount }) => {
             >
                 <form action={createPosts}>
                     <TextInput
+                        titlePlaceHolder={isQuestPost ? titleTexts.quest : titleTexts.sb}
+                        contentPlaceHolder={isQuestPost ? contentTexts.quest : contentTexts.sb}
                         isHidden={selectedTab !== 'Post'}
                         title={newPost.title}
                         content={newPost.content}

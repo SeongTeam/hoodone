@@ -8,6 +8,9 @@ import { customColors } from '@/utils/chakra/customColors';
 */
 
 type TextInputProps = {
+    titlePlaceHolder: string;
+    contentPlaceHolder: string;
+
     title: string;
     content: string;
     setTitle: (value: string) => void;
@@ -21,6 +24,8 @@ const TextInput: React.FC<TextInputProps> = ({
     setTitle,
     setContent,
     isHidden,
+    titlePlaceHolder,
+    contentPlaceHolder,
 }) => {
     // const bg = customColors.black[300];
     const fontColor = customColors.black[100];
@@ -57,7 +62,7 @@ const TextInput: React.FC<TextInputProps> = ({
                     name="title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Quest Title:Do Something"
+                    placeholder={titlePlaceHolder}
                     bg={bg}
                 />
 
@@ -65,7 +70,7 @@ const TextInput: React.FC<TextInputProps> = ({
                     border={`1px solid ${inputBorderColor}`}
                     focusBorderColor={focusBorderColor}
                     color={fontColor}
-                    placeholder="Freely leave content"
+                    placeholder={contentPlaceHolder}
                     height="200px"
                     name="content"
                     onChange={(e) => setContent(e.target.value)}

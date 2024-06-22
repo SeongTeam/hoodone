@@ -4,9 +4,9 @@ import { Box, Grid, GridItem, HStack, Spacer, Stack, VStack, Text } from '@chakr
 import CreatePostForm from '@/components/posts/create/createPostForm';
 import { useUserAccountWithSSR } from '@/hooks/userAccount';
 import { customColors } from '@/utils/chakra/customColors';
-import CreationRulesBox from '@/components/posts/create/postFormat/subComponent/creationRulesBox';
+import CreateRuleBox from '@/components/posts/create/postFormat/subComponent/createRuleBox';
 
-export default function CreateQuestPage() {
+export default function CreateSbPage() {
     const [user, setUser] = useUserAccountWithSSR();
 
     return (
@@ -18,20 +18,20 @@ export default function CreateQuestPage() {
               "main  main space empty"
               "main main space empty"`}
                 gridTemplateRows={'3.5rem, 30px 1rem'}
-                gridTemplateColumns={'200px,2rem,'}
+                gridTemplateColumns={'150px,2rem,'}
                 w="100%"
                 h="100%"
             >
                 <GridItem pl="2" width="100%" area={'main'}>
                     {' '}
-                    <CreatePostForm isQuestPost={true} userAccount={user} />
+                    <CreatePostForm userAccount={user} />
                 </GridItem>
                 <GridItem pl="2" area={'space'}>
                     {' '}
                     <Box width="10px"> </Box>
                 </GridItem>
                 <GridItem pl="2" area={'createRule'} alignContent="center">
-                    <CreationRulesBox isQuestPost={true}></CreationRulesBox>
+                    <CreateRuleBox></CreateRuleBox>
                 </GridItem>
             </Grid>
         </Box>

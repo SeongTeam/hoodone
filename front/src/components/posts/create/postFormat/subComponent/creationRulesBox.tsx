@@ -2,16 +2,20 @@
 
 import { customColors } from '@/utils/chakra/customColors';
 import { Box, Text, VStack } from '@chakra-ui/react';
+import { ruleBoxTexts } from '../const/texts';
 
-type CreateRuleBoxProps = {};
+type CreationRulesBoxProps = {
+    isQuestPost: boolean;
+};
 
-const CreateRuleBox: React.FC<any> = ({}) => {
+const CreationRulesBox: React.FC<CreationRulesBoxProps> = ({ isQuestPost }) => {
     const outsideBg = customColors.white;
     const insideBg = customColors.pastelGreen[100];
     const BorderColor = customColors.shadeLavender[300];
-    const rule1 = '1. Check your Quest creation ticket';
-    const rule2 = '2. Create Simple and Easy Quest';
-    const rule3 = '3. Express your quest on title';
+    const rules: string[] = isQuestPost ? ruleBoxTexts.quest : ruleBoxTexts.sb;
+    // const rule1 = '1. Check your Quest creation ticket';
+    // const rule2 = '2. Create Simple and Easy Quest';
+    // const rule3 = '3. Express your quest on title';
 
     return (
         <Box
@@ -24,19 +28,19 @@ const CreateRuleBox: React.FC<any> = ({}) => {
             border={`1px solid ${BorderColor}`}
         >
             <Text fontSize="1.4em"> Create Rule</Text>
-            <VStack spacing="3px" p="12px" bg={insideBg}>
-                <Text mt="4px" noOfLines={2} fontSize="1.2em" color="black" whiteSpace="pre-line">
-                    {rule1}
+            <VStack spacing="3px" p="12px" bg={insideBg} align="left">
+                <Text mt="4px" noOfLines={3} fontSize="1.2em" color="black" whiteSpace="pre-line">
+                    {rules[0]}
                 </Text>
                 <Text mt="4px" noOfLines={2} fontSize="1.2em" color="black" whiteSpace="pre-line">
-                    {rule2}
+                    {rules[1]}
                 </Text>
                 <Text mt="4px" noOfLines={2} fontSize="1.2em" color="black" whiteSpace="pre-line">
-                    {rule3}
+                    {rules[2]}
                 </Text>
             </VStack>
         </Box>
     );
 };
 
-export default CreateRuleBox;
+export default CreationRulesBox;
