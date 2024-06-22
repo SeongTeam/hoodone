@@ -1,19 +1,4 @@
-import {
-    Alert,
-    AlertIcon,
-    Box,
-    Button,
-    Container,
-    Flex,
-    HStack,
-    Icon,
-    Input,
-    Spacer,
-    Tag,
-    Text,
-    VStack,
-    useColorModeValue,
-} from '@chakra-ui/react';
+import { Box, Button, HStack, Spacer, Tag, Text, VStack, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { type PostType } from '@/atoms/post';
@@ -24,8 +9,9 @@ import { userAccountState } from '@/atoms/userAccount';
 import { customColors } from '@/utils/chakra/customColors';
 import Tab, { type TabItem } from './tab';
 import { createPosts } from '@/server-actions/postsActions';
-import { theme } from '@/utils/chakra/theme';
 import { AddIcon, AttachmentIcon } from '@chakra-ui/icons';
+
+import { showErrorToast } from '@/components/modal/auth/components/toast/toast';
 
 type CreatePostFormProps = {
     userAccount: userAccountState;
@@ -42,6 +28,7 @@ const formTabs = [
 ];
 
 const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount }) => {
+    const useToastOption = useToast();
     const [selectedTab, setSelectTab] = useState(formTabs[0].ID);
     const [newPost, setNewPost] = useState<PostType>({ title: '', content: '' } as PostType);
     const [imagePreview, setImagePreview] = React.useState<string | null>(null);
@@ -67,6 +54,28 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount }) => {
             />
         );
     });
+
+    const onSubmit = async () => {
+        console.log('onSubmit()');
+        const { title, content } = newPost;
+        if (!title && title.length <= 0) {
+            showErrorToast(useToastOption, { title: 'Title is empty!! ' });
+            return;
+        }
+
+        if (!content && content.length <= 0) {
+            showErrorToast(useToastOption, { title: 'Content is empty!! ' });
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', content);
+        formData.append('isQuest', 'true');
+
+        const result = await createPosts(formData);
+        console.log(result);
+    };
 
     return (
         <Box>
@@ -108,9 +117,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount }) => {
                             borderRadius="30px"
                             bg={customColors.skyBlue[300]}
                             variant="solid"
-                            // colorScheme={theme}
                             color={customColors.black}
-                            // textColor={customColors.black}
                         >
                             {value}
                         </Tag>
@@ -127,8 +134,6 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount }) => {
                     align="center"
                 >
                     <Button
-                        // bg={customColors.gray[200]}
-                        // colorScheme={}
                         bg="#ebedf0"
                         _hover={{ bg: customColors.white[300] }}
                         borderRadius="15px"
@@ -176,6 +181,9 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount }) => {
 
                 <HStack spacing="20px">
                     <Button
+                        onClick={() => {
+                            onSubmit();
+                        }}
                         bg={customColors.purple[100]}
                         _hover={{ bg: customColors.white[300] }}
                         borderRadius="8px"

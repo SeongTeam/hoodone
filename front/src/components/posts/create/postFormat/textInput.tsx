@@ -26,6 +26,8 @@ const TextInput: React.FC<TextInputProps> = ({
     const fontColor = customColors.black[100];
     const bg = customColors.white;
     const inputBorderColor = customColors.shadeLavender[300];
+    const focusBorderColor = customColors.skyBlue[100];
+
     const breakpoints = {
         base: '0em', // 0px
         sm: '30em', // ~480px. em is a relative unit and is dependant on the font-size.
@@ -50,22 +52,18 @@ const TextInput: React.FC<TextInputProps> = ({
                 // width={breakpoints}
             >
                 <Input
-                    variant="newPost"
                     border={`1px solid ${inputBorderColor}`}
+                    borderRadius="8px"
                     name="title"
-                    // fontStyle={{ color: 'black' }}
-                    color={fontColor}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Quest Title:Do Something"
-                    _placeholder={{ color: 'black.200', fontsize: '' }}
                     bg={bg}
-                    width="100%"
                 />
 
                 <Textarea
                     border={`1px solid ${inputBorderColor}`}
-                    // hidden={true}
+                    focusBorderColor={focusBorderColor}
                     color={fontColor}
                     placeholder="Freely leave content"
                     height="200px"
