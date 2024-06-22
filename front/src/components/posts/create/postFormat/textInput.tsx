@@ -23,6 +23,7 @@ const TextInput: React.FC<TextInputProps> = ({
     isHidden,
 }) => {
     // const bg = customColors.black[300];
+    const fontColor = customColors.black[100];
     const bg = customColors.white;
     const inputBorderColor = customColors.shadeLavender[300];
     const breakpoints = {
@@ -52,6 +53,8 @@ const TextInput: React.FC<TextInputProps> = ({
                     variant="newPost"
                     border={`1px solid ${inputBorderColor}`}
                     name="title"
+                    // fontStyle={{ color: 'black' }}
+                    color={fontColor}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Quest Title:Do Something"
@@ -63,9 +66,11 @@ const TextInput: React.FC<TextInputProps> = ({
                 <Textarea
                     border={`1px solid ${inputBorderColor}`}
                     // hidden={true}
+                    color={fontColor}
                     placeholder="Freely leave content"
                     height="200px"
                     name="content"
+                    onChange={(e) => setContent(e.target.value)}
                     value={content}
                 ></Textarea>
             </VStack>
