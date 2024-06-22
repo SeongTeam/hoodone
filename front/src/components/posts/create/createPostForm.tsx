@@ -132,7 +132,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount }) => {
                         bg="#ebedf0"
                         _hover={{ bg: customColors.white[300] }}
                         borderRadius="15px"
-                        width={{ lg: '30%' }}
+                        width={{ lg: '40%' }}
                         minHeight={{ sm: '250px' }}
                     >
                         <VStack alignContent="center" direction="column">
