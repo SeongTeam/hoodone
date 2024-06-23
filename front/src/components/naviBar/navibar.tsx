@@ -1,53 +1,36 @@
-'use client';
-
-import { Providers } from '@/utils/chakra/providers';
-import { Button, Flex, Image } from '@chakra-ui/react';
-import { useRouter } from 'next/navigation';
-import SearchBar from './searchBar';
-import RightContent from './rightContent/rightContent';
+"use client";
+import { Button, Box ,Flex, Image,Spacer ,Text } from '@chakra-ui/react';
+import SearchBar from './components/searchBar';
+import { customColors } from '@/utils/chakra/customColors';
+import { useUserAccountWithSSR } from "@/hooks/userAccount";
+import LoginButton from './components/LoginButton';
+import UserMenu from './components/UserMenu';
 
 export default function NaviBar() {
-    const bg = 'red';
-    const fontSize = '2xl';
-    const color = 'gray.500';
-    const router = useRouter();
-    const rootRoute = '/';
+    const bg = customColors.white[100];
+    const [user, setUser] = useUserAccountWithSSR();
+
+    const gretting = user.isLogin ? `Hello, ${user.nickname}!` : 'Hello, Visistor!';
+
 
     return (
-        <Flex bg={color} justify="space-between" h="84px" w="full">
-            <Flex align="center" cursor="pointer">
-                <Image
-                    src="/hood1/sideNavIcon.svg"
-                    w={{ base: '30px', xl: '70px' }}
-                    h={{ base: '30px', xl: '70px' }}
-                    alt="Icon of Side Navi bar"
-                />
+        <Box h='100%' w='100%' px = '20px' bg={bg} 
+            alignContent={'center'}
+         border = '3px solid red'>
+            <Flex >
+                <Box display = { {base : "none",  lg: "block" }}w = "25%" 
+                border = "3px solid pink">
+                    <Text fontFamily={'Lato'} fontSize = "24px"> Small Quest</Text>
+                </Box>
+                <Box w = "25%" alignContent={'center'} 
+                border = "3px solid pink">
+                    <Text fontSize = {{base : "16px" ,  lg: "20px"}}> {gretting}</Text>
+                </Box>
+                <Spacer />
+                <SearchBar />
+                { user.isLogin ? <UserMenu /> : <LoginButton /> }
             </Flex>
-            <Flex
-                align="center"
-                width={{ base: '40px', md: 'auto' }}
-                ml={{ base: 0, md: 10, xl: '40px' }}
-                cursor="pointer"
-                onClick={() => {
-                    router.push(rootRoute);
-                }}
-            >
-                <Image
-                    src="/hood1/homeIcon.svg"
-                    w={{ base: '30px', xl: '70px' }}
-                    height={{ base: '30px', xl: '60px' }}
-                    alt="Icon of Hood 1"
-                />
-                <Image
-                    src="/hood1/hood1Text.svg"
-                    w={{ md: '70px', xl: '140px' }}
-                    height={{ md: '25px', xl: '50px' }}
-                    display={{ base: 'none', md: 'unset' }}
-                    alt="Text Image of Hood 1"
-                />
-            </Flex>
-            <SearchBar />
-            <RightContent />
-        </Flex>
+
+        </Box>
     );
 }
