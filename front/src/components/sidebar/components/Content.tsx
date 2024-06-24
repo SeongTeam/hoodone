@@ -4,33 +4,36 @@ import { Box, Flex, Stack, Spacer, Text } from "@chakra-ui/react";
 //   Custom components
 import Links from "@/components/sidebar/components/Links";
 import React from "react";
-import { RouteInterface } from "@/components/sidebar/Sidebar";
+import { RouteInterface } from "@/components/sidebar/SideBarRoute";
 import Panel from "./Panel";
+import { customColors } from "@/utils/chakra/customColors";
 
 // FUNCTIONS
 
-type sidebarContentProps = {
+type ContentProps = {
     routes : RouteInterface[]
 }
 
-function SidebarContent({ routes } : sidebarContentProps)  {
+function Content({ routes } : ContentProps)  {
   // SIDEBAR
   return (
-    <Flex direction='column' height='100%' pt='25px' px="10px" borderRadius='30px' >
-      <Stack direction='column' mt='5px' >
-        <Box >
-          <Links routes={routes} />
-        </Box>
-      </Stack>
-      <Spacer/>
-      <Box
-        mt='60px'
-        mb='40px'
-        >
-          <Panel/>
+    <Box  pt='10px' px="10px"  h="100%" >
+      <Flex direction='column' h="full">
+        <Stack direction='column' mt='20px' >
+          <Box >
+            <Box mb ='10px'>
+              <Text fontFamily={'Lato'} fontSize = "14px" color = { customColors.gray[100]}> 
+              Page
+              </Text>
+            </Box >
+            <Links routes={routes} />
+          </Box>
+        </Stack>
+        <Spacer/>
+        <Panel/>
+      </Flex>
       </Box>
-    </Flex>
   );
 }
 
-export default SidebarContent;
+export default Content;

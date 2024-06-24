@@ -5,6 +5,7 @@ import { customColors } from '@/utils/chakra/customColors';
 import { useUserAccountWithSSR } from "@/hooks/userAccount";
 import LoginButton from './components/LoginButton';
 import UserMenu from './components/UserMenu';
+import SidebarResponsive from '../sidebar/SideBarDrawer';
 
 export default function NaviBar() {
     const bg = customColors.white[100];
@@ -17,18 +18,18 @@ export default function NaviBar() {
         <Box h='100%' w='100%' px = '20px' bg={bg} 
             alignContent={'center'}
          border = '3px solid red'>
-            <Flex >
-                <Box display = { {base : "none",  lg: "block" }}w = "25%" 
-                border = "3px solid pink">
-                    <Text fontFamily={'Lato'} fontSize = "24px"> Small Quest</Text>
+            <Flex alignContent={'center'} alignItems={'center'} >
+                <SidebarResponsive />
+                <Box  alignContent={'center'} me= "150px">
+                    <Text fontFamily={'Lato'} fontWeight={'bold'} fontSize = {{md : "20px" ,  lg: "28px"}}> Small Quest</Text>
                 </Box>
-                <Box w = "25%" alignContent={'center'} 
-                border = "3px solid pink">
-                    <Text fontSize = {{base : "16px" ,  lg: "20px"}}> {gretting}</Text>
+                <Box display = { {base : "none",  lg: "block" }} alignContent={'center'} 
+                >
+                    <Text fontSize = {{md : "12px" ,  lg: "20px"}}> {gretting}</Text>
                 </Box>
                 <Spacer />
                 <SearchBar />
-                { user.isLogin ? <UserMenu /> : <LoginButton /> }
+                { !user.isLogin ? <UserMenu /> : <LoginButton /> }
             </Flex>
 
         </Box>
