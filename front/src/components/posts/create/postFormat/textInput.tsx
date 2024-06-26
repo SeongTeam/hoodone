@@ -13,6 +13,7 @@ import { customColors } from "@/utils/chakra/customColors";
 */
 
 type TextInputProps = {
+<<<<<<< HEAD
   title : string;
   content : string;
   setTitle: ( value: string ) => void;
@@ -26,6 +27,33 @@ const TextInput: React.FC<TextInputProps> = ({
   setTitle,
   setContent,
   isHidden,
+=======
+    titlePlaceHolder: string;
+    contentPlaceHolder: string;
+    tagPlaceHolder: string;
+
+    title: string;
+    content: string;
+    tag: string;
+    setTitle: (value: string) => void;
+    setContent: (value: string) => void;
+    setTag: (value: string) => void;
+    isHidden: boolean;
+};
+
+const TextInput: React.FC<TextInputProps> = ({
+    title = '',
+    content = '',
+    tag: tags = '',
+    setTitle,
+    setContent,
+    setTag,
+
+    isHidden,
+    titlePlaceHolder,
+    contentPlaceHolder,
+    tagPlaceHolder: tagsPlaceHolder,
+>>>>>>> dcbff04 (<feature> [front] tag 로직 추가)
 }) => {
   const bg = customColors.black[300];
 
@@ -33,6 +61,7 @@ const TextInput: React.FC<TextInputProps> = ({
     setContent(value);
   }
 
+<<<<<<< HEAD
   return (
     <Stack hidden = {isHidden} spacing={3} width="100%">
       
@@ -56,5 +85,59 @@ const TextInput: React.FC<TextInputProps> = ({
       <Input hidden={true} name="content" value={content}></Input>
     </Stack>
   );
+=======
+    const handleEditorChange = (value: string) => {
+        setContent(value);
+    };
+
+    return (
+        <Box>
+            <VStack
+                // bg="red"
+                alignContent="space-between"
+                direction="column"
+                hidden={isHidden}
+                spacing="20px"
+                // width={breakpoints}
+            >
+                <Input
+                    border={`1px solid ${inputBorderColor}`}
+                    focusBorderColor={focusBorderColor}
+                    borderRadius="8px"
+                    color={fontColor}
+                    name="title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder={titlePlaceHolder}
+                    bg={bg}
+                />
+
+                <Textarea
+                    border={`1px solid ${inputBorderColor}`}
+                    focusBorderColor={focusBorderColor}
+                    color={fontColor}
+                    placeholder={contentPlaceHolder}
+                    height="200px"
+                    name="content"
+                    onChange={(e) => setContent(e.target.value)}
+                    value={content}
+                ></Textarea>
+
+                <Input
+                    border={`1px solid ${inputBorderColor}`}
+                    focusBorderColor={focusBorderColor}
+                    borderRadius="8px"
+                    color={fontColor}
+                    name="tags"
+                    value={tags}
+                    /**TODO Tage onChange logic 추가하기 */
+                    onChange={(e) => setTag(e.target.value)}
+                    placeholder={tagsPlaceHolder}
+                    bg={bg}
+                />
+            </VStack>
+        </Box>
+    );
+>>>>>>> dcbff04 (<feature> [front] tag 로직 추가)
 };
 export default TextInput;
