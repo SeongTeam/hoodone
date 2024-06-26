@@ -60,13 +60,13 @@ export class UsersController {
     getUsers() {
         return this.userUseCase.getAllUsers();
     }
-    @Get('/email:email')
+    @Get('/email/:email')
     getByEmail(@Param('email') email: string) {
         console.log('calling /email:email ');
 
         return this.userUseCase.getUserByEmail(email);
     }
-    @Get('/nickname:nickname')
+    @Get('/nickname/:nickname')
     getById(@Param('nickname') nickname: string) {
         return this.userUseCase.getUserByNickname(nickname);
     }
