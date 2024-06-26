@@ -3,7 +3,7 @@
 import React from "react";
 // chakra imports
 import { Box, Flex, HStack, Text, useColorModeValue, Link } from "@chakra-ui/react";
-import { RouteInterface } from "@/components/sidebar/Sidebar";
+import { RouteInterface } from "@/components/sidebar/SideBarRoute";
 import NextLink from 'next/link'
 import { usePathname } from "next/navigation";
 import { customColors } from "@/utils/chakra/customColors";

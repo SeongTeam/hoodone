@@ -119,27 +119,6 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount, isQuestPos
                     />
                 </form>
                 <HStack
-                    border={`1px solid ${inputBorderColor}`}
-                    borderRadius="15px"
-                    py="5px"
-                    px="11px"
-                    spacing={4}
-                >
-                    {['#Tag1', '#Tag2', '#Tag3'].map((value) => (
-                        <Tag
-                            size="lg"
-                            key={value}
-                            borderRadius="30px"
-                            bg={customColors.skyBlue[300]}
-                            variant="solid"
-                            color={customColors.black}
-                        >
-                            {value}
-                        </Tag>
-                    ))}
-                </HStack>
-
-                <HStack
                     py="17px"
                     px="59px"
                     spacing="40px"
