@@ -32,7 +32,7 @@ const SearchBar: React.FC<SearchInputProps> = ({ user }) => {
                             bg='inherit'
                             borderRadius='inherit'
                             border = "none"
-                            _hover='none'
+                            _hover ={{bg: "inherit", transform: "none"}}
                             _active={{
                                 bg: "inherit",
                                 transform: "none",
