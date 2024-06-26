@@ -64,9 +64,11 @@ const newPost = definePartsStyle({
     field: {
         w: '100%',
         h: '54px',
-        bg: customColors.black[300],
+        bg: customColors.white[100],
+        border: `1px solid ${customColors.shadeLavender[300]}`,
+        _focus: { borderBlockColor: customColors.skyBlue[100], borderWidth: '2px' },
         fontSize: newPostFontSize,
-        _placeholder: { opacity: 0.4, color: '#FFFFFF', fontSize: newPostFontSize },
+        // _placeholder: { opacity: 0.4, color: '#FFFFFF', fontSize: newPostFontSize },
         _autofill: {
             transition: 'background-color 5000s ease-in-out 0s, color 0s 600000s',
         },

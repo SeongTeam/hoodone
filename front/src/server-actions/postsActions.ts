@@ -78,33 +78,59 @@ export async function createPosts(formData: FormData) {
     try {
         const title = formData.get('title') as string;
         const content = formData.get('content') as string;
+        const isQuest = formData.get('isQuest') as string;
+        // const imgUrl = formData.get('imgUrl') as string;
+        // console.log(`${title} ${content} ${isQuest}`);
+        logger.error(`${title} ${content} ${isQuest}`);
 
         assert(title && title.length > 0, 'title should be not empty');
         assert(content && content.length > 0, 'content should be not empty');
+        // assert(imgUrl && imgUrl.length > 0, 'imgUrl should be not empty');
 
         const newPost = {
             title,
             content,
         } as PostType;
 
+        /**
+         * TODO imgUrl 로직을 추가해야 합니다, 아니면 DB에 imgUrl을 null able로 두어야 합니다
+         * 임시로 imgUrl은 아래 주소를 사용해서 보내겠습니다
+         *  mockUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpmk3ku78NmHbSKh60W0lHLovIBNPCWAwabw&s"
+         */
+        const mockUrl =
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpmk3ku78NmHbSKh60W0lHLovIBNPCWAwabw&s';
+        newPost.imgUrl = mockUrl;
         const Image = formData.get('image') as File;
         if (Image && Image.size > 0) {
             const uploadResult = await uploadThumbnail(Image);
             newPost.thumbnailPublicID = uploadResult?.public_id;
+            newPost.imgUrl = uploadResult?.public_id;
         }
         /*TODO
-        - token get 실패시, 홈이동 > 로그인 창 오픈.
+        - token get 실패시, 홈이동 > 로그인 창 오픈. 
         */
         const accessToken = await validateAuth();
+        let res: Response;
 
-        const res = await fetch(`${backendURL}/posts`, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json',
-                authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify(newPost),
-        });
+        if (isQuest) {
+            res = await fetch(`${backendURL}/quests`, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                    authorization: `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify(newPost),
+            });
+        } else {
+            res = await fetch(`${backendURL}/sbs`, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                    authorization: `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify(newPost),
+            });
+        }
 
         if (!res.ok) {
             logger.error('[createPosts] response is not ok. status', {
