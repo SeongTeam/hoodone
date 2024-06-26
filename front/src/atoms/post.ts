@@ -14,6 +14,8 @@ export type PostType = {
     deletedAt: Date | null;
     title: string;
     content: string;
+    imgUrl: string;
+    tags: string[];
     likeCount: number;
     commentCount: number;
     isPublished: boolean;

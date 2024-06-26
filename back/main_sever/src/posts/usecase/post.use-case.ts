@@ -20,7 +20,7 @@ export class PostsUseCases {
 
     async createQuest(
         authorId: number,
-        postInfo: Pick<PostModel, 'title' | 'content' | 'imgUrl'>,
+        postInfo: Pick<PostModel, 'title' | 'content' | 'imgUrl' | 'tags'>,
         qr: QueryRunner,
     ) {
         // TODO 게시물 에러코드 생성하기
