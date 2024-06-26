@@ -1,24 +1,34 @@
 "use client"
-import { PostType, postState  } from "@/atoms/post";
-import { Button, Flex ,IconButton, Menu, MenuButton, MenuItem, MenuList, Text, Spacer} from "@chakra-ui/react";
+import { PostType  } from "@/atoms/post";
+import { Box, Button, Flex ,IconButton, Menu, MenuButton, MenuItem, MenuList, Text, Spacer} from "@chakra-ui/react";
 import { customColors } from "@/utils/chakra/customColors";
 import { basicFontSize } from "@/utils/chakra/foundations/fonts";
-import { HamburgerIcon, ArrowDownIcon,ArrowUpIcon , ChatIcon } from "@chakra-ui/icons";
-import React from "react";
+import { ChatIcon } from "@chakra-ui/icons";
+import React , { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import PostMenu from "./postMenu";
 import MotionDiv from "@/components/common/motionDiv";
+import PostThumbnail from "./server-component/postThumbnail";
+import { Icon } from "@iconify-icon/react";
+import UserProfileImage from "@/components/common/server-component/UserProfileImage";
 
 type PostListItemProps = {
     post: PostType;
     index: number;
-    children: React.ReactNode;
 };
 
+function useStopPropagtion() {
+    return useCallback(( e: React.SyntheticEvent) => {
+        e.stopPropagation();
+    }, []);
+}
+
 /*TODO
-- 업데이트 시간 표준 규정하기
-    - nest Server와 next Server 시간 중 선택
-- handleOnClickItem 대신 <Image> NextJS 사용고려하기
+- 업데이트 시간 YYYY.MM.DD 표시하기
+- onClick 핸들러 구현하기
+    - 페이지 이동
+    - 프로필 이동
+    - 좋아요 표시
+- 좋아요 클릭시 Icon 변경하기
 */
 
 const variants = {
@@ -29,20 +39,35 @@ const variants = {
 const PostListItem: React.FC<PostListItemProps> = ({ 
     post,
     index,
-    children }) => {
-    const fontColor = customColors.white[300];
-    const bg = customColors.black[200];
-    const borderColor = customColors.strokeColor[100];
+}) => {
+    const fontColor = customColors.black[100];
+    const bg = customColors.white[100];
+    const borderColor = customColors.shadeLavender[100];
     const timeAgo = post.createdAt;
-    const isShowDelete = false;
-    const buttonColor = customColors.black[300];
+    const buttonColor = customColors.white[100];
+    const buttonBg = customColors.purple[100];
     const router = useRouter();
 
-    const handleOnClickItem = () => {
+    const isUserFavorite = false;
+
+    const editTitle = (title: string) => {
+        const maxTitleLength = 30;
+        if(title.length > maxTitleLength) {
+            return title.substring(0, maxTitleLength) + "...";
+        }
+        return title;
+    }
+    const stopPropagation = useStopPropagtion();
+    const handleOnClickItem = (event : React.MouseEvent<HTMLDivElement>) => {
         const id = post.id;
-        router.push(`/post/${id}?index=${index}`);
+        alert("id : " + id);
+        //router.push(`/post/${id}?index=${index}`);
     }
 
+    const handleButtonClick = (event : React.MouseEvent<HTMLButtonElement>) => {
+        stopPropagation(event);
+        alert("handleButtonClick");
+    }
 
     return (
         <MotionDiv
@@ -57,44 +82,62 @@ const PostListItem: React.FC<PostListItemProps> = ({
             }}
             viewport={{amount: 0}}
         >
-            <Flex 
-                w= "full"
+            <Box 
+                h="440px"
                 border={"1px solid"}
                 borderColor={borderColor}
                 borderRadius={"15px"}
-                px="1rem"
-                py="0.25rem"
-                justify={"space-between"}
                 bg={bg}
                 onClick={handleOnClickItem}
+                px="10px"
+                py="20px"
+                _hover = {{bg: customColors.white[200]}}
+                cursor="pointer"
             >
-                {children}
-                <Flex paddingLeft={"1rem"} w="full" flexDirection={"column"}>
-                    <Flex>
+                <Flex w="full" h="full" justify={"space-between"} direction={"column"}>
+                    <Flex align={"center"} >
+                        <Text fontSize="24px" color={fontColor}>{editTitle(post.title)}</Text>
+                    </Flex>
+                    <PostThumbnail publicID={post.thumbnailPublicID}/>
+                    <Flex align={"center"}>
+                        <UserProfileImage ImageSrc={post.author.profileImg} />
                         <Text color={fontColor}>
                             {`${post.author.nickname||JSON.stringify(post.author)} ~${timeAgo}`}
-                            </Text>
-                        <Spacer/>
-                        <PostMenu post={post}/>
+                        </Text>
                     </Flex>
-                    <Text fontSize={basicFontSize} color={fontColor}>{post.title}</Text>
-                    <Flex gap="0.5rem">
+                    <Flex justify={"space-between"} >
+                        <Button
+                            color={buttonColor} 
+                            bg={buttonBg}
+                            onClick={stopPropagation}
+                            _hover = {{bg: customColors.purple[200]}}
+                        >
+                            Play it!
+                        </Button>
                         <Button 
-                            leftIcon={<ArrowUpIcon />}
-                            rightIcon={<ArrowDownIcon />}
-                            color={fontColor} 
-                            bg={buttonColor}>
+                            leftIcon={ isUserFavorite ?
+                                <Icon icon ="solar:heart-bold"  width="20px" height="20px"/> :
+                                <Icon icon="solar:heart-linear" width="20px" height="20px"/>}
+                            color={buttonColor} 
+                            gap="10px"
+                            bg={buttonBg}
+                            onClick={handleButtonClick}
+                            _hover = {{bg: customColors.purple[200]}}
+                            >
                                 {`${post.likeCount}`}
                         </Button>
                         <Button 
                             leftIcon={<ChatIcon />}
-                            color={fontColor} 
-                            bg={buttonColor}>
+                            color={buttonColor} 
+                            gap="10px"
+                            bg={buttonBg}
+                            _hover = {{bg: customColors.purple[200]}}
+                            >
                                 {`${post.commentCount}`}
-                            </Button>
+                        </Button>
                     </Flex>
                 </Flex>
-            </Flex>
+            </Box>
         </MotionDiv>
     );
 };

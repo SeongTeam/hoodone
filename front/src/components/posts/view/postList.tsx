@@ -4,6 +4,7 @@ import { PostType } from "@/atoms/post";
 import PostListItem from "./postListItem";
 import PostThumbnail from "./server-component/postThumbnail";
 import { customColors } from "@/utils/chakra/customColors";
+import { Grid, GridItem } from "@chakra-ui/react";
 
 /*TODO
 - <PostThumbnail> 컴포넌트 Servercomponent로 활용하기
@@ -17,22 +18,20 @@ const PostList : React.FC<PostListProps> = ({
   
   return (
 
-    <Flex 
-      flexWrap="wrap" 
-      direction="column" 
-      align="center" 
-      width="100%" 
-      gap="1rem"
+    <Grid 
+      templateColumns="repeat(auto-fill,minmax(250px,1fr))"
+      gap ="20px"
+      width="100%"
       >
       {postList.map((post, index) => {
         return (
-        <PostListItem post={post} key={post.id} index={index}>
-            <PostThumbnail publicID={post.thumbnailPublicID}/>
-        </PostListItem>
+          <GridItem key = {post.id} maxW="340px">
+            <PostListItem post={post} key={post.id} index={index}/>
+          </GridItem>
         );
       }
       )}
-    </Flex>
+    </Grid>
     
 
   )
