@@ -4,7 +4,7 @@ import { useInView } from "react-intersection-observer";
 import { useCallback, useEffect, useState } from "react";
 import { Grid, GridItem } from "@chakra-ui/react";
 import { PostType } from "@/atoms/post";
-import PostListItem from "./postListItem";
+import PostCard from "./PostCard";
 import MotionDiv from "@/components/common/motionDiv";
 
 
@@ -100,7 +100,7 @@ const LoadMorePosts : React.FC = ( ) => {
                                 }}
                                 viewport={{amount: 0}}
                             >
-                                <PostListItem post={post} key={post.id} index={index}/>
+                                <PostCard post={post} key={post.id} index={index}/>
                             </MotionDiv>
                         </GridItem>
                         );

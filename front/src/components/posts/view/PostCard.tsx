@@ -12,7 +12,7 @@ import UserProfileImage from "@/components/common/server-component/UserProfileIm
 import { PostType } from "@/atoms/post";
 import QuestButtons from "./components/QuestButtons";
 
-type PostListItemProps = {
+type PostCardProps = {
     post: PostType;
     index: number;
 };
@@ -26,7 +26,7 @@ type PostListItemProps = {
 - 좋아요 클릭시 Icon 변경하기
 */
 
-const PostListItem: React.FC<PostListItemProps> = ({ 
+const PostCard: React.FC<PostCardProps> = ({ 
     post,
     index,
 }) => {
@@ -82,4 +82,4 @@ const PostListItem: React.FC<PostListItemProps> = ({
     );
 };
 
-export default PostListItem;
+export default PostCard;
