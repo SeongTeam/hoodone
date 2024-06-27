@@ -2,11 +2,19 @@ import Post from '@/components/posts/view/server-component/post';
 import { NextPage } from 'next';
 import { PostType } from '@/atoms/post';
 import { getPostWithID } from '@/lib/server-only/postLib';
-import { Flex } from '@chakra-ui/react';
+import { Box, Text, Spacer, Flex, Grid, GridItem, VStack } from '@chakra-ui/react';
 import logger from '@/utils/log/logger';
+import CreationRulesBox from '@/components/posts/create/postFormat/subComponent/creationRulesBox';
+import { customColors } from '@/utils/chakra/customColors';
+import { useUserAccountWithSSR } from '@/hooks/userAccount';
+import { userAccountState } from '@/atoms/userAccount';
+import CommentArea from '@/components/comment/server-component/commentArea';
+import DetailPostForm from '@/components/posts/detail/detailPostForm';
 type QuestPageProps = {
     params: {
         postid: string;
+        writer: userAccountState;
+        rootCommentID?: number;
     };
     searchParams: {
         index: string;
@@ -14,15 +22,66 @@ type QuestPageProps = {
 };
 
 const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => {
-    /* TODO
-    - 2가지 시나리오에 대한 post data cache 고려하기
-        1. post list item 클릭 > 해당 페이지 진입
-        2. url 링크를 통해 해당 페이지 진입
-    - comment 로드 실패시에 대한 UI 구현하기 (fall back UI)
-    - comment 로등 동안 표출될 UI 구현하기 ( suspense)
-    - commentlist 업데이트 시 revalidate에 의해 PostPage가 RE-SSR되는 현상 최적화 하기 
-    */
+    const { writer, rootCommentID } = params;
+    const inputBorderColor = customColors.shadeLavender[300];
+
+    const QuestRuleBox: React.FC = () => {
+        const outsideBg = customColors.white;
+        const insideBg = customColors.pastelGreen[100];
+        const BorderColor = customColors.shadeLavender[300];
+        const rules: string[] = [
+            '1. Enjoy Quest',
+            '2. Leave your review',
+            '3. Participate in the quest',
+        ];
+
+        return (
+            <Box
+                height="250px"
+                // width={{ sm: '70%', base: '90%', lg: '100%' }}
+                w="100%"
+                py="20px"
+                px="12px"
+                bg={outsideBg}
+                borderRadius="15px"
+                border={`1px solid ${BorderColor}`}
+            >
+                <Text fontSize="1.4em"> Create Rule</Text>
+                <VStack spacing="3px" p="12px" bg={insideBg} align="left">
+                    <Text
+                        mt="4px"
+                        noOfLines={3}
+                        fontSize="1.2em"
+                        color="black"
+                        whiteSpace="pre-line"
+                    >
+                        {rules[0]}
+                    </Text>
+                    <Text
+                        mt="4px"
+                        noOfLines={2}
+                        fontSize="1.2em"
+                        color="black"
+                        whiteSpace="pre-line"
+                    >
+                        {rules[1]}
+                    </Text>
+                    <Text
+                        mt="4px"
+                        noOfLines={2}
+                        fontSize="1.2em"
+                        color="black"
+                        whiteSpace="pre-line"
+                    >
+                        {rules[2]}
+                    </Text>
+                </VStack>
+            </Box>
+        );
+    };
+
     logger.info('#PostPage Rendered', { message: params.postid });
+    console.log(params.postid, searchParams.index);
 
     const post: PostType | null = await getPostWithID(params.postid, parseInt(searchParams.index));
 
@@ -32,9 +91,40 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
     }
 
     return (
-        <Flex w={'full'} flexDir={'column'}>
-            <Post post={post} />
-        </Flex>
+        <Box width="100%" px="29px" pt="25px" pb="20px">
+            <Text size="17px">User Quest</Text>
+            <Spacer height="11px" />
+
+            <Grid
+                templateAreas={`"main main space createRule"
+                "main  main space empty"
+                "main main space empty"`}
+                gridTemplateRows={'2em, 30px 1em'}
+                gridTemplateColumns={'700px,2rem,'}
+                w="100%"
+                maxW="1300px"
+                h="100%"
+            >
+                <GridItem pl="2" maxW={{ base: '800px', lg: '900px' }} area={'main'}>
+                    {' '}
+                    <Box bg="FFFFFF" borderRadius="15px" border={`1px solid ${inputBorderColor}`}>
+                        <DetailPostForm
+                            postInfo={post}
+                            isQuestPost={true}
+                            writerAccount={writer}
+                        ></DetailPostForm>
+                        <CommentArea postID={1} rootCommentID={rootCommentID} />
+                    </Box>
+                </GridItem>
+                <GridItem pl="2" area={'space'}>
+                    {' '}
+                    <Box width="10px"> </Box>
+                </GridItem>
+                <GridItem width="100%" pl="2" area={'createRule'} alignContent="center" bg="purple">
+                    <QuestRuleBox></QuestRuleBox>
+                </GridItem>
+            </Grid>
+        </Box>
     );
 };
 

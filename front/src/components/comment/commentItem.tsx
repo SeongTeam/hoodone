@@ -1,23 +1,20 @@
-"use client"
+'use client';
 import { CommentType, CommentClass } from '@/atoms/comment';
-import React, { useState} from 'react';
-import { Flex,  } from '@chakra-ui/react'
+import React, { useState } from 'react';
+import { Flex } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import Comment from './comment';
 import InputReply from './InputReply';
-import { useRouter, useParams, useSearchParams } from 'next/navigation'
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import DeletedCommentItem from './deletedCommentItem';
 
-
-
 type CommentItemProps = {
-    comment: CommentType,
-    childrenReplyList: React.ReactNode,
-    isWritingOnCurrentPage: boolean,
-
-}
-const CommentItem : React.FC<CommentItemProps> = ({
-    comment ,
+    comment: CommentType;
+    childrenReplyList: React.ReactNode;
+    isWritingOnCurrentPage: boolean;
+};
+const CommentItem: React.FC<CommentItemProps> = ({
+    comment,
     childrenReplyList,
     isWritingOnCurrentPage,
 }) => {
@@ -26,73 +23,74 @@ const CommentItem : React.FC<CommentItemProps> = ({
     const [isWriteReply, setIsWriteReply] = useState(false);
     const commentInstance = new CommentClass(comment);
     const router = useRouter();
-    const params = useParams<{ postid: string}>();
+    const params = useParams<{ postid: string }>();
     const searchParams = useSearchParams();
-    
+
     const navigateToCommentPage = () => {
         const commentid = comment.id;
         const index = searchParams.get('index');
         const postId = params.postid;
         const path = `/post/${postId}/comment/${commentid}?index=${index}`;
         router.push(path);
-    }
+    };
 
     const handleShowReply = () => {
-        if(commentInstance.isAccessableReply()){
+        if (commentInstance.isAccessableReply()) {
             setIsShowReply(!isShowReply);
-        }
-        else if(commentInstance.isHaveReply()){
+        } else if (commentInstance.isHaveReply()) {
             navigateToCommentPage();
         }
-    }
+    };
 
     const handleWriteReply = () => {
-        if(isWritingOnCurrentPage){
+        if (isWritingOnCurrentPage) {
             setIsWriteReply(!isWriteReply);
-        }
-        else{
+        } else {
             navigateToCommentPage();
         }
-
-    }
+    };
 
     const handleCancelReply = () => {
         setIsWriteReply(false);
-    }
+    };
 
     const handleAddReply = () => {
         setIsWriteReply(false);
         setIsShowReply(true);
-    }
-
-    
+    };
 
     return (
-        <Flex 
+        <Flex
             w="full"
-            flexDir={"column"}
-            borderRadius={"15px"}
-            borderLeft={`3px solid ${borderColor}`}
-            gap={"0.5rem"}
+            flexDir={'column'}
+            borderRadius={'15px'}
+            // borderLeft={`3px solid ${borderColor}`}
+            gap={'0.5rem'}
         >
-            {commentInstance.isDeleted() ?
-                <DeletedCommentItem commentInstance={commentInstance} isShowReply={isShowReply} handleShowReplyIconClicked={handleShowReply}/> 
-            : 
-                <Comment 
-                    commentInstance={commentInstance} 
+            {commentInstance.isDeleted() ? (
+                <DeletedCommentItem
+                    commentInstance={commentInstance}
+                    isShowReply={isShowReply}
+                    handleShowReplyIconClicked={handleShowReply}
+                />
+            ) : (
+                <Comment
+                    commentInstance={commentInstance}
                     handleReplyButtonClicked={handleWriteReply}
                     handleShowReplyIconClicked={handleShowReply}
                     isShowReply={isShowReply}
                 />
-
-            } 
-            {isWriteReply && <InputReply handleAddReply={handleAddReply} handleCancelReply= {handleCancelReply} parentComment={comment}/>}
-            {isShowReply 
-                && 
-                childrenReplyList
-            }
+            )}
+            {isWriteReply && (
+                <InputReply
+                    handleAddReply={handleAddReply}
+                    handleCancelReply={handleCancelReply}
+                    parentComment={comment}
+                />
+            )}
+            {isShowReply && childrenReplyList}
         </Flex>
     );
-}
+};
 
 export default CommentItem;

@@ -20,7 +20,7 @@ const CreationRulesBox: React.FC<CreationRulesBoxProps> = ({ isQuestPost }) => {
     return (
         <Box
             height="250px"
-            width={{ sm: '70%', base: '90%', lg: '100%' }}
+            // width={{ sm: '70%', base: '90%', lg: '100%' }}
             py="20px"
             px="12px"
             bg={outsideBg}
