@@ -2,8 +2,11 @@
 import Image from "next/image";
 import { useInView } from "react-intersection-observer";
 import { useCallback, useEffect, useState } from "react";
-import PostList from "./postList";
+import { Grid, GridItem } from "@chakra-ui/react";
 import { PostType } from "@/atoms/post";
+import PostListItem from "./postListItem";
+import MotionDiv from "@/components/common/motionDiv";
+
 
 /*TODO
 - route handler GET METHOD cache 활용 여부 확인
@@ -30,6 +33,11 @@ const LoadMorePosts : React.FC = ( ) => {
     const [ isLoading, setIsLoading ] = useState<boolean>(false);
     const [ hasMore, setHasMore ] = useState<boolean>(true);
     const [ offset, setOffset ] = useState<number>(INITIAL_OFFSET);
+
+    const variants = {
+        hidden : { opacity: 0 },
+        visible: { opacity: 1 },
+    }
 
     const loadPosts = useCallback( async () => {
         if(!hasMore|| isLoading) {
@@ -71,7 +79,33 @@ const LoadMorePosts : React.FC = ( ) => {
 
     return (
         <>
-            <PostList postList={posts}/>
+            <Grid 
+                templateColumns="repeat(auto-fill,minmax(250px,1fr))"
+                gap ="20px"
+                width="100%"
+                >
+                {
+                    posts.map((post, index) => {
+                        return (
+                        <GridItem key = {post.id} maxW="340px">
+                            <MotionDiv
+                                variants={variants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="hidden"
+                                transition={{ 
+                                    delay: index * 0.1,
+                                    ease: "easeInOut",
+                                    duration: 0.5 
+                                }}
+                                viewport={{amount: 0}}
+                            >
+                                <PostListItem post={post} key={post.id} index={index}/>
+                            </MotionDiv>
+                        </GridItem>
+                        );
+                })}
+            </Grid>
             <section>
                 <div ref={ref}>
                     {isLoading && <Image
