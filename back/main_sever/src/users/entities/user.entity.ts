@@ -47,6 +47,7 @@ export class UserModel extends BaseModel {
 
     @Column({ type: 'enum', enum: RoleType, array: true })
     roles: RoleType[];
+
     @IsEnum(UserModelStatus)
     @IsString()
     status: UserModelStatus;
@@ -68,6 +69,11 @@ export class UserModel extends BaseModel {
     // @Expose()
     // @OneToMany(() => PostModel, (post) => post.author)
     // likedPosts: PostModel[];
+
+    @Expose()
+    @Column({ name: 'profile_image_public_id', default: '' })
+    @IsString()
+    profileImagePublicId: string;
 
     @Expose()
     @OneToMany(() => QuestPostModel, (post) => post.author)

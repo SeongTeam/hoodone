@@ -59,7 +59,7 @@ export class SbPostsService {
     async create(
         authorId: number,
         questId: number,
-        contentInfo: Pick<SbPostModel, 'title' | 'content' | 'imgUrl'>,
+        contentInfo: Pick<SbPostModel, 'title' | 'content' | 'cloudinaryPublicId'>,
         qr?: QueryRunner,
     ) {
         try {

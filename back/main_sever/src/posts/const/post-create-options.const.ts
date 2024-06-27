@@ -1,6 +1,7 @@
 import { PostModel } from '../entities/post.entity';
 
-export const postCreateOption: Pick<
-    PostModel,
-    'positiveCount' | 'negativeCount' | 'commentCount' | 'isPublished'
-> = { positiveCount: 0, negativeCount: 0, commentCount: 0, isPublished: true };
+export const postCreateOption: Pick<PostModel, 'favoriteCount' | 'commentCount' | 'isPublished'> = {
+    favoriteCount: 0,
+    commentCount: 0,
+    isPublished: true,
+};

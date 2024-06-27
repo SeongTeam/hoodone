@@ -18,7 +18,7 @@ export class RegisterUserDto extends PickType(UserModel, ['nickname', 'email', '
     @MinLength(8)
     @MaxLength(20)
     //영어, 숫자, 특수문자 각각 1개씩 필요 가능한 유효성 체크
-    @Matches(/^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{3,}$/, {
+    @Matches(/^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/, {
         message: passwordValidationMessage,
     })
     password: string;
