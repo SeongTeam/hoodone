@@ -15,13 +15,11 @@ export const COMMON_COMMENT_FIND_OPTION: FindManyOptions<CommentModel> = {
             nickname: true,
         },
         questPost: {
-            positiveCount: true,
-            negativeCount: true,
+            favoriteCount: true,
             title: true,
         },
         sbtPost: {
-            positiveCount: true,
-            negativeCount: true,
+            favoriteCount: true,
             title: true,
         },
     },
