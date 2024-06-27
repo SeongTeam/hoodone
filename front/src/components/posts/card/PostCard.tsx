@@ -6,7 +6,7 @@ import { ChatIcon } from "@chakra-ui/icons";
 import React , { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import MotionDiv from "@/components/common/motionDiv";
-import PostThumbnail from "./server-component/postThumbnail";
+import PostThumbnail from "./components/postThumbnail";
 import { Icon } from "@iconify-icon/react";
 import UserProfileImage from "@/components/common/server-component/UserProfileImage";
 import { PostType } from "@/atoms/post";
