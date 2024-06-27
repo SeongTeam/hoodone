@@ -11,6 +11,7 @@ import { Icon } from "@iconify-icon/react";
 import UserProfileImage from "@/components/common/server-component/UserProfileImage";
 import { PostType } from "@/atoms/post";
 import QuestButtons from "./components/QuestButtons";
+import { formatCreatedAt } from "@/lib/Date";
 
 type PostCardProps = {
     post: PostType;
@@ -18,7 +19,6 @@ type PostCardProps = {
 };
 
 /*TODO
-- 업데이트 시간 YYYY.MM.DD 표시하기
 - onClick 핸들러 구현하기
     - 페이지 이동
     - 프로필 이동
@@ -71,7 +71,7 @@ const PostCard: React.FC<PostCardProps> = ({
                 <Flex align={"center"}>
                     <UserProfileImage ImageSrc={post.author.profileImagePublicId} />
                     <Text color={fontColor}>
-                        {`${post.author.nickname||JSON.stringify(post.author)} ~${timeAgo}`}
+                        {`${post.author.nickname} ${formatCreatedAt(timeAgo)}`}
                     </Text>
                 </Flex>
                 <QuestButtons
