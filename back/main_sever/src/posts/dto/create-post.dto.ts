@@ -10,4 +10,6 @@ export class CreatePostDto extends PickType(PostModel, [
     'title',
     'content',
     'cloudinaryPublicId',
+    'tags'
 ]) {}
+

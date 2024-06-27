@@ -32,7 +32,11 @@ const formTabs = [
 const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount, isQuestPost }) => {
     const useToastOption = useToast();
     const [selectedTab, setSelectTab] = useState(formTabs[0].ID);
-    const [newPost, setNewPost] = useState<PostType>({ title: '', content: '' } as PostType);
+    const [newPost, setNewPost] = useState<PostType>({
+        title: '',
+        content: '',
+    } as PostType);
+    const [tag, setTag] = useState<string>('');
     const [imagePreview, setImagePreview] = React.useState<string | null>(null);
     const { selectedFile, onSelectedFile, onDroppedFile } = useSelectFile();
     const [error, setError] = useState(false);
@@ -69,10 +73,11 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount, isQuestPos
             showErrorToast(useToastOption, { title: 'Content is empty!! ' });
             return;
         }
-
+        // const joinedTags: string = tags.join(' ');
         const formData = new FormData();
         formData.append('title', title);
         formData.append('content', content);
+        formData.append('tags', tag);
         formData.append('isQuest', `${isQuestPost}`);
 
         const result = await createPosts(formData);
@@ -96,38 +101,23 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount, isQuestPos
                     <TextInput
                         titlePlaceHolder={isQuestPost ? titleTexts.quest : titleTexts.sb}
                         contentPlaceHolder={isQuestPost ? contentTexts.quest : contentTexts.sb}
+                        tagPlaceHolder="write tag"
                         isHidden={selectedTab !== 'Post'}
                         title={newPost.title}
                         content={newPost.content}
+                        tag={tag}
                         setTitle={(value: string) => {
                             setNewPost((prev) => ({ ...prev, title: value }));
                         }}
                         setContent={(value: string) => {
                             setNewPost((prev) => ({ ...prev, content: value }));
                         }}
+                        setTag={(tag: string) => {
+                            const tagList = tag.split(' ');
+                            setTag(() => tag);
+                        }}
                     />
                 </form>
-                <HStack
-                    border={`1px solid ${inputBorderColor}`}
-                    borderRadius="15px"
-                    py="5px"
-                    px="11px"
-                    spacing={4}
-                >
-                    {['#Tag1', '#Tag2', '#Tag3'].map((value) => (
-                        <Tag
-                            size="lg"
-                            key={value}
-                            borderRadius="30px"
-                            bg={customColors.skyBlue[300]}
-                            variant="solid"
-                            color={customColors.black}
-                        >
-                            {value}
-                        </Tag>
-                    ))}
-                </HStack>
-
                 <HStack
                     py="17px"
                     px="59px"

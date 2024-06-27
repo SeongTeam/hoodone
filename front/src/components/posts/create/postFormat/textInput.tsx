@@ -10,22 +10,29 @@ import { customColors } from '@/utils/chakra/customColors';
 type TextInputProps = {
     titlePlaceHolder: string;
     contentPlaceHolder: string;
+    tagPlaceHolder: string;
 
     title: string;
     content: string;
+    tag: string;
     setTitle: (value: string) => void;
     setContent: (value: string) => void;
+    setTag: (value: string) => void;
     isHidden: boolean;
 };
 
 const TextInput: React.FC<TextInputProps> = ({
     title = '',
     content = '',
+    tag: tags = '',
     setTitle,
     setContent,
+    setTag,
+
     isHidden,
     titlePlaceHolder,
     contentPlaceHolder,
+    tagPlaceHolder: tagsPlaceHolder,
 }) => {
     // const bg = customColors.black[300];
     const fontColor = customColors.black[100];
@@ -58,7 +65,9 @@ const TextInput: React.FC<TextInputProps> = ({
             >
                 <Input
                     border={`1px solid ${inputBorderColor}`}
+                    focusBorderColor={focusBorderColor}
                     borderRadius="8px"
+                    color={fontColor}
                     name="title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -76,6 +85,19 @@ const TextInput: React.FC<TextInputProps> = ({
                     onChange={(e) => setContent(e.target.value)}
                     value={content}
                 ></Textarea>
+
+                <Input
+                    border={`1px solid ${inputBorderColor}`}
+                    focusBorderColor={focusBorderColor}
+                    borderRadius="8px"
+                    color={fontColor}
+                    name="tags"
+                    value={tags}
+                    /**TODO Tage onChange logic 추가하기 */
+                    onChange={(e) => setTag(e.target.value)}
+                    placeholder={tagsPlaceHolder}
+                    bg={bg}
+                />
             </VStack>
         </Box>
     );
