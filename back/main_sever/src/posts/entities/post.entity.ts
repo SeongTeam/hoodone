@@ -1,4 +1,4 @@
-import { IsString, IsUrl } from 'class-validator';
+import { IsString, IsUrl, ValidationArguments } from 'class-validator';
 import { BaseModel } from 'src/common/entity/base.entity';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
@@ -22,6 +22,9 @@ export class PostModel extends BaseModel {
     content: string;
 
     @Column()
+    @IsString({
+        message: stringValidationMessage,
+    })
     cloudinaryPublicId: string;
 
     @Column({

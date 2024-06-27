@@ -14,6 +14,7 @@ import {
     Delete,
     Logger,
     Query,
+    ValidationPipe,
 } from '@nestjs/common';
 import { QueryRunner as QR } from 'typeorm';
 
@@ -51,7 +52,7 @@ export class CommentsController {
     async postComment(
         @User() user: UserModel,
         @Param('postId', PostIdPip) postId: PostId,
-        @Body() createDto: CreateCommentDto,
+        @Body(ValidationPipe) createDto: CreateCommentDto,
         @QueryRunner() qr: QR,
     ) {
         let res = new CommentApiResponseDto();
@@ -68,7 +69,7 @@ export class CommentsController {
     @UseInterceptors(TransactionInterceptor)
     async postReplyComment(
         @Param('postId', PostIdPip) postId: PostId,
-        @Body() createDto: CreateReplyCommentDto,
+        @Body(ValidationPipe) createDto: CreateReplyCommentDto,
         @User() user: UserModel,
         @QueryRunner() qr: QR,
     ) {
@@ -136,7 +137,7 @@ export class CommentsController {
     @UseInterceptors(TransactionInterceptor)
     async patch(
         @Param('id', ParseIntPipe) id: number,
-        @Body() body: UpdateCommentDto,
+        @Body(ValidationPipe) body: UpdateCommentDto,
         @QueryRunner() qr: QR,
     ) {
         return this.commentUseCases.update(id, body, qr);
