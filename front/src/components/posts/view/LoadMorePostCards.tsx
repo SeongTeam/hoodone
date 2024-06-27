@@ -27,7 +27,7 @@ const getPaginatedPostsFromAPI = async (offset: number) => {
     return posts;
 }
 
-const LoadMorePosts : React.FC = ( ) => {
+const LoadMorePostCards : React.FC = ( ) => {
     const { ref, inView } = useInView()
     const [ posts, setPosts ] = useState<PostType[]>([])
     const [ isLoading, setIsLoading ] = useState<boolean>(false);
@@ -121,4 +121,4 @@ const LoadMorePosts : React.FC = ( ) => {
     );
 };
 
-export default LoadMorePosts;
+export default LoadMorePostCards;

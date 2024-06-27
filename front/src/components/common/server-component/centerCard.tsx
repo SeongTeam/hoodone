@@ -3,12 +3,8 @@ import React, { Suspense } from "react";
 import { getCachedPaginatedPosts } from "@/lib/server-only/postLib";
 import { PostType } from "@/atoms/post";
 import PostList from "@/components/posts/view/postList";
-import LoadMorePosts from "@/components/posts/view/loadMorePosts";
+import LoadMorePostCards from "@/components/posts/view/LoadMorePostCards";
 
-type CenterCardProps = {
-    searchInput : object,
-
-}
 
 /*TODO
 - <PostList/> 컴포넌트에 Suspense 구현 
@@ -27,7 +23,7 @@ const CenterCard: React.FC = async () => {
             pt ="1rem"
             flexDir={"column"}
         >
-            <LoadMorePosts />
+            <LoadMorePostCards />
         </Flex>
     );
 }
