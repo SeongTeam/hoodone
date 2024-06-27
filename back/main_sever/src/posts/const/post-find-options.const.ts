@@ -12,8 +12,8 @@ export const QUEST_POST_FIND_OPTION: FindManyOptions<QuestPostModel> = {
     select: {
         deletedAt: false,
         author: {
-            id: true,
             nickname: true,
+            profileImagePublicId: true,
         },
     },
 
@@ -29,8 +29,8 @@ export const SB_POST_FIND_OPTION: FindManyOptions<SbPostModel> = {
     select: {
         deletedAt: false,
         author: {
-            id: true,
             nickname: true,
+            profileImagePublicId: true,
         },
     },
 

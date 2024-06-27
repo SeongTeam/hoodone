@@ -58,7 +58,7 @@ export class QuestPostsService {
      */
     async create(
         authorId: number,
-        contentInfo: Pick<PostModel, 'title' | 'content' | 'imgUrl'>,
+        contentInfo: Pick<PostModel, 'title' | 'content' | 'cloudinaryPublicId'>,
         qr?: QueryRunner,
     ) {
         try {

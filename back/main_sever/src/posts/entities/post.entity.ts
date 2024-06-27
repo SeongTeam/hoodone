@@ -22,8 +22,7 @@ export class PostModel extends BaseModel {
     content: string;
 
     @Column()
-    @IsUrl()
-    imgUrl: string;
+    cloudinaryPublicId: string;
 
     @Column({
         default: [],
@@ -34,11 +33,8 @@ export class PostModel extends BaseModel {
     // @Column({ name: 'like_count' })
     // likeCount: number;
 
-    @Column({ name: 'positive_count' })
-    positiveCount: number;
-
-    @Column({ name: 'negative_count' })
-    negativeCount: number;
+    @Column({ name: 'favorite_count', default: 0 })
+    favoriteCount: number;
 
     @Column({ name: 'comment_count' })
     commentCount: number;

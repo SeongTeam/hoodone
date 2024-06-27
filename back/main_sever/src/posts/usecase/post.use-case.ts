@@ -20,7 +20,7 @@ export class PostsUseCases {
 
     async createQuest(
         authorId: number,
-        postInfo: Pick<PostModel, 'title' | 'content' | 'imgUrl'>,
+        postInfo: Pick<PostModel, 'title' | 'content' | 'cloudinaryPublicId'>,
         qr: QueryRunner,
     ) {
         // TODO 게시물 에러코드 생성하기
@@ -36,7 +36,7 @@ export class PostsUseCases {
     async createSb(
         authorId: number,
         questId: number,
-        postInfo: Pick<SbPostModel, 'title' | 'content' | 'imgUrl'>,
+        postInfo: Pick<SbPostModel, 'title' | 'content' | 'cloudinaryPublicId'>,
         qr: QueryRunner,
     ) {
         // TODO 게시물 에러코드 생성하기
