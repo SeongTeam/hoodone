@@ -2,7 +2,7 @@ import { PostType } from '@/atoms/post';
 import { userAccountState } from '@/atoms/userAccount';
 import { customColors } from '@/utils/chakra/customColors';
 import { Box, Button, Divider, Flex, HStack, Image, Spacer, Tag, Text } from '@chakra-ui/react';
-import DetailPostHeader from './components/detailPostHeader';
+import DetailPostHeader from './components/DetailPostHeader';
 
 type DetailPostFormProps = {
     writerAccount: userAccountState;

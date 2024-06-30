@@ -34,59 +34,52 @@ const mockPostData1: PostType[] = [
 ];
 const mockPostData2: PostType[] = [mockPost, mockPost, mockPost];
 
-export class PostSlider extends React.Component {
-    public static async getInitialProps({ res, req, asPath, query }: any) {
-        //  SSR 처리가 일어나는 부분
-
-        return {
-            // 렌더링 함수로 보낼 props 데이터 처리 부분
-        };
-    }
-
-    _slideLeft() {
+const PostSlider: React.FC = () => {
+    const _slideLeft = () => {
         let slider = document.getElementById('slider')!;
         slider.scrollLeft = slider.scrollLeft - 235;
-    }
+    };
 
-    _slideRight() {
+    const _slideRight = () => {
         let slider = document.getElementById('slider')!;
         slider.scrollLeft = slider.scrollLeft + 235;
-    }
-    render() {
-        return (
-            <HStack w="100%" overflowY="hidden" overflowX="scroll">
-                <Button
-                    title="scroll left"
-                    w="60px"
-                    h="60px "
-                    bg={customColors.purple[100]}
-                    onClick={this._slideLeft}
-                >
-                    <ArrowLeftIcon />
-                </Button>
+    };
 
-                <Flex
-                    id="slider"
-                    w="100%"
-                    overflowY="hidden"
-                    overflowX="scroll"
-                    scrollBehavior="smooth"
-                    gap="2.2rem"
-                >
-                    {mockPostData1.map((post, index) => (
-                        <MiniPostCard key={index} index={index} post={post} />
-                    ))}
-                </Flex>
-                <Button
-                    title="scroll right"
-                    w="60px"
-                    h="60px "
-                    bg={customColors.purple[100]}
-                    onClick={this._slideRight}
-                >
-                    <ArrowRightIcon />
-                </Button>
-            </HStack>
-        );
-    }
-}
+    return (
+        <HStack w="100%" overflowY="hidden" overflowX="scroll">
+            <Button
+                title="scroll left"
+                w="60px"
+                h="60px "
+                bg={customColors.purple[100]}
+                onClick={_slideLeft}
+            >
+                <ArrowLeftIcon />
+            </Button>
+
+            <Flex
+                id="slider"
+                w="100%"
+                overflowY="hidden"
+                overflowX="scroll"
+                scrollBehavior="smooth"
+                gap="2.2rem"
+            >
+                {mockPostData1.map((post, index) => (
+                    <MiniPostCard key={index} index={index} post={post} />
+                ))}
+            </Flex>
+            <Button
+                title="scroll right"
+                w="60px"
+                h="60px "
+                bg={customColors.purple[100]}
+                onClick={_slideRight}
+            >
+                <ArrowRightIcon />
+            </Button>
+        </HStack>
+    );
+};
+
+export default PostSlider;

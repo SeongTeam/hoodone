@@ -7,10 +7,11 @@ import { customColors } from '@/utils/chakra/customColors';
 import { useUserAccountWithSSR } from '@/hooks/userAccount';
 import { userAccountState } from '@/atoms/userAccount';
 import RuleCard from '@/components/posts/card/RuleCard';
-import { PostSlider } from '@/components/_global/slider/postSliber';
 import CommentArea from '@/components/comment/server-component/commentArea';
 import DetailPostForm from '@/components/posts/detail/detailPostForm';
 import { questPostRuleText } from '@/components/posts/card/const/rule_card_texts';
+import dynamic from 'next/dynamic';
+const PostSlider = dynamic(() => import('@/components/_global/slider/postSliber'), { ssr: false });
 
 export type QuestPageProps = {
     params: {
@@ -75,7 +76,7 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
                         <Spacer h="6px" />
 
                         <Text fontSize="1.4em"> Submission</Text>
-                        <PostSlider></PostSlider>
+                        <PostSlider />
 
                         <Spacer h="26px" />
 
