@@ -16,7 +16,7 @@ const CommentArea: React.FC<CommentAreaProps> = ({ postID, rootCommentID }) => {
 
     return (
         <Box maxW="100%" overflow="hidden">
-            <VStack w="100%" h="full" flexDirection={'column'} gap="1rem" bg="yellow">
+            <VStack w="100%" h="full" flexDirection={'column'} gap="1rem">
                 {isCommentsPage && <InputComment />}
                 <Suspense fallback={<LoadingCommentList />}>
                     <RootCommentItemList postID={postID} rootCommentID={rootCommentID} />

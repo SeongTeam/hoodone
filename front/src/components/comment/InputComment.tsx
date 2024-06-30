@@ -53,7 +53,7 @@ const InputComment: React.FC<InputCommentProps> = ({}) => {
                 color={fontColor}
                 w="90%"
                 h="100%"
-                bg={customColors.pastelGreen[100]}
+                bg={customColors.pastelGreen[300]}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Comment"
                 _placeholder={{ color: 'gray.500' }}

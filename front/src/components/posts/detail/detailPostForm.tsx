@@ -1,94 +1,79 @@
+import { PostType } from '@/atoms/post';
 import { userAccountState } from '@/atoms/userAccount';
 import { customColors } from '@/utils/chakra/customColors';
-import {
-    Box,
-    HStack,
-    VStack,
-    Text,
-    Image,
-    Tag,
-    Divider,
-    Button,
-    Container,
-    Flex,
-    Spacer,
-} from '@chakra-ui/react';
-import { AddIcon, AttachmentIcon, DragHandleIcon, StarIcon } from '@chakra-ui/icons';
-import CommentArea from '@/components/comment/server-component/commentArea';
-import { PostType } from '@/atoms/post';
-
-const mockContent =
-    '1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 ';
+import { Box, Button, Divider, Flex, HStack, Image, Spacer, Tag, Text } from '@chakra-ui/react';
+import DetailPostHeader from './components/detailPostHeader';
 
 type DetailPostFormProps = {
     writerAccount: userAccountState;
     postInfo: PostType;
     communityImageURL?: string;
-    isQuestPost: boolean;
 };
 
-const DetailPostForm: React.FC<DetailPostFormProps> = ({
-    writerAccount,
-    isQuestPost,
-    postInfo,
-}) => {
+export const DetailPostForm: React.FC<DetailPostFormProps> = ({ writerAccount, postInfo }) => {
     const bg = customColors.white[100];
     const borderColor = customColors.shadeLavender[300];
-    const { title, content, imgUrl, author, createdAt, likeCount, tags } = postInfo;
+    const { title, content, author, createdAt, tags } = postInfo;
+
+    const mockTags = ['1234', '1235', '12325,', '123456789012345689+123456789'];
 
     return (
-        <Box
-            minW={{
-                sm: '600px',
-                base: '700px',
-                lg: '800px',
-            }}
-        >
-            <VStack
-                align="stretch"
-                spacing="20px"
-                py="20px"
-                px="16px"
-                direction="column"
-                width="100%"
-            >
-                <Flex direction="row" px="15px">
-                    <HStack align="center" spacing="6px">
-                        <Image
-                            borderRadius="full"
-                            boxSize="60px"
-                            src="https://bit.ly/dan-abramov"
-                            alt="Dan Abramov"
-                        />
-                        <Text w="180px" fontSize="16px" bg="green">
-                            {author.nickname}
-                        </Text>
-                        {/* TODO  write 시간 기록하기 동작 에러 확인하기 */}
-                        {/* <Spacer width="100px" /> */}
+        <Box w="100%" minW="300px">
+            <DetailPostHeader
+                writer={postInfo.author}
+                writerAccount={writerAccount}
+                createDate={postInfo.createdAt}
+            ></DetailPostHeader>
 
-                        <Text fontSize="12px">{' ~1h'}</Text>
-                        <Text fontSize="12px">{' ago'}</Text>
-                    </HStack>
-                    <Box h={8} w="full" />
-                    <Box bg="yellow" width="80px">
-                        <Text> Icon seat</Text>
-                        {/* TODO  Charkra Icon 동작 에러 확인하기 */}
-                        {/* <StarIcon />
-                            <DragHandleIcon /> */}
-                    </Box>
-                </Flex>
-                <Text fontSize="24px">{title}</Text>
+            <Flex flexDirection="column" align="left" justify="center" w="100%" gap="20px">
+                {/* title */}
+                <Text
+                    /**TODO bold를 사용해서 좀 더 제목처럼 보이게 하자 */
+                    px={4}
+                    py={4}
+                    // fontSize="1.6em"
+                    fontSize={{ sm: '1.5em', md: '1.6em', lg: '1.7em' }}
+                    noOfLines={4}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    whiteSpace="wrap"
+                    alignContent="left"
+                    align="left"
+                >
+                    12345978921214512121121
+                </Text>
 
-                <Divider orientation="horizontal" />
+                <Divider orientation="horizontal" borderColor={customColors.shadeLavender[100]} />
 
-                <Text>{content}</Text>
+                {/* content */}
+                <Text
+                    px={4}
+                    py={4}
+                    // fontSize="1.6em"
+                    fontSize="1.3em"
+                    noOfLines={4}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    whiteSpace="wrap"
+                    alignContent="left"
+                    align="left"
+                >
+                    {postInfo.content}
+                </Text>
+                <Spacer h="20px" />
 
+                {/* Tag area */}
                 <HStack>
-                    {tags.map((value) => (
+                    {mockTags.map((value) => (
                         <Tag
+                            maxW="200px"
                             size="lg"
+                            // h="40px"
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap"
                             key={value}
-                            borderRadius="30px"
+                            borderRadius="15px"
                             bg={customColors.skyBlue[300]}
                             variant="solid"
                             color={customColors.black}
@@ -97,6 +82,7 @@ const DetailPostForm: React.FC<DetailPostFormProps> = ({
                         </Tag>
                     ))}
                 </HStack>
+                <Divider orientation="horizontal" borderColor={customColors.shadeLavender[100]} />
 
                 <HStack>
                     <Button
@@ -123,13 +109,8 @@ const DetailPostForm: React.FC<DetailPostFormProps> = ({
                         Do it
                     </Button>
                 </HStack>
-                <Box w="full" h="250px" bg="green">
-                    <Text>SubMission</Text>
-                    <Text>나중에 구현</Text>
-                </Box>
-            </VStack>
+            </Flex>
         </Box>
     );
 };
-
 export default DetailPostForm;
