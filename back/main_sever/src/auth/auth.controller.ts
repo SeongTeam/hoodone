@@ -98,7 +98,7 @@ export class AuthController {
     @Post('send-pin-code')
     @UseInterceptors(TransactionInterceptor)
     @UseFilters(CommonExceptionFilter)
-    async sendSignUpPinCode(@Body() body, @QueryRunner() qr: QR) {
+    async sendSignUpPinCode(@Body(ValidationPipe) body, @QueryRunner() qr: QR) {
         /**reponse로 온 result의 response 안에
          * result[response] : '250 2.0.0 OK ... gsmpt가 들어 있으면 성골
          */
@@ -111,7 +111,7 @@ export class AuthController {
     }
     //  response: '250 2.0.0 OK  1716551382 d2e1a72fcca58-6f8fcbea886sm952420b3a.137 - gsmtp',
     @Post('compare/tempuser-pin-code')
-    async compareTempUserPinCode(@Body() body) {
+    async compareTempUserPinCode(@Body(ValidationPipe) body) {
         const { email, pinCode } = body;
         console.log(body);
         const result = await this.tempUserUseCase.comparePinCodes({ email, pinCode });
@@ -164,7 +164,10 @@ export class AuthController {
     @Patch('send-password-reset-link')
     @UseInterceptors(TransactionInterceptor)
     @UseFilters(CommonExceptionFilter)
-    async sendPasswordResetLink(@Body() body: { toEmail: string }, @QueryRunner() qr: QR) {
+    async sendPasswordResetLink(
+        @Body(ValidationPipe) body: { toEmail: string },
+        @QueryRunner() qr: QR,
+    ) {
         /**TODO 디음에 pincode가 아닌 link로 로직을 바꾸자 */
         const { toEmail } = body;
         const isExist = await this.userUseCase.hasExistedEmail(toEmail);

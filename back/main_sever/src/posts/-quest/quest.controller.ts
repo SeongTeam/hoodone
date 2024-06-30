@@ -46,7 +46,11 @@ export class QuestPostsController {
     @Post()
     @UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
-    async post(@User('id') userId: number, @Body() body: CreatePostDto, @QueryRunner() qr: QR) {
+    async post(
+        @User('id') userId: number,
+        @Body(ValidationPipe) body: CreatePostDto,
+        @QueryRunner() qr: QR,
+    ) {
         // 로직 실행
         console.log(body);
         const newPost = await this.postUseCase.createQuest(userId, body, qr);

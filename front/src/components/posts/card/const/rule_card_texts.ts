@@ -8,7 +8,13 @@ export const contentTexts = {
     sb: 'Description',
 };
 
-export const ruleBoxTexts = {
+export const createRuleCardTexts = {
     quest: ['1. Enjoy Quest', '2. Leave your review', '3. Participate in the quest'],
     sb: ['1. Upload Image as an quest result', '2. Leave Detail content', '3. Wait for evaluation'],
 };
+
+export const questPostRuleText: string[] = [
+    '1. Enjoy Quest',
+    '2. Leave your review',
+    '3. Participate in the quest',
+];
