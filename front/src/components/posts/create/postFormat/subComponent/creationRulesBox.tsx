@@ -1,8 +1,8 @@
 'use client';
 
+import { createRuleCardTexts } from '@/components/posts/card/const/rule_card_texts';
 import { customColors } from '@/utils/chakra/customColors';
 import { Box, Text, VStack } from '@chakra-ui/react';
-import { ruleBoxTexts } from '../const/texts';
 
 type CreationRulesBoxProps = {
     isQuestPost: boolean;
@@ -12,7 +12,7 @@ const CreationRulesBox: React.FC<CreationRulesBoxProps> = ({ isQuestPost }) => {
     const outsideBg = customColors.white;
     const insideBg = customColors.pastelGreen[100];
     const BorderColor = customColors.shadeLavender[300];
-    const rules: string[] = isQuestPost ? ruleBoxTexts.quest : ruleBoxTexts.sb;
+    const rules: string[] = isQuestPost ? createRuleCardTexts.quest : createRuleCardTexts.sb;
     // const rule1 = '1. Check your Quest creation ticket';
     // const rule2 = '2. Create Simple and Easy Quest';
     // const rule3 = '3. Express your quest on title';

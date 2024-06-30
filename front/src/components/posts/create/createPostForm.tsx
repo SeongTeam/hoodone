@@ -12,7 +12,7 @@ import { createPosts } from '@/server-actions/postsActions';
 import { AddIcon, AttachmentIcon } from '@chakra-ui/icons';
 
 import { showErrorToast } from '@/components/modal/auth/components/toast/toast';
-import { contentTexts, titleTexts } from './postFormat/const/texts';
+import { contentTexts, titleTexts } from '../card/const/rule_card_texts';
 
 type CreatePostFormProps = {
     userAccount: userAccountState;
