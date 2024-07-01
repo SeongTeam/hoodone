@@ -3,7 +3,6 @@ import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { type PostType } from '@/atoms/post';
 import useSelectFile from '@/hooks/useSelectFile';
-import ImageUpload from './postFormat/imageUpload';
 import TextInput from './postFormat/textInput';
 import { userAccountState } from '@/atoms/userAccount';
 import { customColors } from '@/utils/chakra/customColors';
@@ -13,6 +12,8 @@ import { AddIcon, AttachmentIcon } from '@chakra-ui/icons';
 
 import { showErrorToast } from '@/components/modal/auth/components/toast/toast';
 import { contentTexts, titleTexts } from './postFormat/const/texts';
+import { uploadQuestImage } from '@/server-actions/postsActions';
+import ImageUploadArea from '@/components/common/ImageUpload';
 
 type CreatePostFormProps = {
     userAccount: userAccountState;
@@ -37,8 +38,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount, isQuestPos
         content: '',
     } as PostType);
     const [tag, setTag] = useState<string>('');
-    const [imagePreview, setImagePreview] = React.useState<string | null>(null);
-    const { selectedFile, onSelectedFile, onDroppedFile } = useSelectFile();
+    const { selectedFile, setSelectedFile ,onSelectedFile, onDroppedFile } = useSelectFile();
     const [error, setError] = useState(false);
     const bg = customColors.white;
     const inputBorderColor = customColors.shadeLavender[300];
@@ -118,61 +118,14 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ userAccount, isQuestPos
                         }}
                     />
                 </form>
-                <HStack
-                    py="17px"
-                    px="59px"
-                    spacing="40px"
-                    borderRadius="15px"
-                    border={`1px solid ${inputBorderColor}`}
-                    alignContent="center"
-                    align="center"
-                >
-                    <Button
-                        bg="#ebedf0"
-                        _hover={{ bg: customColors.white[300] }}
-                        borderRadius="15px"
-                        width={{ lg: '40%' }}
-                        minHeight={{ sm: '250px' }}
-                    >
-                        <VStack alignContent="center" direction="column">
-                            {/* <AddIcon boxSize={8} mb="4px" color="black" /> */}
-                            /**TODO 피그마와 다른 아이콘 사용 */
-                            <AttachmentIcon boxSize={8} mb="4px" color="black" />
-                            <Text
-                                mt="4px"
-                                noOfLines={2}
-                                fontSize="18px"
-                                color="black"
-                                whiteSpace="pre-line"
-                            >
-                                UpLoad Media File *.jpeg, *.png
-                            </Text>
-                        </VStack>
-                    </Button>
-                    <Box width={{ lg: '45%' }} minHeight={{ sm: '250px' }} alignContent="center">
-                        <Text
-                            mt="4px"
-                            noOfLines={3}
-                            fontSize="24px"
-                            color="black"
-                            whiteSpace="pre-line"
-                        >
-                            Freely Upload Image file. Not need to be related to your quest
-                        </Text>
-                        <Spacer height="12px"></Spacer>
-                        <Button
-                            bg={customColors.purple[100]}
-                            _hover={{ bg: customColors.white[300] }}
-                            borderRadius="8px"
-                            fontSize="20px"
-                            py="20px"
-                            px="15px"
-                        >
-                            Upload
-                        </Button>
-                    </Box>
-                </HStack>
+                
+                <ImageUploadArea
+                    img={selectedFile}
+                    setImg={setSelectedFile}
+                    onInputImg={onSelectedFile}
+                    onDropImg={onDroppedFile}
 
+                />
                 <HStack spacing="20px">
                     <Button
                         onClick={() => {
