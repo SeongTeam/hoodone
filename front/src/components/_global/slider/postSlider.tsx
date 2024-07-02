@@ -6,18 +6,21 @@ import MiniPostCard from '@/components/posts/card/MiniPostCard';
 import PostCard from '@/components/posts/card/PostCard';
 import { customColors } from '@/utils/chakra/customColors';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
-import { Button, Flex, HStack } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack } from '@chakra-ui/react';
+import { Icon } from '@iconify-icon/react';
+
 import React from 'react';
 
-type contentCardType = 'MiniPostCard' | 'PostCard' | 'AdminPostCard';
-
 interface PostSliderPops {
-    cardType: contentCardType;
-    postData: PostType[];
     sliderName: string;
+    gap?: string;
+    children: React.ReactNode;
 }
 
-const PostSlider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const PostSlider: React.FC<PostSliderPops> = ({ sliderName, gap, children }) => {
+    const BTN_H = 70;
+    const BTN_W = 40;
+
     const cardComponentMap = {
         MiniPostCard: MiniPostCard,
         PostCard: PostCard,
@@ -35,37 +38,53 @@ const PostSlider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     };
 
     return (
-        <HStack w="100%" overflowY="hidden" overflowX="scroll">
+        <Box position="relative" px="15px">
             <Button
+                style={{
+                    position: 'absolute',
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)', // Center both horizontally and vertically
+                    left: -1,
+                    width: BTN_W,
+                    height: BTN_H,
+                    backgroundColor: customColors.purple[100],
+                }}
                 title="scroll left"
-                w="60px"
-                h="60px "
                 bg={customColors.purple[100]}
                 onClick={_slideLeft}
             >
                 <ArrowLeftIcon />
             </Button>
-
-            <Flex
-                id="slider"
-                w="100%"
-                overflowY="hidden"
-                overflowX="scroll"
-                scrollBehavior="smooth"
-                gap="2.2rem"
-            >
-                {children}
-            </Flex>
+            <HStack w="100%" overflowY="hidden" overflowX="scroll">
+                <Flex
+                    w="1400px"
+                    id="slider"
+                    overflowY="hidden"
+                    overflowX="scroll"
+                    scrollBehavior="smooth"
+                    gap={gap ?? '2.2rem'}
+                >
+                    {children}
+                </Flex>
+            </HStack>
             <Button
-                title="scroll right"
-                w="60px"
-                h="60px "
+                style={{
+                    position: 'absolute',
+                    top: '50%',
+                    transform: 'translate(50%, -50%)', // Center both horizontally and vertically
+                    right: -1,
+                    width: BTN_W,
+                    height: BTN_H,
+                    backgroundColor: customColors.purple[100],
+                    display: 'flex', // Ensure UpBtn has available space for centering
+                }}
+                title="scroll left"
                 bg={customColors.purple[100]}
                 onClick={_slideRight}
             >
                 <ArrowRightIcon />
             </Button>
-        </HStack>
+        </Box>
     );
 };
 

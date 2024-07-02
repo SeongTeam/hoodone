@@ -80,7 +80,7 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
                         <Spacer h="6px" />
 
                         <Text fontSize="1.4em"> Submission</Text>
-                        <PostSlider>
+                        <PostSlider sliderName="sbsPostsOnDetail">
                             {allPosts?.map((post, index) => (
                                 <MiniPostCard key={index} index={index} post={post} />
                             ))}
