@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { PostType } from '@/atoms/post';
-import { getPostWithID } from '@/lib/server-only/postLib';
+import { getAllPosts, getPostWithID } from '@/lib/server-only/postLib';
 import { Box, Text, Spacer, Flex, Grid, GridItem, VStack, SimpleGrid } from '@chakra-ui/react';
 import logger from '@/utils/log/logger';
 import { customColors } from '@/utils/chakra/customColors';
@@ -11,7 +11,9 @@ import CommentArea from '@/components/comment/server-component/commentArea';
 import DetailPostForm from '@/components/posts/detail/detailPostForm';
 import { questPostRuleText } from '@/components/posts/card/const/rule_card_texts';
 import dynamic from 'next/dynamic';
-const PostSlider = dynamic(() => import('@/components/_global/slider/postSliber'), { ssr: false });
+import MiniPostCard from '@/components/posts/card/MiniPostCard';
+import React from 'react';
+const PostSlider = dynamic(() => import('@/components/_global/slider/postSlider'), { ssr: false });
 
 export type QuestPageProps = {
     params: {
@@ -32,6 +34,8 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
     console.log(params.postid, searchParams.index);
 
     const post: PostType | null = await getPostWithID(params.postid, parseInt(searchParams.index));
+
+    const allPosts: PostType[] | null = await getAllPosts();
 
     if (!post) {
         logger.error(`post${params.postid} not found`);
@@ -76,7 +80,11 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
                         <Spacer h="6px" />
 
                         <Text fontSize="1.4em"> Submission</Text>
-                        <PostSlider />
+                        <PostSlider>
+                            {allPosts?.map((post, index) => (
+                                <MiniPostCard key={index} index={index} post={post} />
+                            ))}
+                        </PostSlider>
 
                         <Spacer h="26px" />
 
