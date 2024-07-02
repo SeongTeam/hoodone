@@ -31,6 +31,8 @@ import { Logger } from '@nestjs/common';
 import { TempUserUseCase } from 'src/users/usecase/temp-user.case';
 import { retry } from 'rxjs';
 import { ResetPasswordRequestDto } from './dto/reset-password-request.dto';
+import { AccessTokenGuard } from './guard/token/access-token.guard';
+import { User } from 'src/users/decorator/user.decorator';
 import { emit } from 'process';
 
 @Controller('auth')
@@ -40,6 +42,15 @@ export class AuthController {
         private readonly userUseCase: UserUseCase,
         private readonly tempUserUseCase: TempUserUseCase,
     ) {}
+
+    @Get('/identify')
+    @UseGuards(AccessTokenGuard)
+    async identifyUser(@User('id') userId: number) {
+        let res = new AuthApiResponseDto();
+        res.identify = await this.userUseCase.getUserById(userId);
+
+        return res;
+    }
 
     @Post('token/access')
     @UseGuards(RefreshTokenGuard)
