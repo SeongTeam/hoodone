@@ -1,5 +1,3 @@
-'use client';
-
 import { customColors } from '@/utils/chakra/customColors';
 import { Box, Text, VStack } from '@chakra-ui/react';
 import { ruleBoxTexts } from '../const/texts';

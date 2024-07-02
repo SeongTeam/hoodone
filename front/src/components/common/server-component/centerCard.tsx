@@ -1,8 +1,6 @@
 import { Flex,Text } from "@chakra-ui/react";
 import React, { Suspense } from "react";
 import { getCachedPaginatedPosts } from "@/lib/server-only/postLib";
-import { PostType } from "@/atoms/post";
-import PostList from "@/components/posts/view/postList";
 import LoadMorePostCards from "@/components/posts/card/LoadMorePostCards";
 
 

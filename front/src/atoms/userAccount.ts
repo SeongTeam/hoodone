@@ -3,6 +3,7 @@ import { atom } from 'recoil';
 import { persistAtom } from '@/utils/recoil/recoild-persist';
 
 export interface userAccountState {
+    email: string;
     nickname: string; // identifier
     isLogin: boolean;
     status: 'activated' | 'suspended' | 'banned';
@@ -10,6 +11,7 @@ export interface userAccountState {
 }
 
 export const defaultUserAccount: userAccountState = {
+    email: '',
     nickname: '',
     isLogin: false,
     status: 'activated',

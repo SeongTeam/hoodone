@@ -9,7 +9,7 @@ import MotionDiv from "@/components/common/motionDiv";
 import PostThumbnail from "./components/postThumbnail";
 import { Icon } from "@iconify-icon/react";
 import UserProfileImage from "@/components/common/server-component/UserProfileImage";
-import { PostType } from "@/atoms/post";
+import { PostType } from '@/type/postType';
 import QuestButtons from "./components/QuestButtons";
 import { formatCreatedAt } from "@/lib/Date";
 

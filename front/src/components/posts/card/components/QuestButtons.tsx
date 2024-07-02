@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { Flex, Button } from "@chakra-ui/react";
 import { Icon } from "@iconify-icon/react";
 import { customColors } from "@/utils/chakra/customColors";
-import { PostType } from "@/atoms/post";
+import { PostType } from '@/type/postType';
 import { ChatIcon } from "@chakra-ui/icons";
 
 type QuestButtonsProps = {

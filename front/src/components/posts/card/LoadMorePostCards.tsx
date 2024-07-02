@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useInView } from "react-intersection-observer";
 import { useCallback, useEffect, useState } from "react";
 import { Grid, GridItem } from "@chakra-ui/react";
-import { PostType } from "@/atoms/post";
+import { PostType } from '@/type/postType';
 import PostCard from "./PostCard";
 import MotionDiv from "@/components/common/motionDiv";
 
