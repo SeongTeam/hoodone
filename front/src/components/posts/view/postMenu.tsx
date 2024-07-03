@@ -1,5 +1,5 @@
 "use client"
-import { PostType, postState  } from "@/atoms/post";
+import { PostType } from '@/type/postType';
 import { Menu, MenuList, MenuButton, MenuItem, IconButton } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import React from "react";

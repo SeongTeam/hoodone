@@ -5,7 +5,7 @@ import { AuthException } from 'src/common/exception/auth-exception';
 import { UsersService } from 'src/users/users.service';
 
 import { UserModel } from '../entities/user.entity';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Logger } from '@nestjs/common';
 
 @Injectable()
 export class UserUseCase {
@@ -61,6 +61,15 @@ export class UserUseCase {
     async getUserByEmail(email: string): Promise<UserModel> {
         const existingUser = await this.userService.getUserByEmail(email);
         if (!existingUser) {
+            throw new AuthException('EMAIL_NOT_FOUND');
+        }
+        return existingUser;
+    }
+
+    async getUserById(id: number) {
+        const existingUser = await this.userService.getUserById(id);
+        if (!existingUser) {
+            Logger.error('UserUseCase getUserById', { message: `User[${id}] does not exist` });
             throw new AuthException('EMAIL_NOT_FOUND');
         }
         return existingUser;

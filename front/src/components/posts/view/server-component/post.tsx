@@ -1,4 +1,3 @@
-import { PostType } from "@/atoms/post";
 import React from "react";
 import { Card, CardBody, CardFooter, CardHeader, Flex,Spacer ,Text } from "@chakra-ui/react";
 import { basicFontSize } from "@/utils/chakra/foundations/fonts";
@@ -8,6 +7,7 @@ import PostMenu from "../postMenu";
 import { CommentType } from "@/atoms/comment";
 import CommentArea from "@/components/comment/server-component/commentArea";
 import logger from "@/utils/log/logger";
+import { PostType } from '@/type/postType';
 
 type PostProps = {
     post: PostType | null

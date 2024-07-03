@@ -1,5 +1,3 @@
-'use client';
-
 import { createRuleCardTexts } from '@/components/posts/card/const/rule_card_texts';
 import { customColors } from '@/utils/chakra/customColors';
 import { Box, Text, VStack } from '@chakra-ui/react';

@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { getPostWithID } from "@/lib/server-only/postLib";
-import { PostType } from "@/atoms/post";
+import { PostType } from '@/type/postType';
 import { Flex } from "@chakra-ui/react";
 import logger from "@/utils/log/logger";
 import Post from "@/components/posts/view/server-component/post";

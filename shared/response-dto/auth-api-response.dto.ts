@@ -30,4 +30,10 @@ export class AuthApiResponseDto {
         raw: [];
         affected: 1;
     };
+
+    identify?: {
+        nickname: string;
+        email: string;
+        profileImagePublicId: string;
+    };
 }
