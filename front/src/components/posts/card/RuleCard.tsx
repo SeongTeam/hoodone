@@ -40,12 +40,12 @@ const RuleCard: React.FC<RuleCardProps> = ({ title, cardTexts, displayOption, bg
             w="100%"
             py="20px"
             px="12px"
-            bg={outsideBg}
+            bg="white"
             borderRadius="15px"
             border={`1px solid ${BorderColor}`}
         >
             <Text fontSize="1.4em"> Create Rule</Text>
-            <VStack spacing="3px" p="12px" bg={insideBg} align="left">
+            <VStack spacing="3px" px="12px" bg={insideBg} align="left">
                 <Text mt="4px" noOfLines={3} fontSize="1.2em" color="black" whiteSpace="pre-line">
                     {cardTexts[0]}
                 </Text>
