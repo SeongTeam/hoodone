@@ -3,10 +3,10 @@ import Image from 'next/image';
 import { useInView } from 'react-intersection-observer';
 import { useCallback, useEffect, useState } from 'react';
 import { Box, Spacer, Text, VStack } from '@chakra-ui/react';
-import { PostType } from '@/atoms/post';
 import PostCard from './PostCard';
 import MotionDiv from '@/components/common/motionDiv';
 import PostSlider from '@/components/_global/slider/postSlider';
+import { PostType } from '@/type/postType';
 
 /*TODO
 - route handler GET METHOD cache 활용 여부 확인
@@ -72,78 +72,71 @@ const LoadMorePostCards: React.FC = () => {
     }, [inView, loadPosts]);
 
     return (
-        <>
-            <VStack spacing="4px">
-                <Text mx="5px" mt="10px">
-                    User Quest
+        <div>
+            <Text mx="5px" mt="10px">
+                User Quest
+            </Text>
+            <PostSlider sliderName="User Quests" gap="20px" hight="440px">
+                {posts.map((post, index) => {
+                    if (index < 4)
+                        return (
+                            <MotionDiv
+                                variants={variants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="hidden"
+                                transition={{
+                                    delay: index * 0.1,
+                                    ease: 'easeInOut',
+                                    duration: 0.5,
+                                }}
+                                viewport={{ amount: 0 }}
+                            >
+                                <PostCard post={post} key={post.id} index={index} type="quest" />
+                            </MotionDiv>
+                        );
+                })}
+            </PostSlider>
+            <Box>
+                <Text mx="5px" mt="5px">
+                    Submissions
                 </Text>
-                <PostSlider sliderName="User Quests" gap="20px">
-                    {posts.map((post, index) => {
-                        if (index < 4)
-                            return (
-                                <MotionDiv
-                                    variants={variants}
-                                    initial="hidden"
-                                    animate="visible"
-                                    exit="hidden"
-                                    transition={{
-                                        delay: index * 0.1,
-                                        ease: 'easeInOut',
-                                        duration: 0.5,
-                                    }}
-                                    viewport={{ amount: 0 }}
-                                >
-                                    <PostCard
-                                        post={post}
-                                        key={post.id}
-                                        index={index}
-                                        type="quest"
-                                    />
-                                </MotionDiv>
-                            );
-                    })}
-                </PostSlider>
-                <Box>
-                    <Text mx="5px" mt="5px">
-                        Submissions
-                    </Text>
-                </Box>
-                <PostSlider sliderName="Submission" gap="20px">
-                    {posts.map((post, index) => {
-                        if (index < 4)
-                            return (
-                                <MotionDiv
-                                    variants={variants}
-                                    initial="hidden"
-                                    animate="visible"
-                                    exit="hidden"
-                                    transition={{
-                                        delay: index * 0.1,
-                                        ease: 'easeInOut',
-                                        duration: 0.5,
-                                    }}
-                                    viewport={{ amount: 0 }}
-                                >
-                                    <PostCard post={post} key={post.id} index={index} type="sb" />
-                                </MotionDiv>
-                            );
-                    })}
-                </PostSlider>
-                <section>
-                    <div ref={ref}>
-                        {isLoading && (
-                            <Image
-                                src="/hood1/spinner.svg"
-                                alt="spinner"
-                                width={100}
-                                height={100}
-                                className="object-contain"
-                            />
-                        )}
-                    </div>
-                </section>
-            </VStack>
-        </>
+            </Box>
+            <PostSlider sliderName="Submission" gap="20px" hight="440px">
+                {posts.map((post, index) => {
+                    if (index < 4)
+                        return (
+                            <MotionDiv
+                                variants={variants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="hidden"
+                                transition={{
+                                    delay: index * 0.1,
+                                    ease: 'easeInOut',
+                                    duration: 0.5,
+                                }}
+                                viewport={{ amount: 0 }}
+                            >
+                                <PostCard post={post} key={post.id} index={index} type="sb" />
+                            </MotionDiv>
+                        );
+                })}
+            </PostSlider>
+            <section>
+                <span ref={ref}>
+                    {isLoading && (
+                        <Image
+                            src="/hood1/spinner.svg"
+                            alt="spinner"
+                            width={100}
+                            height={100}
+                            className="object-contain"
+                        />
+                    )}
+                </span>
+            </section>
+        </div>
     );
 };
 
