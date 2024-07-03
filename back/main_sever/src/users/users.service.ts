@@ -142,6 +142,15 @@ export class UsersService {
         return existingUser;
     }
 
+    async getUserById(id: number) {
+        const existingUser = await this.usersRepository.findOne({
+            where: {
+                id,
+            },
+        });
+        return existingUser;
+    }
+
     async getTempUserByEmail(email: string) {
         const existingUser = await this.tempUserRepository.findOne({
             where: {

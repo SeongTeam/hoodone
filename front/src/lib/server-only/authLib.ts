@@ -85,3 +85,29 @@ export function setRefreshTokenCookie(refreshToken: string) {
         path: '/',
     });
 }
+
+export async function getUserBasicInfo() {
+    try {
+        const accessToken = validateAuth();
+        const response: Response = await fetch(`${backURL}/auth/identify`, {
+            method: 'GET',
+            headers: {
+                authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            cache: 'no-store',
+        });
+
+        if (!response.ok) {
+            logger.error('[getUserBasicInfo] response is not ok', { message: response });
+            throw new Error('getUserBasicInfo response error');
+        }
+
+        const res: AuthApiResponseDto = await response.json();
+        const ret = res.identify!;
+
+        return ret;
+    } catch (e) {
+        logger.error('getUserBasicInfo error', { message: e });
+    }
+}

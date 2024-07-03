@@ -1,13 +1,10 @@
-'use client';
-
 import { Box, Grid, GridItem, HStack, Spacer, Stack, VStack, Text } from '@chakra-ui/react';
 import CreatePostForm from '@/components/posts/create/createPostForm';
-import { useUserAccountWithSSR } from '@/hooks/userAccount';
 import { customColors } from '@/utils/chakra/customColors';
 import CreationRulesBox from '@/components/posts/create/postFormat/subComponent/creationRulesBox';
+import { POST_TYPE } from '@/type/postType';
 
 export default function CreateQuestPage() {
-    const [user, setUser] = useUserAccountWithSSR();
 
     return (
         <Box width="100%" px="29px" pt="25px" pb="20px">
@@ -25,9 +22,7 @@ export default function CreateQuestPage() {
             >
                 <GridItem pl="2" area={'main'}>
                     {' '}
-                    <Box maxW={{ base: '800px' }}>
-                        <CreatePostForm isQuestPost={true} userAccount={user} />
-                    </Box>
+                    <CreatePostForm type={POST_TYPE.QUEST} />
                 </GridItem>
                 <GridItem pl="2" area={'space'}>
                     {' '}

@@ -1,10 +1,9 @@
 import 'server-only';
 import logger from '@/utils/log/logger';
 import { PostApiResponseDto } from 'hoodone-shared';
-import { PostType } from '@/atoms/post';
 import assert from 'assert';
 import { unstable_cache } from 'next/cache';
-import Post from '@/components/posts/view/server-component/post';
+import { PostType } from '@/type/postType';
 
 const backendURL = process.env.BACKEND_URL;
 
@@ -103,7 +102,7 @@ export async function getPostWithID(id: string, PostsPos: number) {
 
 export async function getPaginatedPosts(offset: number, limit: number) {
     try {
-        const res = await fetch(`${backendURL}/posts/paginated?offset=${offset}&limit=${limit}`);
+        const res = await fetch(`${backendURL}/quests/paginated?offset=${offset}&limit=${limit}`);
 
         if (!res.ok) {
             logger.error('getPaginatedPosts error', {

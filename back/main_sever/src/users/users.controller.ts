@@ -70,7 +70,7 @@ export class UsersController {
         return this.userUseCase.getUserByEmail(email);
     }
     @Get('/nickname/:nickname')
-    getById(@Param('nickname') nickname: string) {
+    getByNickname(@Param('nickname') nickname: string) {
         return this.userUseCase.getUserByNickname(nickname);
     }
 }

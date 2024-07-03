@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 
 const useSelectFile = () => {
-  const [selectedFile, setSelectedFile] = useState<File|null>();
+  const [selectedFile, setSelectedFile] = useState<File|null>(null);
 
   const onSelectedFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.[0]) {
@@ -15,6 +15,7 @@ const useSelectFile = () => {
 
   const onDroppedFile = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    event.stopPropagation();
     console.log("[onDroppedFile]", event);
 
     if (event.dataTransfer.items) {
