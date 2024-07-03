@@ -1,5 +1,6 @@
-"use client";
-import { Box, Button, HStack, Spacer, Tag, Text, VStack, useToast } from '@chakra-ui/react';
+'use client';
+
+import { Box, Button, HStack, VStack, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import useSelectFile from '@/hooks/useSelectFile';
@@ -7,35 +8,31 @@ import TextInput from './postFormat/textInput';
 import { customColors } from '@/utils/chakra/customColors';
 import Tab, { type TabItem } from './tab';
 import { createPosts } from '@/server-actions/postsActions';
-import { AddIcon, AttachmentIcon } from '@chakra-ui/icons';
 import { showErrorToast } from '@/components/modal/auth/components/toast/toast';
-import { uploadQuestImage } from '@/server-actions/postsActions';
 import ImageUploadArea from '@/components/common/ImageUpload';
 import { useUserAccountWithSSR } from '@/hooks/userAccount';
-import { NEW_POST_FORMAT,POST_TYPE, NewPostFormType, tagDelimiter } from '@/type/postType';
+import { NEW_POST_FORMAT, POST_TYPE, NewPostFormType, tagDelimiter } from '@/type/postType';
 import { contentTexts, titleTexts } from '../card/const/rule_card_texts';
-
 
 type CreatePostFormProps = {
     type: POST_TYPE;
 };
 
-const CreatePostForm: React.FC<CreatePostFormProps> = ({  type = POST_TYPE.QUEST }) => {
-    const [ userAccount ] = useUserAccountWithSSR(); //사용자가 브라우저 자원을 훼손할 여지가 있으므로, accessToken을 통해 서버에서 직접 정보를 가져오기
+const CreatePostForm: React.FC<CreatePostFormProps> = ({ type = POST_TYPE.QUEST }) => {
+    const [userAccount] = useUserAccountWithSSR(); //사용자가 브라우저 자원을 훼손할 여지가 있으므로, accessToken을 통해 서버에서 직접 정보를 가져오기
     const router = useRouter();
     const useToastOption = useToast();
     const [newPost, setNewPost] = useState<NewPostFormType>({
         title: '',
         content: '',
         tags: [],
-        type : type
+        type: type,
     } as NewPostFormType);
-    const { selectedFile, setSelectedFile ,onSelectedFile, onDroppedFile } = useSelectFile();
+    const { selectedFile, setSelectedFile, onSelectedFile, onDroppedFile } = useSelectFile();
     const [error, setError] = useState(false);
     const bg = customColors.white[100];
     const inputBorderColor = customColors.shadeLavender[300];
     const isQuestPost = type === POST_TYPE.QUEST;
-
 
     const onSubmit = async () => {
         console.log('onSubmit()');
@@ -48,11 +45,11 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({  type = POST_TYPE.QUEST
             showErrorToast(useToastOption, { title: 'Content is empty!! ' });
             return;
         }
-        
+
         const formData = new FormData();
         formData.append(NEW_POST_FORMAT.POST_DTO, JSON.stringify(newPost));
 
-        if(selectedFile) {
+        if (selectedFile) {
             formData.append(NEW_POST_FORMAT.IMAGE, selectedFile);
         }
 
@@ -68,7 +65,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({  type = POST_TYPE.QUEST
             router.push('/login');
         }
         */
-    },[])
+    }, []);
 
     return (
         <Box>
@@ -83,23 +80,21 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({  type = POST_TYPE.QUEST
                 borderRadius="15px"
                 border={`1px solid ${inputBorderColor}`}
             >
-
                 <form>
                     <TextInput
                         titlePlaceHolder={isQuestPost ? titleTexts.quest : titleTexts.sb}
                         contentPlaceHolder={isQuestPost ? contentTexts.quest : contentTexts.sb}
                         tagPlaceHolder="write tag"
-                        post = {newPost}
+                        post={newPost}
                         setPost={setNewPost}
                     />
                 </form>
-                
+
                 <ImageUploadArea
                     img={selectedFile}
                     setImg={setSelectedFile}
                     onInputImg={onSelectedFile}
                     onDropImg={onDroppedFile}
-
                 />
                 <HStack spacing="20px">
                     <Button

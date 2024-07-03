@@ -1,16 +1,14 @@
 'use client';
 import { Box, Flex, Menu, MenuButton, Text, Spacer } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
-import { basicFontSize } from '@/utils/chakra/foundations/fonts';
-import { ChatIcon } from '@chakra-ui/icons';
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import MotionDiv from '@/components/common/motionDiv';
 import PostThumbnail from './components/postThumbnail';
 import UserProfileImage from '@/components/common/server-component/UserProfileImage';
-import { PostType } from '@/atoms/post';
 import QuestButtons from './components/QuestButtons';
 import { formatCreatedAt } from '@/lib/Date';
+import { PostType } from '@/type/postType';
 
 type PostVariety = 'quest' | 'sb';
 

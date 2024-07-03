@@ -73,4 +73,5 @@ export const customColors = {
     disableColor: {
         100: 'rgba(135, 143, 158, 0.78)',
     },
+    pageBackGround: '#F7F6F9',
 };

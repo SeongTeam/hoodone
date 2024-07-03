@@ -1,35 +1,34 @@
-import { PostType } from '@/atoms/post';
+'use client';
+
 import { userAccountState } from '@/atoms/userAccount';
 import { customColors } from '@/utils/chakra/customColors';
 import { Box, Button, Divider, Flex, HStack, Image, Spacer, Tag, Text } from '@chakra-ui/react';
 import DetailPostHeader from './components/DetailPostHeader';
+import ParentPostCard from './components/ParentPostCard';
+import { PostType } from '@/type/postType';
 
 type DetailPostFormProps = {
     writerAccount: userAccountState;
-    postInfo: PostType;
+    post: PostType;
     communityImageURL?: string;
 };
 
-export const DetailPostForm: React.FC<DetailPostFormProps> = ({ writerAccount, postInfo }) => {
+export const DetailPostForm: React.FC<DetailPostFormProps> = ({ writerAccount, post }) => {
     const bg = customColors.white[100];
     const borderColor = customColors.shadeLavender[300];
-    const { title, content, author, createdAt, tags } = postInfo;
-
-    const mockTags = ['1234', '1235', '12325,', '123456789012345689+123456789'];
+    // const { title, content, author, createdAt, tags } = post;
 
     return (
         <Box w="100%" minW="300px">
             <DetailPostHeader
-                writer={postInfo.author}
                 writerAccount={writerAccount}
-                createDate={postInfo.createdAt}
+                createDate={post.createdAt}
             ></DetailPostHeader>
 
-            <Flex flexDirection="column" align="left" justify="center" w="100%" gap="20px">
+            <Flex flexDirection="column" align="left" justify="center" w="100%">
                 {/* title */}
                 <Text
                     /**TODO bold를 사용해서 좀 더 제목처럼 보이게 하자 */
-                    px={4}
                     py={4}
                     // fontSize="1.6em"
                     fontSize={{ sm: '1.5em', md: '1.6em', lg: '1.7em' }}
@@ -40,31 +39,26 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ writerAccount, p
                     alignContent="left"
                     align="left"
                 >
-                    {title}
+                    {'Sb:\t'}
+                    {post.title}
                 </Text>
 
                 <Divider orientation="horizontal" borderColor={customColors.shadeLavender[100]} />
 
+                <Box height={5}></Box>
+
+                <ParentPostCard post={post} type="quest"></ParentPostCard>
+
+                <Box height={35}></Box>
                 {/* content */}
-                <Text
-                    px={4}
-                    py={4}
-                    // fontSize="1.6em"
-                    fontSize="1.3em"
-                    noOfLines={4}
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    whiteSpace="wrap"
-                    alignContent="left"
-                    align="left"
-                >
-                    {postInfo.content}
+                <Text px={4} py={4} fontSize="1.3em" alignContent="left" align="left">
+                    {post.content}
                 </Text>
                 <Spacer h="20px" />
 
                 {/* Tag area */}
                 <HStack>
-                    {tags.map((value) => (
+                    {post.tags.map((value) => (
                         <Tag
                             maxW="200px"
                             size="lg"
@@ -82,7 +76,9 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ writerAccount, p
                         </Tag>
                     ))}
                 </HStack>
+                <Box height={5}></Box>
                 <Divider orientation="horizontal" borderColor={customColors.shadeLavender[100]} />
+                <Box height={15}></Box>
 
                 <HStack>
                     <Button

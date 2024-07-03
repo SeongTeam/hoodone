@@ -1,6 +1,6 @@
 'use client';
 
-import { AuthorType } from '@/atoms/post';
+import { AuthorType } from '@/type/postType';
 import { userAccountState } from '@/atoms/userAccount';
 import { formatTimeFromNow } from '@/lib/Date';
 import { customColors } from '@/utils/chakra/customColors';
@@ -9,7 +9,6 @@ import { Box, Flex, HStack, Text, Image, Spacer } from '@chakra-ui/react';
 
 type DetailPostHeaderProps = {
     writerAccount: userAccountState;
-    writer: AuthorType;
     createDate: Date;
 };
 

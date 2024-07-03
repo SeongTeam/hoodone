@@ -1,12 +1,25 @@
-import Post from '@/components/posts/view/server-component/post';
 import { NextPage } from 'next';
 import { PostType } from '@/type/postType';
-import { getPostWithID } from '@/lib/server-only/postLib';
-import { Flex } from '@chakra-ui/react';
+import { getAllPosts, getPostWithID } from '@/lib/server-only/postLib';
+import { Box, Text, Spacer, Flex, Grid, VStack, SimpleGrid, Image } from '@chakra-ui/react';
 import logger from '@/utils/log/logger';
-type SbPageProps = {
+import { customColors } from '@/utils/chakra/customColors';
+import { useUserAccountWithSSR } from '@/hooks/userAccount';
+import { userAccountState } from '@/atoms/userAccount';
+import RuleCard from '@/components/posts/card/RuleCard';
+import CommentArea from '@/components/comment/server-component/commentArea';
+import DetailPostForm from '@/components/posts/detail/detailPostForm';
+import { questPostRuleText } from '@/components/posts/card/const/rule_card_texts';
+import dynamic from 'next/dynamic';
+import MiniPostCard from '@/components/posts/card/MiniPostCard';
+import { ImageUploadVariant } from '@/components/common/ImageUpload';
+const PostSlider = dynamic(() => import('@/components/_global/slider/postSlider'), { ssr: false });
+
+export type SbPageProps = {
     params: {
         postid: string;
+        writer: userAccountState;
+        rootCommentID?: number;
     };
     searchParams: {
         index: string;
@@ -14,17 +27,15 @@ type SbPageProps = {
 };
 
 const SbPage: NextPage<SbPageProps> = async ({ params, searchParams }) => {
-    /* TODO
-    - 2가지 시나리오에 대한 post data cache 고려하기
-        1. post list item 클릭 > 해당 페이지 진입
-        2. url 링크를 통해 해당 페이지 진입
-    - comment 로드 실패시에 대한 UI 구현하기 (fall back UI)
-    - comment 로등 동안 표출될 UI 구현하기 ( suspense)
-    - commentlist 업데이트 시 revalidate에 의해 PostPage가 RE-SSR되는 현상 최적화 하기 
-    */
+    const { writer, rootCommentID } = params;
+    const borderColor = customColors.shadeLavender[300];
+
     logger.info('#PostPage Rendered', { message: params.postid });
+    console.log(params.postid, searchParams.index);
 
     const post: PostType | null = await getPostWithID(params.postid, parseInt(searchParams.index));
+
+    const allPosts: PostType[] | null = await getAllPosts();
 
     if (!post) {
         logger.error(`post${params.postid} not found`);
@@ -32,9 +43,73 @@ const SbPage: NextPage<SbPageProps> = async ({ params, searchParams }) => {
     }
 
     return (
-        <Flex w={'full'} flexDir={'column'}>
-            <Post post={post} />
-        </Flex>
+        <Box
+            w="full"
+            h="full"
+            pt="20px"
+            px={{ sm: '4px', md: '14px', lg: '29px' }}
+            // pt={{ sm: '12px', md: '25px' }}
+            bg={customColors.pageBackGround}
+        >
+            <Text pl="8px" pb="2px" size="17px">
+                Submission
+            </Text>
+            <Flex
+                flexDirection="column"
+                // pt={{ base: '120px', md: '75px' }}
+                // px={{ sm: '4px', md: '14px', lg: '29px' }}
+                // pt={{ sm: '12px', md: '25px' }}
+                pb="20px"
+                minW="300px"
+            >
+                <Spacer height="11px" />
+                <SimpleGrid columns={{ sm: 1, md: 1 }} spacing="24px">
+                    <Grid
+                        templateColumns={{ md: '1fr', lg: '1fr', xl: '3fr 1fr' }}
+                        templateRows={{ sm: '1fr auto', md: '2fr' }}
+                        gap="24px"
+                    >
+                        <RuleCard
+                            title="Quest"
+                            cardTexts={questPostRuleText}
+                            displayOption={{ sm: 'block', md: 'block', lg: 'block', xl: 'none' }}
+                        ></RuleCard>
+
+                        <VStack
+                            w="100%"
+                            minW="300px"
+                            bg="white"
+                            align="left"
+                            px={{ sm: '0', md: '14px', lg: '24px' }}
+                            py="24px"
+                            borderRadius="15px"
+                            border={`1px solid ${borderColor}`}
+                        >
+                            <DetailPostForm writerAccount={writer} post={post}></DetailPostForm>
+
+                            <Box h="16px" />
+
+                            <Text fontSize="1.4em"> Submission</Text>
+                            <PostSlider sliderName="sbsPostsOnDetail" hight="190px">
+                                {allPosts?.map((post, index) => (
+                                    <MiniPostCard key={index} index={index} post={post} />
+                                ))}
+                            </PostSlider>
+
+                            <Spacer h="26px" />
+
+                            <CommentArea postID={post.id}></CommentArea>
+                        </VStack>
+
+                        <RuleCard
+                            title="Quest"
+                            cardTexts={questPostRuleText}
+                            displayOption={{ md: 'none', lg: 'none', xl: 'block' }}
+                        ></RuleCard>
+                    </Grid>
+                </SimpleGrid>
+            </Flex>
+        </Box>
     );
 };
 
