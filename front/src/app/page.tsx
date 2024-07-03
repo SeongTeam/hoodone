@@ -1,9 +1,7 @@
-
-import Link from "next/link";
-import { Box, Flex, Spacer } from "@chakra-ui/react";
-import { customColors } from "@/utils/chakra/customColors";
-import CenterCard from "@/components/common/server-component/centerCard";
-
+import Link from 'next/link';
+import { Box, Flex, Spacer } from '@chakra-ui/react';
+import { customColors } from '@/utils/chakra/customColors';
+import CenterCard from '@/components/common/server-component/centerCard';
 
 /* TODO
 - style 적용 불가 원인 분석 및 해결
@@ -12,15 +10,13 @@ import CenterCard from "@/components/common/server-component/centerCard";
   - Auth 로직 구현  
 */
 export default function Home() {
-  
-  return (
-    <>
-      <main>
-        <Box w="full" >
-            <CenterCard/>
-        </Box>
-      </main>
-    </>
-  );
-
+    return (
+        <>
+            <main>
+                <Box w="full" h="full" px="25px" bg="#F7F6F9">
+                    <CenterCard />
+                </Box>
+            </main>
+        </>
+    );
 }

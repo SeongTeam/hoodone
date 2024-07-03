@@ -40,7 +40,7 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ writerAccount, p
                     alignContent="left"
                     align="left"
                 >
-                    12345978921214512121121
+                    {title}
                 </Text>
 
                 <Divider orientation="horizontal" borderColor={customColors.shadeLavender[100]} />
@@ -64,7 +64,7 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ writerAccount, p
 
                 {/* Tag area */}
                 <HStack>
-                    {mockTags.map((value) => (
+                    {tags.map((value) => (
                         <Tag
                             maxW="200px"
                             size="lg"

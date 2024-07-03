@@ -2,6 +2,7 @@
 
 import { AuthorType } from '@/atoms/post';
 import { userAccountState } from '@/atoms/userAccount';
+import { formatTimeFromNow } from '@/lib/Date';
 import { customColors } from '@/utils/chakra/customColors';
 import { ChevronDownIcon, DragHandleIcon, StarIcon } from '@chakra-ui/icons';
 import { Box, Flex, HStack, Text, Image, Spacer } from '@chakra-ui/react';
@@ -13,8 +14,7 @@ type DetailPostHeaderProps = {
 };
 
 const DetailPostHeader: React.FC<DetailPostHeaderProps> = ({ writerAccount, createDate }) => {
-    const bg = customColors.white[100];
-    const borderColor = customColors.shadeLavender[300];
+    const time = formatTimeFromNow(createDate);
 
     return (
         <Flex w="100%" direction="row" pl="15px" pr="3px">
@@ -31,12 +31,12 @@ const DetailPostHeader: React.FC<DetailPostHeaderProps> = ({ writerAccount, crea
                 </Text>
                 {/* TODO  write 시간 기록하기 동작 에러 확인하기 */}
                 {/* <Spacer width="100px" /> */}
-
-                <Text fontSize="12px">{' ~1h'}</Text>
-                <Text fontSize="12px">{' ago'}</Text>
             </HStack>
             <Box h={8} w="full" />
-            <HStack width="80px">
+            <HStack width="200px">
+                <Text w="90px" noOfLines={1} fontSize="12px">
+                    {time}
+                </Text>
                 <StarIcon boxSize={5} />
                 <Spacer> </Spacer>
                 <ChevronDownIcon boxSize={7} />

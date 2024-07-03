@@ -1,8 +1,14 @@
-import { Flex,Text } from "@chakra-ui/react";
-import React, { Suspense } from "react";
-import { getCachedPaginatedPosts } from "@/lib/server-only/postLib";
-import LoadMorePostCards from "@/components/posts/card/LoadMorePostCards";
-
+import { Box, Flex, SimpleGrid, Slider, Text } from '@chakra-ui/react';
+import React, { Suspense } from 'react';
+import { getCachedPaginatedPosts } from '@/lib/server-only/postLib';
+import { PostType } from '@/atoms/post';
+import LoadMorePostCards from '@/components/posts/card/LoadMorePostCards';
+import PostSlider from '@/components/_global/slider/postSlider';
+import AdminPostCard from '@/components/posts/card/AdminPostCard';
+import MotionDiv from '../motionDiv';
+import LoadMoreAdminPostCards from '@/components/posts/card/LoadMoreAdminCards';
+import { customColors } from '@/utils/chakra/customColors';
+import LoadMoreSbCards from '@/components/posts/card/LoadMoreSbCards';
 
 /*TODO
 - <PostList/> 컴포넌트에 Suspense 구현 
@@ -11,19 +17,43 @@ import LoadMorePostCards from "@/components/posts/card/LoadMorePostCards";
 - Infinite scroll 구현하기
     */
 const CenterCard: React.FC = async () => {
-    
+    const variants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1 },
+    };
+
+    const getPaginatedPostsFromAPI = async (offset: number) => {
+        const res = await fetch(`http://localhost:4000/api/posts?offset=${offset}`);
+        const posts = res.json();
+        return posts;
+    };
+
     return (
         <Flex
             width="100%"
             height="100%"
             justifyContent="center"
             alignItems="center"
-            pt ="1rem"
-            flexDir={"column"}
+            pt="1rem"
+            flexDir={'column'}
         >
-            <LoadMorePostCards />
+            <SimpleGrid
+                columns={{ sm: 1, md: 1 }}
+                justifyContent="center"
+                alignContent="center"
+                spacing="4px"
+            >
+                <Box>
+                    <Text mx="5px" mt="10px">
+                        Admin Quest
+                    </Text>
+                </Box>
+                <LoadMoreAdminPostCards />
+
+                <LoadMorePostCards />
+            </SimpleGrid>
         </Flex>
     );
-}
+};
 
 export default CenterCard;
