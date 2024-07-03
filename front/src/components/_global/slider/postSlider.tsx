@@ -1,6 +1,5 @@
 'use client';
 
-import { PostType } from '@/atoms/post';
 import AdminPostCard from '@/components/posts/card/AdminPostCard';
 import MiniPostCard from '@/components/posts/card/MiniPostCard';
 import PostCard from '@/components/posts/card/PostCard';
@@ -9,23 +8,19 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack } from '@chakra-ui/react';
 import { Icon } from '@iconify-icon/react';
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface PostSliderPops {
     sliderName: string;
     gap?: string;
+    width?: string;
+    hight?: string;
     children: React.ReactNode;
 }
 
-const PostSlider: React.FC<PostSliderPops> = ({ sliderName, gap, children }) => {
+const PostSlider: React.FC<PostSliderPops> = ({ sliderName, gap, children, width, hight }) => {
     const BTN_H = 70;
     const BTN_W = 40;
-
-    const cardComponentMap = {
-        MiniPostCard: MiniPostCard,
-        PostCard: PostCard,
-        AdminPostCard: AdminPostCard,
-    };
 
     const _slideLeft = () => {
         let slider = document.getElementById('slider')!;
@@ -38,7 +33,7 @@ const PostSlider: React.FC<PostSliderPops> = ({ sliderName, gap, children }) => 
     };
 
     return (
-        <Box position="relative" px="15px">
+        <Box position="relative" px="15px" w={width} h={hight}>
             <Button
                 style={{
                     position: 'absolute',

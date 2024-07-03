@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
-import { PostType } from '@/atoms/post';
+import { PostType } from '@/type/postType';
 import { getAllPosts, getPostWithID } from '@/lib/server-only/postLib';
-import { Box, Text, Spacer, Flex, Grid, GridItem, VStack, SimpleGrid } from '@chakra-ui/react';
+import { Box, Text, Spacer, Flex, Grid, VStack, SimpleGrid, Image } from '@chakra-ui/react';
 import logger from '@/utils/log/logger';
 import { customColors } from '@/utils/chakra/customColors';
 import { useUserAccountWithSSR } from '@/hooks/userAccount';
@@ -12,7 +12,6 @@ import DetailPostForm from '@/components/posts/detail/detailPostForm';
 import { questPostRuleText } from '@/components/posts/card/const/rule_card_texts';
 import dynamic from 'next/dynamic';
 import MiniPostCard from '@/components/posts/card/MiniPostCard';
-import React from 'react';
 const PostSlider = dynamic(() => import('@/components/_global/slider/postSlider'), { ssr: false });
 
 export type QuestPageProps = {
@@ -80,7 +79,7 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
                         <Spacer h="6px" />
 
                         <Text fontSize="1.4em"> Submission</Text>
-                        <PostSlider sliderName="sbsPostsOnDetail">
+                        <PostSlider sliderName="sbsPostsOnDetail" hight="190px">
                             {allPosts?.map((post, index) => (
                                 <MiniPostCard key={index} index={index} post={post} />
                             ))}
