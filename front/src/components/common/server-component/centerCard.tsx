@@ -1,14 +1,9 @@
 import { Box, Flex, SimpleGrid, Slider, Text } from '@chakra-ui/react';
 import React, { Suspense } from 'react';
 import { getCachedPaginatedPosts } from '@/lib/server-only/postLib';
-import { PostType } from '@/atoms/post';
 import LoadMorePostCards from '@/components/posts/card/LoadMorePostCards';
-import PostSlider from '@/components/_global/slider/postSlider';
-import AdminPostCard from '@/components/posts/card/AdminPostCard';
-import MotionDiv from '../motionDiv';
 import LoadMoreAdminPostCards from '@/components/posts/card/LoadMoreAdminCards';
 import { customColors } from '@/utils/chakra/customColors';
-import LoadMoreSbCards from '@/components/posts/card/LoadMoreSbCards';
 
 /*TODO
 - <PostList/> 컴포넌트에 Suspense 구현 

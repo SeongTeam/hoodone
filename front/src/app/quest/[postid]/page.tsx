@@ -4,7 +4,6 @@ import { getAllPosts, getPostWithID } from '@/lib/server-only/postLib';
 import { Box, Text, Spacer, Flex, Grid, VStack, SimpleGrid, Image } from '@chakra-ui/react';
 import logger from '@/utils/log/logger';
 import { customColors } from '@/utils/chakra/customColors';
-import { useUserAccountWithSSR } from '@/hooks/userAccount';
 import { userAccountState } from '@/atoms/userAccount';
 import RuleCard from '@/components/posts/card/RuleCard';
 import CommentArea from '@/components/comment/server-component/commentArea';
@@ -40,7 +39,6 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
         logger.error(`post${params.postid} not found`);
         throw new ReferenceError(`post not found`);
     }
-
     return (
         <Flex
             flexDirection="column"
@@ -63,7 +61,6 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
                         cardTexts={questPostRuleText}
                         displayOption={{ sm: 'block', md: 'block', lg: 'block', xl: 'none' }}
                     ></RuleCard>
-
                     <VStack
                         w="100%"
                         minW="300px"
@@ -74,7 +71,7 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
                         borderRadius="15px"
                         border={`1px solid ${inputBorderColor}`}
                     >
-                        <DetailPostForm writerAccount={writer} postInfo={post}></DetailPostForm>
+                        <DetailPostForm writerAccount={writer} post={post}></DetailPostForm>
 
                         <Spacer h="6px" />
 
@@ -89,7 +86,6 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
 
                         <CommentArea postID={post.id}></CommentArea>
                     </VStack>
-
                     <RuleCard
                         title="Quest"
                         cardTexts={questPostRuleText}
