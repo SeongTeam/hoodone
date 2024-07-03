@@ -14,12 +14,13 @@ export default function CreateQuestPage() {
                 templateAreas={`"main main space createRule"
               "main  main space empty"
               "main main space empty"`}
-                gridTemplateRows={'3.5rem, 30px 1rem'}
-                gridTemplateColumns={'200px,2rem,'}
+                gridTemplateRows={'2em, 30px 1em'}
+                gridTemplateColumns={'700px,2em,'}
                 w="100%"
+                maxW="1300px"
                 h="100%"
             >
-                <GridItem pl="2" width="100%" area={'main'}>
+                <GridItem pl="2" area={'main'}>
                     {' '}
                     <CreatePostForm type={POST_TYPE.QUEST} />
                 </GridItem>
@@ -27,7 +28,7 @@ export default function CreateQuestPage() {
                     {' '}
                     <Box width="10px"> </Box>
                 </GridItem>
-                <GridItem pl="2" area={'createRule'} alignContent="center">
+                <GridItem width="100%" pl="2" area={'createRule'} alignContent="center">
                     <CreationRulesBox isQuestPost={true}></CreationRulesBox>
                 </GridItem>
             </Grid>

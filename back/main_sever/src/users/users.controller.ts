@@ -33,7 +33,10 @@ export class UsersController {
     @Post('/tempUser')
     @UseInterceptors(TransactionInterceptor)
     @UseFilters(CommonExceptionFilter)
-    async postTempUser(@Body() userInfo: Pick<TempUserModel, 'email'>, @QueryRunner() qr: QR) {
+    async postTempUser(
+        @Body(ValidationPipe) userInfo: Pick<TempUserModel, 'email'>,
+        @QueryRunner() qr: QR,
+    ) {
         const { email } = userInfo;
         const isExist = await this.userUseCase.hasExistedEmail(email);
         if (isExist)
@@ -44,7 +47,7 @@ export class UsersController {
     }
 
     @Patch('/tempUser')
-    comparePINCodes(@Body() userInfo: Pick<TempUserModel, 'email' | 'pinCode'>) {
+    comparePINCodes(@Body(ValidationPipe) userInfo: Pick<TempUserModel, 'email' | 'pinCode'>) {
         return this.tempUserUseCase.comparePinCodes(userInfo);
     }
 

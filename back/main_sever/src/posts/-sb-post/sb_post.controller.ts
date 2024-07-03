@@ -52,7 +52,7 @@ export class SbPostsController {
     async postQuest(
         @User('id') userId: number,
         @Headers('questId') questId: number,
-        @Body() body: CreatePostDto,
+        @Body(ValidationPipe) body: CreatePostDto,
         @QueryRunner() qr: QR,
     ) {
         // 로직 실행
@@ -108,7 +108,7 @@ export class SbPostsController {
     @UseInterceptors(TransactionInterceptor)
     async patchSb(
         @Param('id', ParseIntPipe) id: number,
-        @Body() body: UpdatePostDto,
+        @Body(ValidationPipe) body: UpdatePostDto,
         @QueryRunner() qr: QR,
     ) {
         return this.postUseCase.updateSb(id, body);
@@ -137,7 +137,7 @@ export class SbPostsController {
     async addPost(
         @User('id') userId: number,
         @Param('boardId', ParseIntPipe) boardId: number,
-        @Body() body: CreatePostDto,
+        @Body(ValidationPipe) body: CreatePostDto,
         @QueryRunner() qr: QR,
     ) {
         /*TODO
@@ -151,7 +151,7 @@ export class SbPostsController {
     @Roles(RoleType.USER, RoleType.ADMIN)
     @UseGuards(AccessTokenGuard, RoleGuard)
     @UseInterceptors(TransactionInterceptor)
-    async patchBoardMigration(@Body() body, @QueryRunner() qr: QR) {
+    async patchBoardMigration(@Body(ValidationPipe) body, @QueryRunner() qr: QR) {
         const { boardIdList, postIdList } = body;
         /*TODO
         - 특정 post 리스트를 board에 옮기는 로직 구현 필요.
