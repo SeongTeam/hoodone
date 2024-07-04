@@ -10,11 +10,11 @@ export default function AuthenticationLayout({ children }: { children: React.Rea
     
     return (
         <Box 
-            w={{base : "80%" , lg : "720px"}} 
+            w={{base : "80%" , md : "720px"}} 
             h="830px"
             borderRadius={"15px"}
             mt = "40px"
-            ms = {{ base : "0px" , lg : "20px" }}
+            ms = {{ base : "0px" , md : "20px" }}
             bg={bg}
             px = {{ base : "20px" , lg : "140px" }}
             py = {{ base : "40px" , lg : "90px" }}

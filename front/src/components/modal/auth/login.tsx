@@ -83,7 +83,12 @@ const Login: React.FC<LoginProps> = () => {
                 inputPlaceHolder="Enter password"
                 formData={{ ...form.register('password', { required: true, max: 20 }) }}
             ></CommonInput>
-            <Button variant="oauth" type="submit">
+            <Button
+                w="160px"
+                h="60px"
+                fontSize="24px" 
+                variant="purple" 
+                type="submit">
                 Log In
             </Button>
         </form>

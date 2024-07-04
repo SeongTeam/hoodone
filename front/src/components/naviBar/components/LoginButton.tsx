@@ -16,7 +16,7 @@ const LoginButton : React.FC = () => {
     return (
         <Button
             w = {{ base : "100px" ,  lg: "130px"}}
-            h = "full"
+            h = "40px"
             variant="outline"
             colorScheme="blue"
             size="sm"
@@ -28,9 +28,21 @@ const LoginButton : React.FC = () => {
             _hover={{ bg: customColors.purple[200] }}
             _active={{ bg }}
             >
-                <Flex gap="15px" px = "8px" py = "10px"> 
-                    <Icon icon="ph:sign-in-bold"  width="24px" height="24px" />
-                    <Text fontSize={{base : "16px" ,  lg: "20px"} }>Sign In</Text>
+                <Flex gap="15px" px = "8px" py = "10px" justify={"center"}> 
+                    <Box 
+                    >
+                        <Icon 
+                            icon="ph:sign-in-bold"  
+                            width="24px" 
+                            height="24px"
+                        />
+                    </Box>
+                    <Text 
+                        display={{  base : "none" ,  md: "block"} }
+                        fontSize="20px"
+                    >
+                        Sign In
+                    </Text>
                 </Flex>
             </Button>
 
