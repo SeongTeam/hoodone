@@ -42,16 +42,15 @@ export const CommonInput: React.FC<CommonInputProps> = (props: CommonInputProps)
                         {...formData}
                     />
                     <InputRightElement
-                        paddingRight={1}
-                        alignItems="center"
-                        width="4.5rem"
-                        height="4.5rem"
+                        w="80px"
+                        h="full"
                     >
                         <Button
-                            h="2.75rem"
-                            size="sm"
+                            w="full"
+                            variant= { !show ? 'purple' : 'outline' }
+                            mx="10px"
+                            
                             onClick={handleClick}
-                            color={show ? 'black' : 'gray.200'}
                         >
                             {show ? 'Hide' : 'Show'}
                         </Button>
