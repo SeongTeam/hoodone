@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { AuthException } from 'src/common/exception/auth-exception';
+import { AuthException } from 'src/_common/exception/auth-exception';
 import { UserUseCase } from 'src/users/usecase/user.use-case';
 
 import { AuthUseCase } from '../../usecase/auth.use-case';

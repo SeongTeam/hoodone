@@ -19,9 +19,9 @@ import {
 import { QueryRunner as QR } from 'typeorm';
 
 import { AccessTokenGuard } from 'src/auth/guard/token/access-token.guard';
-import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
-import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
-import { IsPublic } from 'src/common/decorator/is-public.decorator';
+import { TransactionInterceptor } from 'src/_common/interceptor/transaction.interceptor';
+import { QueryRunner } from 'src/_common/decorator/query-runner.decorator';
+import { IsPublic } from 'src/_common/decorator/is-public.decorator';
 import { User } from 'src/users/decorator/user.decorator';
 import { UserModel } from 'src/users/entities/user.entity';
 

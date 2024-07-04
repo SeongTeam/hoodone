@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { QueryRunner, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { AuthException } from 'src/common/exception/auth-exception';
+import { AuthException } from 'src/_common/exception/auth-exception';
 
 import { UserModel } from './entities/user.entity';
 import { COMMON_FIND_USER_OPTIONS } from './const/user-find-options';

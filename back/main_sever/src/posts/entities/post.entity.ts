@@ -1,6 +1,6 @@
 import { IsString, IsUrl, ValidationArguments } from 'class-validator';
-import { BaseModel } from 'src/common/entity/base.entity';
-import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
+import { BaseModel } from 'src/_common/entity/base.entity';
+import { stringValidationMessage } from 'src/_common/validation-message/string-validation.message';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { UserModel } from 'src/users/entities/user.entity';
 import { CommentModel } from '../-comment/entities/comment.entity';

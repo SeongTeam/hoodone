@@ -7,9 +7,9 @@ import {
     ENV_AUTH_SALT2024_KEY,
     ENV_HASH_ROUNDS_KEY,
     ENV_JWT_SECRET_KEY,
-} from 'src/common/const/env-keys.const';
+} from 'src/_common/const/env-keys.const';
 import { UserModel } from 'src/users/entities/user.entity';
-import { AuthException } from 'src/common/exception/auth-exception';
+import { AuthException } from 'src/_common/exception/auth-exception';
 
 @Injectable()
 export class AuthService {

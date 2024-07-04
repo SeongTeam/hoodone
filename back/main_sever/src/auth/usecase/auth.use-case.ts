@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common/decorators';
 import { forwardRef } from '@nestjs/common/utils';
 import { QueryRunner } from 'typeorm';
 
-import { AuthException } from 'src/common/exception/auth-exception';
+import { AuthException } from 'src/_common/exception/auth-exception';
 import { UserUseCase } from 'src/users/usecase/user.use-case';
 import { UserModel } from 'src/users/entities/user.entity';
 

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
-import { CommonModule } from 'src/common/common.module';
+import { CommonModule } from 'src/_common/common.module';
 
 import { PostsUseCases } from './usecase/post.use-case';
 import { BoardModule } from 'src/boards/boards.module';

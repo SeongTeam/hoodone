@@ -1,8 +1,8 @@
 import { PickType } from '@nestjs/mapped-types';
 import { IsEmail, IsString, Matches, MaxLength, MinLength } from 'class-validator';
-import { emailValidationMessage } from 'src/common/validation-message/email-validation.message';
-import { passwordValidationMessage } from 'src/common/validation-message/password-vaildation.message';
-import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
+import { emailValidationMessage } from 'src/_common/validation-message/email-validation.message';
+import { passwordValidationMessage } from 'src/_common/validation-message/password-vaildation.message';
+import { stringValidationMessage } from 'src/_common/validation-message/string-validation.message';
 import { UserModel } from 'src/users/entities/user.entity';
 
 export class ResetPasswordRequestDto extends PickType(UserModel, ['email', 'password']) {

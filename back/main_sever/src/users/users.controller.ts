@@ -16,12 +16,12 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserUseCase } from './usecase/user.use-case';
-import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
+import { TransactionInterceptor } from 'src/_common/interceptor/transaction.interceptor';
 import { QueryRunner as QR } from 'typeorm';
-import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
+import { QueryRunner } from 'src/_common/decorator/query-runner.decorator';
 import { TempUserModel } from './entities/temp-user.entity';
 import { TempUserUseCase } from './usecase/temp-user.case';
-import { CommonExceptionFilter } from 'src/common/filter/common-exception.filter';
+import { CommonExceptionFilter } from 'src/_common/filter/common-exception.filter';
 
 @Controller('users')
 export class UsersController {

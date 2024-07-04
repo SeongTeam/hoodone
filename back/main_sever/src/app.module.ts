@@ -6,7 +6,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
-import { CommonModule } from 'src/common/common.module';
+import { CommonModule } from 'src/_common/common.module';
 import { BoardModule } from 'src/boards/boards.module';
 import { TypeormConfig } from 'src/configs/typeorm.config';
 import { PostsModule } from 'src/posts/post.module';
@@ -22,7 +22,7 @@ import {
     ENV_SMTP_ID,
     ENV_SMTP_PORT,
     ENV_SMTP_PW,
-} from './common/const/env-keys.const';
+} from './_common/const/env-keys.const';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({

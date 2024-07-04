@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common/decorators';
 import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
-import { AuthException } from 'src/common/exception/auth-exception';
+import { AuthException } from 'src/_common/exception/auth-exception';
 import { UsersService } from 'src/users/users.service';
 
 import { UserModel } from '../entities/user.entity';

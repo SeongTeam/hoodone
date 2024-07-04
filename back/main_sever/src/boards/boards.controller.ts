@@ -15,8 +15,8 @@ import {
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { AccessTokenGuard } from 'src/auth/guard/token/access-token.guard';
-import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
-import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
+import { TransactionInterceptor } from 'src/_common/interceptor/transaction.interceptor';
+import { QueryRunner } from 'src/_common/decorator/query-runner.decorator';
 import { User } from 'src/users/decorator/user.decorator';
 import { QueryRunner as QR } from 'typeorm';
 import { AccessLevel } from './entities/board.entity';
