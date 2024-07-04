@@ -29,7 +29,7 @@ export default function NaviBar() {
                 </Box>
                 <Spacer />
                 <SearchBar />
-                { !user.isLogin ? <UserMenu /> : <LoginButton /> }
+                { user.isLogin ? <UserMenu /> : <LoginButton /> }
             </Flex>
 
         </Box>

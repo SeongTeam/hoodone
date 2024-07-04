@@ -1,12 +1,17 @@
 import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
 import { Button, Box, Flex, Text } from "@chakra-ui/react";
 import { customColors } from "@/utils/chakra/customColors";
-import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 
 const LoginButton : React.FC = () => {
 
+    const router = useRouter();
     const bg = customColors.purple[100];
     const boxColor = customColors.white[100];
+
+    const handleLoginButtonClick = () => {
+        router.push('/authentication/sign-in');
+    }
 
     return (
         <Button
@@ -16,7 +21,7 @@ const LoginButton : React.FC = () => {
             colorScheme="blue"
             size="sm"
             bg = { bg }
-            onClick={() => alert('Route to Login Page')}
+            onClick={() => handleLoginButtonClick()}
             color = { boxColor }
             border = "1px solid"
             borderColor = { customColors.shadeLavender[100] }
