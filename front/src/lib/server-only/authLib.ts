@@ -6,6 +6,7 @@ import { Asset } from 'next/font/google';
 import assert from 'assert';
 import { cookies } from 'next/headers';
 import logger from '@/utils/log/logger';
+import { LoggableResponse } from '@/utils/log/types';
 
 const backURL = process.env.BACKEND_URL;
 
@@ -88,18 +89,20 @@ export function setRefreshTokenCookie(refreshToken: string) {
 
 export async function getUserBasicInfo() {
     try {
-        const accessToken = validateAuth();
+        const accessToken = await validateAuth();
         const response: Response = await fetch(`${backURL}/auth/identify`, {
             method: 'GET',
             headers: {
-                authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             },
             cache: 'no-store',
         });
 
         if (!response.ok) {
-            logger.error('[getUserBasicInfo] response is not ok', { message: response });
+            logger.error('[getUserBasicInfo] response is not ok', {
+                response: new LoggableResponse(response),
+            });
             throw new Error('getUserBasicInfo response error');
         }
 
@@ -109,5 +112,6 @@ export async function getUserBasicInfo() {
         return ret;
     } catch (e) {
         logger.error('getUserBasicInfo error', { message: e });
+        throw new Error('getUserBasicInfo error');
     }
 }
