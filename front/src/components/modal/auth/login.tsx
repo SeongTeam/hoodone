@@ -1,19 +1,18 @@
 'use client';
-import { Button, Flex, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import { useRecoilState } from 'recoil';
-
-import { AuthModalState } from '@/atoms/authModal';
 import { useUserAccountWithSSR } from "@/hooks/userAccount";
 import { signIn } from '@/server-actions/AuthAction';
-import { customColors } from '@/utils/chakra/customColors';
 import { useForm } from 'react-hook-form';
 import { CommonInput } from './components/input/common_input';
+import { SignInDTO } from '@/type/server-action/AuthType';
 
 type LoginProps = {};
 
 /* TODO
 - Server Action 오류 처리 로직 구현
+- input value validation 구현
+- useForm 이해하기
 */
 const Login: React.FC<LoginProps> = () => {
     interface IForm {
@@ -28,15 +27,8 @@ const Login: React.FC<LoginProps> = () => {
         },
     });
 
-    const [authModalState, setAuthModelState] = useRecoilState(AuthModalState);
     const [userState, setUserState] = useUserAccountWithSSR();
     const [msg, setMsg] = useState('');
-    const [loginForm, setLoginForm] = useState({
-        email: '',
-        password: '',
-    });
-
-    const fontColor = customColors.white[100];
 
     const loginWithEmailAndPassword = async (email: string, password: string) => {
         const formData = new FormData();
@@ -46,15 +38,11 @@ const Login: React.FC<LoginProps> = () => {
         const res = await signIn(formData);
 
         if (res.ok) {
-            const nickname = res.response.nickname;
+            const { nickname }  = res.response as SignInDTO;
             setUserState((prev) => ({
                 ...prev,
                 nickname: nickname,
                 isLogin: true,
-            }));
-            setAuthModelState((prev) => ({
-                ...prev,
-                open: false,
             }));
         } else {
             setMsg(res.message);
@@ -71,10 +59,18 @@ const Login: React.FC<LoginProps> = () => {
     };
 
     return (
+        <Box>
         <form onSubmit={onSubmit} className="form-modalPage">
-            <Text textAlign="center" color="red" fontSize="10pt">
-                {msg}
-            </Text>
+            <Flex 
+                mt = "30px"
+                w='full'
+                justifyContent="center"
+
+                >
+                <Text textAlign="center" color="red" fontSize="16pt">
+                    {msg}
+                </Text>
+            </Flex>
             <CommonInput
                 inputName="Email"
                 inputType="email"
@@ -90,31 +86,8 @@ const Login: React.FC<LoginProps> = () => {
             <Button variant="oauth" type="submit">
                 Log In
             </Button>
-            <Flex w="100%" justify={'space-between'} color={fontColor}>
-                <Text
-                    cursor="pointer"
-                    onClick={() =>
-                        setAuthModelState((prev) => ({
-                            ...prev,
-                            view: 'resetPassword',
-                        }))
-                    }
-                >
-                    Forget ID/PW?
-                </Text>
-                <Text
-                    cursor="pointer"
-                    onClick={() =>
-                        setAuthModelState((prev) => ({
-                            ...prev,
-                            view: 'signup',
-                        }))
-                    }
-                >
-                    Sign Up
-                </Text>
-            </Flex>
         </form>
+        </Box>
     );
 };
 export default Login;
