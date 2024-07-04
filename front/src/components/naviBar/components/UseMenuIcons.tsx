@@ -2,6 +2,7 @@ import { customColors } from '@/utils/chakra/customColors';
 import { Box, Flex, IconButton } from '@chakra-ui/react';
 import { Icon } from '@iconify-icon/react';
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 /*TODO
 = Icon 위치 조정 hardcode하지 말기 */
@@ -9,8 +10,11 @@ import React from 'react';
 const UserMenuIcons: React.FC = () => {
     const color = customColors.black[100];
     const reactColor = customColors.purple[100];
+    const router = useRouter();
 
-
+    const handleCreateButtonClick = () => {
+        router.push('/quest/create')
+    }
 
 
     return (
@@ -24,7 +28,7 @@ const UserMenuIcons: React.FC = () => {
                     icon = {<Icon style={{position: 'relative', top: '-8px'}} icon="ion:create-outline" width="30px" height="30px" />}
                     _focus = {{border: 'none' , bg: 'none' }}
                     _hover = {{bg: 'none', color : reactColor}}
-                    onClick={() => alert ("Create functionality is not implemented yet.")}
+                    onClick={() => handleCreateButtonClick()}
                     />
                 <IconButton 
                     bg='inherit'

@@ -1,7 +1,6 @@
 import type { ComponentStyleConfig } from '@chakra-ui/theme';
 import { inputAnatomy } from '@chakra-ui/anatomy';
 import { customColors } from '../customColors';
-import { basicFontSize as oauthFontSize } from '../foundations/fonts';
 
 //refer https://chakra-ui.com/docs/styled-system/customize-theme
 import { createMultiStyleConfigHelpers, defineStyle } from '@chakra-ui/styled-system';
@@ -13,11 +12,7 @@ const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpe
 
 const baseStyle = definePartsStyle({
     field: {
-        caretColor: customColors.white[300],
         borderRadius: '15px',
-        color: customColors.white[100],
-        border: '1px solid',
-        borderColor: customColors.strokeColor[100],
     },
 });
 
@@ -28,22 +23,31 @@ const baseStyle = definePartsStyle({
 
 */
 
+const oauthFontSize = { base: '12px', lg: '16px' };
+
 const oauth = definePartsStyle({
     field: {
-        w: '592px',
-        h: '80px',
-        px: '1rem',
-        py: '1rem',
-        bg: customColors.black[300],
-        fontSize: oauthFontSize,
+        h: '60px',
+        px: '10px',
+        py: '10px',
+        bg: customColors.shadeLavender[300],
+        fontSize: { base: '12px', lg: '16px' },
+        caretColor: customColors.black[300],
+
         _placeholder: {
             opacity: 0.4,
-            color: customColors.white[300],
+            color: customColors.black[300],
             fontSize: oauthFontSize,
         },
-        _focusVisible: {
-            borderColor: 'gray.400',
-            borderWidth: 4,
+
+        _hover: {
+            border: '1px solid',
+            borderColor: customColors.shadeLavender[100],
+        },
+
+        _focus: {
+            border: '1px solid',
+            borderColor: customColors.shadeLavender[100],
         },
 
         _autofill: {

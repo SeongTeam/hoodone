@@ -3,7 +3,7 @@ import logger from '@/utils/log/logger';
 import { PostApiResponseDto } from 'hoodone-shared';
 import assert from 'assert';
 import { unstable_cache } from 'next/cache';
-import { PostType } from '@/type/postType';
+import { PostType, POST_TYPE } from '@/type/postType';
 
 const backendURL = process.env.BACKEND_URL;
 
@@ -129,5 +129,5 @@ export async function getPaginatedPosts(offset: number, limit: number) {
 export const getCachedPaginatedPosts = unstable_cache(
     async (offset: number, limit: number) => getPaginatedPosts(offset, limit),
     ['posts-paginated'],
-    { tags: ['all-posts'] },
+    { tags: [POST_TYPE.QUEST] },
 );

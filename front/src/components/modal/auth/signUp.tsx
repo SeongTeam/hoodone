@@ -1,4 +1,5 @@
-import { Button, Flex, Text } from '@chakra-ui/react';
+"use client";
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { AuthModalState } from '@/atoms/authModal';
@@ -46,7 +47,6 @@ const SignUp: React.FC = () => {
 
     const [msg, setMsg] = useState('');
     const [passwordMsg, setPasswordMsg] = useState('');
-    const [authModalState, setAuthModalState] = useRecoilState(AuthModalState);
     const [error, setError] = useState('');
     const [certification, setCertification] = useState({
         state: false,
@@ -88,10 +88,7 @@ const SignUp: React.FC = () => {
                 console.log(res);
                 // TODO 유저에게 회원가입 성공했다고 알려주기/ tost 메세지 이용?
                 showSuccessToast(useToastOption, { title: 'Sign Up Success' });
-                setAuthModalState((prev) => ({
-                    ...prev,
-                    isOpen: false,
-                }));
+
             } else {
                 console.log(`else response-----`);
                 const exceptionData: ExceptionDto = res.response;
@@ -105,7 +102,7 @@ const SignUp: React.FC = () => {
                     description: extractedMessage,
                 });
 
-                setMsg(`회원가입 오류 발생\n ${extractedMessage}`);
+                setMsg(`Sorry for error, please retry later\n ${extractedMessage}`);
             }
         } catch (err) {
             console.log('sign up error', error);
@@ -166,41 +163,41 @@ const SignUp: React.FC = () => {
         }
     };
 
-    const onSendEmail = async () => {
+    const sendPincode = async () => {
         const toEmail = form.getValues('email');
-        if (checkValidEmail(toEmail)) {
-            console.log(toEmail);
-            const res = await requestCertifiedMail(toEmail);
-            try {
-                if (res.ok) {
-                    console.log(`success request CertifiedMail`);
-                    showSuccessToast(useToastOption, { title: 'Success Send Mail' });
-
-                    // TODO maill을 성공적으로 보냈다고 알려줌 / tost 메세지 이용?
-                } else {
-                    const exceptionData: ExceptionDto = res.response;
-                    // message 값이 없을 수도 있음
-                    const message = exceptionData.detail?.message ?? '';
-                    const extractedMessage = extractErrorMessage(message);
-                    showErrorToast(useToastOption, {
-                        title: '회원가입 오류 발생',
-                        description: extractedMessage,
-                    });
-
-                    console.log(exceptionData);
-                    setError(`오류 발생\n ${extractedMessage}`);
-                    return;
-                }
-            } catch (err) {
-                // console.log('send email error', error);
-                showErrorToast(useToastOption, { title: 'Error!! ' });
-                console.log(error);
-                return;
-            }
-        } else {
-            setError('email 형식이 이상합니다');
+        if (!checkValidEmail(toEmail)) {
+            setError('pleae, check email address');
             return;
         }
+            
+        try {
+            const res = await requestCertifiedMail(toEmail);
+            if (res.ok) {
+                console.log(`success request CertifiedMail`);
+                showSuccessToast(useToastOption, { title: 'Success Send Mail' });
+
+                // TODO maill을 성공적으로 보냈다고 알려줌 / tost 메세지 이용?
+            } else {
+                const exceptionData: ExceptionDto = res.response;
+                // message 값이 없을 수도 있음
+                const message = exceptionData.detail?.message ?? '';
+                const extractedMessage = extractErrorMessage(message);
+                showErrorToast(useToastOption, {
+                    title: 'Sign Up Fail',
+                    description: extractedMessage,
+                });
+
+                console.log(exceptionData);
+                setError(`Sign Up Fail\n ${extractedMessage}`);
+                return;
+            }
+        } catch (err) {
+            // console.log('send email error', error);
+            showErrorToast(useToastOption, { title: 'sorry for Error. please, retry later' });
+            console.log(error);
+            return;
+        }
+   
     };
 
     /** React.FormEventHandler<HTMLFormElement>를 event에 타입으로 사용하면
@@ -223,12 +220,26 @@ const SignUp: React.FC = () => {
             }
         }
     };
+
+    const handleSendPintCodeButton = () => {
+        const toEmail = form.getValues('email');
+        // 타이머가 작동 안했을 겨우 동작
+        if (checkValidEmail(toEmail) && !isTimerStart) {
+            sendPincode();
+            setIsTimerStart(true);
+        }
+        else if (isTimerStart) resendPincode();
+        else {
+            setError('please check email');
+        }
+    }
+
     function checkValidEmail(email: string): boolean {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
         return emailRegex.test(email);
     }
-    function onResendEmail() {
+    function resendPincode() {
         /**TODO)  pop 창을 보여줘서 새로 보냈다라는 것을 알려주자*/
         if (min <= 0) {
             console.log('Please refresh your email due to timeout.');
@@ -238,7 +249,7 @@ const SignUp: React.FC = () => {
         }
         if (TIMER_MINUTE - 1 > min) {
             console.log(`${min}: ${sec}`);
-            onSendEmail();
+            sendPincode();
 
             setMinute(TIMER_MINUTE);
             setSecond(1); // UI를 위해서 1을 넣고 있습니다
@@ -251,7 +262,7 @@ const SignUp: React.FC = () => {
         <>
             {certification.state === false ? (
                 <form onSubmit={onCertification} className="form-modalPage">
-                    <Text textAlign="center" color="red" fontSize="10px">
+                    <Text textAlign="center" color="red" fontSize="16px">
                         {error}
                     </Text>
                     <CommonInput
@@ -266,17 +277,10 @@ const SignUp: React.FC = () => {
                         formData={{ ...form.register('pinCode', { required: true }) }}
                         buttonName={isTimerStart ? 'Resend' : 'Send'}
                         onClickButton={() => {
-                            const toEmail = form.getValues('email');
-                            // 타이머가 작동 안했을 겨우 동작
-                            if (checkValidEmail(toEmail) && !isTimerStart) {
-                                onSendEmail();
-                                setIsTimerStart(true);
-                                return;
-                            }
-                            if (isTimerStart) onResendEmail();
+                            handleSendPintCodeButton();
                         }}
-                    ></ButtonAndInput>
-                    <div>
+                    />
+                    <Box>
                         {isTimerStart ? (
                             <Timer
                                 setSecond={setSecond}
@@ -288,8 +292,13 @@ const SignUp: React.FC = () => {
                         ) : (
                             <></>
                         )}
-                    </div>
-                    <Button variant="oauth" type="submit">
+                    </Box>
+                    <Button
+                        w="180px"
+                        h="60px" 
+                        variant="purple" 
+                        fontSize = "24px"
+                        type="submit">
                         Confirm
                     </Button>
                 </form>
@@ -304,19 +313,19 @@ const SignUp: React.FC = () => {
                         inputType="email"
                         isDisabled={true}
                         formData={{ ...form.register('email', { required: true, max: 20 }) }}
-                    ></CommonInput>
+                    />
                     <CommonInput
                         inputName="Nickname"
                         inputType="text"
                         formData={{ ...form.register('nickname', { required: true, max: 20 }) }}
-                    ></CommonInput>
+                    />
                     <CommonInput
                         inputName="Password"
                         inputType="password"
                         inputPlaceHolder="Enter password"
                         isUsedPasswordButton={true}
                         formData={{ ...form.register('password', { required: true, max: 20 }) }}
-                    ></CommonInput>
+                    />
                     <Text
                         textAlign="center"
                         color={isPassword ? 'green' : 'red'}
@@ -333,39 +342,20 @@ const SignUp: React.FC = () => {
                         formData={{
                             ...form.register('confirmPassword', { required: true, max: 20 }),
                         }}
-                    ></CommonInput>
+                    />
                     <Text textAlign="center" color="red" fontSize="10pt">
                         {msg}
                     </Text>
-                    <Button variant="oauth" type="submit">
+                    <Button
+                        w="180px"
+                        fontSize="24px"
+                        h="60px" 
+                        variant="purple" 
+                        type="submit">
                         Sign Up
                     </Button>
                 </form>
             )}
-            <Flex marginTop={'40px'} w="100%" justify="space-between">
-                <Text
-                    cursor="pointer"
-                    onClick={() =>
-                        setAuthModalState((prev) => ({
-                            ...prev,
-                            view: 'login',
-                        }))
-                    }
-                >
-                    login
-                </Text>
-                <Text
-                    cursor="pointer"
-                    onClick={() =>
-                        setAuthModalState((prev) => ({
-                            ...prev,
-                            view: 'resetPassword',
-                        }))
-                    }
-                >
-                    Forget ID/PW?
-                </Text>
-            </Flex>
         </>
     );
 };

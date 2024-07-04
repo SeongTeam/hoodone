@@ -1,15 +1,19 @@
-import { Button, Flex, Input, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
+import { Button, Box, Flex, Input, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
 import { tree } from 'next/dist/build/templates/app-page';
 import React from 'react';
 import { MouseEventHandler } from 'react';
+import { UseFormRegisterReturn } from 'react-hook-form';
 
+/*TODO
+- form.register란?
+*/
 type CommonInputProps = {
     inputName: string;
     inputType: React.HTMLInputTypeAttribute | undefined;
     inputPlaceHolder?: string;
     isDisabled?: boolean;
     isUsedPasswordButton?: boolean;
-    formData?: any;
+    formData?: UseFormRegisterReturn;
 };
 
 export const CommonInput: React.FC<CommonInputProps> = (props: CommonInputProps) => {
@@ -18,18 +22,18 @@ export const CommonInput: React.FC<CommonInputProps> = (props: CommonInputProps)
     const [show, setShow] = React.useState(false);
     const handleClick = () => setShow(!show);
     return (
-        <Flex
-            marginBottom={0}
-            paddingBottom={0}
-            w="full"
-            flexDirection={'column'}
-            alignItems={'start'}
-        >
-            <Text paddingBottom={1} color="white" fontSize="20px" as="i">
+        <Box w="full">
+            <Text 
+                paddingBottom={1} 
+                fontFamily="Lato" 
+                fontWeight={'bold'} 
+                color="black"  
+                fontSize="16px"
+            >
                 {inputName}
             </Text>
             {props.isUsedPasswordButton == true ? (
-                <InputGroup size="md">
+                <InputGroup>
                     <Input
                         variant="oauth"
                         placeholder={inputPlaceHolder}
@@ -38,16 +42,15 @@ export const CommonInput: React.FC<CommonInputProps> = (props: CommonInputProps)
                         {...formData}
                     />
                     <InputRightElement
-                        paddingRight={1}
-                        alignItems="center"
-                        width="4.5rem"
-                        height="4.5rem"
+                        w="80px"
+                        h="full"
                     >
                         <Button
-                            h="2.75rem"
-                            size="sm"
+                            w="full"
+                            variant= { !show ? 'purple' : 'outline' }
+                            mx="10px"
+                            
                             onClick={handleClick}
-                            color={show ? 'black' : 'gray.200'}
                         >
                             {show ? 'Hide' : 'Show'}
                         </Button>
@@ -62,6 +65,6 @@ export const CommonInput: React.FC<CommonInputProps> = (props: CommonInputProps)
                     {...formData} // ex) {...form.register('email', { required: true })}
                 />
             )}
-        </Flex>
+        </Box>
     );
 };

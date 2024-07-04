@@ -5,11 +5,10 @@ import { basicFontSize as oauthFontSize } from '../foundations/fonts';
 const Button: ComponentStyleConfig = {
     baseStyle: {
         borderRadius: '15px',
-        fontSize: '1.25rem',
+        fontSize: '20px',
+        py: '20px',
+        px: '15px',
         fontWeight: 700,
-        border: '1px solid',
-        color: customColors.white[100],
-        borderColor: customColors.strokeColor[100],
         _focus: {
             boxShadow: 'none',
         },
@@ -27,13 +26,16 @@ const Button: ComponentStyleConfig = {
             border: '1px solid',
             borderColor: 'blue.500',
         },
-        oauth: {
-            maxW: '190px',
-            maxH: '70px',
-            px: '2rem',
-            py: '2rem',
-            bg: customColors.buttonColor[100],
-            fontSize: oauthFontSize,
+        disable: {
+            bg: customColors.gray[200],
+            _hover: {
+                bg: customColors.gray[200],
+            },
+        },
+        purple: {
+            color: customColors.white[100],
+            bg: customColors.purple[100],
+            _hover: { bg: customColors.purple[200] },
         },
     },
 };

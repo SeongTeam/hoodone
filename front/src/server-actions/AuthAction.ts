@@ -7,14 +7,9 @@ import { type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import { extractStatusMessage } from '@/lib/server-only/message';
 import { setAccessTokenCookie, setRefreshTokenCookie } from '@/lib/server-only/authLib';
-
+import { type responseData } from '@/type/server-action/responseType';
+import { type SignInDTO } from '@/type/server-action/AuthType';
 const backURL = process.env.BACKEND_URL;
-
-type responseData = {
-    ok: boolean;
-    message: string;
-    response: object;
-};
 
 /*TODO
 - Authorization 로직 확장하기
@@ -68,7 +63,11 @@ export async function signUp(formData: FormData) {
 }
 
 export async function signIn(formData: FormData) {
-    const ret: responseData = { ok: false, message: '', response: { nickname: '' } };
+    const ret: responseData = {
+        ok: false,
+        message: '',
+        response: { nickname: '' } as SignInDTO,
+    };
     try {
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
@@ -96,7 +95,7 @@ export async function signIn(formData: FormData) {
 
             setAccessTokenCookie(accessToken);
             setRefreshTokenCookie(refreshToken);
-            ret.response = { nickname };
+            ret.response = { nickname } as SignInDTO;
             ret.ok = true;
         } else {
             const data = await res.json();

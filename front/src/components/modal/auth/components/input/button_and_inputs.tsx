@@ -20,18 +20,22 @@ export const ButtonAndInput: React.FC<ButtonAndInputProps> = (props: ButtonAndIn
 
     return (
         <Flex
-            marginBottom={0}
-            paddingBottom={0}
             w="full"
             flexDirection={'column'}
             alignItems={'start'}
         >
-            <Text paddingBottom={1} color="white" fontSize="20px" as="i">
+            <Text                 
+                paddingBottom={1} 
+                fontFamily="Lato" 
+                fontWeight={'bold'} 
+                color="black"  
+                fontSize="16px"
+            >
                 {inputName}
             </Text>
-            <Flex w="592px" justifyContent="space-between">
+            <Flex w="full" gap ="10px" justifyContent="space-between">
                 {props.isUsedPasswordButton == true ? (
-                    <InputGroup size="md">
+                    <InputGroup size="sm">
                         <Input
                             variant="oauth"
                             placeholder={inputPlaceHolder}
@@ -42,12 +46,9 @@ export const ButtonAndInput: React.FC<ButtonAndInputProps> = (props: ButtonAndIn
                         <InputRightElement
                             paddingRight={1}
                             alignItems="center"
-                            width="4.5rem"
-                            height="4.5rem"
                         >
                             <Button
-                                h="2.75rem"
-                                size="sm"
+                                variant="purple"
                                 onClick={handleClick}
                                 color={show ? 'black' : 'gray.200'}
                             >
@@ -64,7 +65,11 @@ export const ButtonAndInput: React.FC<ButtonAndInputProps> = (props: ButtonAndIn
                         {...formData} // ex) {...form.register('email', { required: true })}
                     />
                 )}
-                <Button variant="oauth" w="180px" h="70px" onClick={props.onClickButton}>
+                <Button
+                    variant = "purple"
+                    w= "80px"
+                    h="full"  
+                    onClick={props.onClickButton}>
                     {buttonName}
                 </Button>
             </Flex>

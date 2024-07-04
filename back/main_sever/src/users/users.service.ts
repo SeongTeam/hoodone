@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { QueryRunner, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -51,7 +51,7 @@ export class UsersService {
                 tempUser = await repository.create({
                     ...userDtoData,
                     isVerfied: false,
-                    updatedAt: new Date().toLocaleString('kr'),
+                    updatedAt: new Date(),
                 });
             }
         } catch (e) {
@@ -97,7 +97,7 @@ export class UsersService {
 
         try {
             const userRepository = this._getUsersRepository(qr);
-            const now: string = new Date().toLocaleString('kr');
+            const now: Date = new Date();
 
             const result: UpdateResult = await userRepository.update(
                 { id: userId },

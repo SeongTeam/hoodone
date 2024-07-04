@@ -3,7 +3,7 @@ import logger from '@/utils/log/logger';
 import { NextResponse } from 'next/server';
 import { type NextRequest } from 'next/server';
 import { PostApiResponseDto } from 'hoodone-shared';
-import { PostType } from '@/atoms/post';
+import { PostType } from '@/type/postType';
 import { getCachedPaginatedPosts, getPostLibConfig } from '@/lib/server-only/postLib';
 
 export async function GET(req: NextRequest) {

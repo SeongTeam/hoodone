@@ -1,4 +1,5 @@
-import { Button, Flex, Icon, Input, Text, useToast } from '@chakra-ui/react';
+"use client"
+import { Box,Button, Flex, Icon, Input, Text, useToast } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { AuthModalState } from '@/atoms/authModal';
@@ -108,25 +109,37 @@ const ResetPassword: React.FC = () => {
     };
 
     return (
-        <Flex direction="column" alignItems="center" gap="40px">
+        <Box mt="20px">
             <Text textAlign="center" fontSize="10pt" color="red">
                 {error}
             </Text>
-            <Text fontSize="sm" textAlign="center" mb={2}>
+            <Box mb ="20px">
+                <Text 
+                fontFamily="Lato" 
+                fontSize="sm" 
+                as='i'>
                 {/* Enter the email associated with your account and we will send you a reset link */}
-                Enter the email associated with your account and we will send you a pin code
-            </Text>
+                    Enter the email associated with your account and we will send you a pin code
+                </Text>
+            </Box>
             <form className="form-modalPage" onSubmit={onSubmit} onChange={onChangeForm}>
+                
                 <CommonInput
                     inputName="Registered Email"
                     formData={{ ...form.register('email', { required: true }) }}
                     inputType="email"
                     inputPlaceHolder="Registered Email..."
-                ></CommonInput>
+                />
                 {!isSendEmail ? (
                     <>
                         {' '}
-                        <Button variant="oauth" onClick={onSendResetEmail}>
+                        <Button
+                            id="sendEmail"
+                            w="120px"
+                            h="60px"
+                            fontSize="24px" 
+                            variant="purple" 
+                            onClick={onSendResetEmail}>
                             Send
                         </Button>
                     </>
@@ -136,13 +149,13 @@ const ResetPassword: React.FC = () => {
                             inputName="Pin Code"
                             inputType="text"
                             formData={{ ...form.register('pinCode', { required: true }) }}
-                        ></CommonInput>
+                        />
                         <CommonInput
-                            inputName="Password"
+                            inputName="New Password"
                             inputType="password"
                             isUsedPasswordButton={true}
                             formData={{ ...form.register('password', { required: true }) }}
-                        ></CommonInput>
+                        />
                         <Text
                             textAlign="center"
                             color={isPassword ? 'green' : 'red'}
@@ -151,36 +164,18 @@ const ResetPassword: React.FC = () => {
                         >
                             {passwordMsg}
                         </Text>
-                        <Button variant="oauth" type="submit">
+                        <Button 
+                            w="160px"
+                            h="60px"
+                            fontSize="24px"
+                            variant="purple" 
+                            type="submit">
                             Confirm
                         </Button>
                     </>
                 )}
             </form>
-
-            <Flex w="100%" justify="space-between">
-                <Text
-                    onClick={() =>
-                        setAuthModalState((prev) => ({
-                            ...prev,
-                            view: 'login',
-                        }))
-                    }
-                >
-                    LOGIN
-                </Text>
-                <Text
-                    onClick={() =>
-                        setAuthModalState((prev) => ({
-                            ...prev,
-                            view: 'signup',
-                        }))
-                    }
-                >
-                    SIGN UP
-                </Text>
-            </Flex>
-        </Flex>
+        </Box>
     );
 };
 export default ResetPassword;

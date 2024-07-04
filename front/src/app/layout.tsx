@@ -63,6 +63,7 @@ export default function RootLayout({
                                         border="5px solid pink"
                                         ml={{ base: 0, lg: sideBarMaxW }}
                                         transition="margin-left 0.3s ease-in-out"
+                                        bg ='#F7F6F9'
                                     >
                                         {children}
                                     </Box>

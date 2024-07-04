@@ -20,7 +20,7 @@ export default function NaviBar() {
          border = '3px solid red'>
             <Flex alignContent={'center'} alignItems={'center'} >
                 <SidebarResponsive />
-                <Box  alignContent={'center'} me= "150px">
+                <Box  alignContent={'center'} me= {{base : "0px" , lg: "150px"}}>
                     <Text fontFamily={'Lato'} fontWeight={'bold'} fontSize = {{md : "20px" ,  lg: "28px"}}> Small Quest</Text>
                 </Box>
                 <Box display = { {base : "none",  lg: "block" }} alignContent={'center'} 
@@ -29,7 +29,7 @@ export default function NaviBar() {
                 </Box>
                 <Spacer />
                 <SearchBar />
-                { !user.isLogin ? <UserMenu /> : <LoginButton /> }
+                { user.isLogin ? <UserMenu /> : <LoginButton /> }
             </Flex>
 
         </Box>
