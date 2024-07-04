@@ -1,3 +1,3 @@
-export interface SignInDTO extends Object {
+export interface SignInDTO {
     nickname: string;
 }

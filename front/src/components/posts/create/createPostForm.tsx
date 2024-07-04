@@ -9,7 +9,6 @@ import Tab, { type TabItem } from './tab';
 import { createPosts } from '@/server-actions/postsActions';
 import { AddIcon, AttachmentIcon } from '@chakra-ui/icons';
 import { showErrorToast } from '@/components/modal/auth/components/toast/toast';
-import { uploadQuestImage } from '@/server-actions/postsActions';
 import ImageUploadArea from '@/components/common/ImageUpload';
 import { useUserAccountWithSSR } from '@/hooks/userAccount';
 import { NEW_POST_FORMAT,POST_TYPE, NewPostFormType, tagDelimiter } from '@/type/postType';
