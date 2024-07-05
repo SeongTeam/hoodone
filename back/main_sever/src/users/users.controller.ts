@@ -12,6 +12,7 @@ import {
     ValidationPipe,
     BadRequestException,
     UseFilters,
+    UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -22,12 +23,17 @@ import { QueryRunner } from 'src/_common/decorator/query-runner.decorator';
 import { TempUserModel } from './entities/temp-user.entity';
 import { TempUserUseCase } from './usecase/temp-user.case';
 import { CommonExceptionFilter } from 'src/_common/filter/common-exception.filter';
+import { AccessTokenGuard } from 'src/auth/guard/token/access-token.guard';
+import { User } from './decorator/user.decorator';
+import { TicketUseCase } from 'src/tickets/usecase/ticket_use_case';
+import { TicketModel } from 'src/tickets/entities/ticket.entity';
 
 @Controller('users')
 export class UsersController {
     constructor(
         private readonly userUseCase: UserUseCase,
         private readonly tempUserUseCase: TempUserUseCase,
+        private readonly ticketUserUseCase: TicketUseCase,
     ) {}
 
     @Post('/tempUser')
@@ -72,5 +78,17 @@ export class UsersController {
     @Get('/nickname/:nickname')
     getByNickname(@Param('nickname') nickname: string) {
         return this.userUseCase.getUserByNickname(nickname);
+    }
+    @Patch('/tickets/increase')
+    @UseGuards(AccessTokenGuard)
+    @UseInterceptors(TransactionInterceptor)
+    incrementTicket(@User('ticket') ticket: TicketModel, @QueryRunner() qr: QR) {
+        return this.ticketUserUseCase.incrementCount(ticket.id, qr);
+    }
+    @Patch('/tickets/decrease')
+    @UseGuards(AccessTokenGuard)
+    @UseInterceptors(TransactionInterceptor)
+    decrementTicket(@User('ticket') ticket: TicketModel, @QueryRunner() qr: QR) {
+        return this.ticketUserUseCase.decrementCount(ticket.id, qr);
     }
 }

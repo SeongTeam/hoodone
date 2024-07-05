@@ -8,6 +8,7 @@ import { UserModel } from './entities/user.entity';
 import { COMMON_FIND_USER_OPTIONS } from './const/user-find-options';
 import { DEFAULT_CREATE_USER_OPTION } from './const/default-user-create-option';
 import { TempUserModel } from './entities/temp-user.entity';
+import { TicketModel } from 'src/tickets/entities/ticket.entity';
 
 @Injectable()
 export class UsersService {
@@ -65,6 +66,7 @@ export class UsersService {
 
     async createUser(
         userDtoData: Pick<UserModel, 'email' | 'nickname' | 'password'>,
+        ticket: TicketModel,
         qr?: QueryRunner,
     ) {
         const { email, nickname, password } = userDtoData;
@@ -76,6 +78,8 @@ export class UsersService {
                 nickname,
                 email,
                 password,
+                ticket,
+
                 ...DEFAULT_CREATE_USER_OPTION,
             });
 
