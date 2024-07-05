@@ -1,9 +1,9 @@
 import { Box, Flex, SimpleGrid, Slider, Text } from '@chakra-ui/react';
 import React, { Suspense } from 'react';
-import { getCachedPaginatedPosts } from '@/lib/server-only/postLib';
 import LoadMorePostCards from '@/components/posts/card/LoadMorePostCards';
 import LoadMoreAdminPostCards from '@/components/posts/card/LoadMoreAdminCards';
 import { customColors } from '@/utils/chakra/customColors';
+import { POST_TYPE } from '@/type/postType';
 
 /*TODO
 - <PostList/> 컴포넌트에 Suspense 구현 
@@ -15,12 +15,6 @@ const CenterCard: React.FC = async () => {
     const variants = {
         hidden: { opacity: 0 },
         visible: { opacity: 1 },
-    };
-
-    const getPaginatedPostsFromAPI = async (offset: number) => {
-        const res = await fetch(`http://localhost:4000/api/posts?offset=${offset}`);
-        const posts = res.json();
-        return posts;
     };
 
     return (
@@ -45,7 +39,9 @@ const CenterCard: React.FC = async () => {
                 </Box>
                 <LoadMoreAdminPostCards />
 
-                <LoadMorePostCards />
+                <LoadMorePostCards
+                  type = {POST_TYPE.QUEST}
+                 />
             </SimpleGrid>
         </Flex>
     );

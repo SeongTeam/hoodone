@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { useInView } from 'react-intersection-observer';
 import { useCallback, useEffect, useState } from 'react';
 import { Box, Grid, GridItem, Text } from '@chakra-ui/react';
-import { PostType } from '@/atoms/post';
 import PostCard from './PostCard';
 import MotionDiv from '@/components/common/motionDiv';
 import AdminPostCard from './AdminPostCard';
@@ -11,6 +10,7 @@ import PostSlider from '@/components/_global/slider/postSlider';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { customColors } from '@/utils/chakra/customColors';
+import { POST_TYPE, PostType } from '@/type/postType';
 
 /*TODO
 - route handler GET METHOD cache 활용 여부 확인
@@ -23,12 +23,14 @@ import { customColors } from '@/utils/chakra/customColors';
     - implement inifinte scroll to show PostListItem
     - Using motion.div on Server component. 
 */
+
+const apiUrl = process.env.NEXT_PUBLIC_FRONT_API_URL;
 const INITIAL_OFFSET = 1;
 const BatchSize = 1;
 
 //** TODO 작성자를 admin것으로 찾아서 변경하자 */
 const getPaginatedPostsFromAPI = async (offset: number) => {
-    const res = await fetch(`http://localhost:4000/api/posts?offset=${offset}`);
+    const res = await fetch(`${apiUrl}/posts?offset=${offset}&type=${POST_TYPE.QUEST}`);
     const posts = res.json();
     return posts;
 };

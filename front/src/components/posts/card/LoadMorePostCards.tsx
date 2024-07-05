@@ -6,7 +6,7 @@ import { Box, Spacer, Text, VStack } from '@chakra-ui/react';
 import PostCard from './PostCard';
 import MotionDiv from '@/components/common/motionDiv';
 import PostSlider from '@/components/_global/slider/postSlider';
-import { PostType } from '@/type/postType';
+import { POST_TYPE, PostType } from '@/type/postType';
 
 /*TODO
 - route handler GET METHOD cache 활용 여부 확인
@@ -19,15 +19,23 @@ import { PostType } from '@/type/postType';
     - implement inifinte scroll to show PostListItem
     - Using motion.div on Server component. 
 */
+
+const apiUrl = process.env.NEXT_PUBLIC_FRONT_API_URL;
+
 const INITIAL_OFFSET = 1;
 const BatchSize = 1;
-const getPaginatedPostsFromAPI = async (offset: number) => {
-    const res = await fetch(`http://localhost:4000/api/posts?offset=${offset}`);
+
+const getPaginatedPostsFromAPI = async (offset: number, type : POST_TYPE) => {
+    const res = await fetch(`${apiUrl}/posts?offset=${offset}&type=${type}`);
     const posts = res.json();
     return posts;
 };
 
-const LoadMorePostCards: React.FC = () => {
+type LoadMorePostCardsProps = {
+    type: POST_TYPE
+}
+
+const LoadMorePostCards: React.FC<LoadMorePostCardsProps> = ({ type }) => {
     const { ref, inView } = useInView();
     const [posts, setPosts] = useState<PostType[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -45,7 +53,7 @@ const LoadMorePostCards: React.FC = () => {
         }
         setIsLoading(true);
         try {
-            const newPosts = await getPaginatedPostsFromAPI(offset);
+            const newPosts = await getPaginatedPostsFromAPI(offset,type);
             setPosts((posts) => [...posts, ...newPosts]);
             setOffset((prev) => prev + BatchSize);
             if (newPosts.length <= 0) setHasMore(false);
