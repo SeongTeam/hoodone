@@ -1,6 +1,5 @@
 import { NextPage } from 'next';
-import { PostType } from '@/type/postType';
-import { getAllPosts, getPostWithID } from '@/lib/server-only/postLib';
+import { POST_TYPE, PostType } from '@/type/postType';
 import { Box, Text, Spacer, Flex, Grid, VStack, SimpleGrid, Image } from '@chakra-ui/react';
 import logger from '@/utils/log/logger';
 import { customColors } from '@/utils/chakra/customColors';
@@ -11,6 +10,7 @@ import DetailPostForm from '@/components/posts/detail/detailPostForm';
 import { questPostRuleText } from '@/components/posts/card/const/rule_card_texts';
 import dynamic from 'next/dynamic';
 import MiniPostCard from '@/components/posts/card/MiniPostCard';
+import { PostFetchService } from '@/lib/server-only/postLib';
 const PostSlider = dynamic(() => import('@/components/_global/slider/postSlider'), { ssr: false });
 
 export type QuestPageProps = {
@@ -27,13 +27,14 @@ export type QuestPageProps = {
 const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => {
     const { writer, rootCommentID } = params;
     const inputBorderColor = customColors.shadeLavender[300];
+    const postFetchService = new PostFetchService(POST_TYPE.QUEST);
 
     logger.info('#PostPage Rendered', { message: params.postid });
     console.log(params.postid, searchParams.index);
 
-    const post: PostType | null = await getPostWithID(params.postid, parseInt(searchParams.index));
+    const post: PostType | null = await postFetchService.getPostByID(params.postid, parseInt(searchParams.index));
 
-    const allPosts: PostType[] | null = await getAllPosts();
+    const allPosts: PostType[] | null = await postFetchService.getCachedPaginatedPosts(1);
 
     if (!post) {
         logger.error(`post${params.postid} not found`);
