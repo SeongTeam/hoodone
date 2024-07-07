@@ -1,9 +1,15 @@
-import { Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { CommentModel } from '../-comment/entities/comment.entity';
 import { PostModel } from './post.entity';
 import { QuestPostModel } from './quest_post.entity';
 import { UserModel } from 'src/users/entities/user.entity';
+import { IsEnum, IsString } from 'class-validator';
 
+export enum VoteResult {
+    NOT_YET,
+    APPROVAL,
+    DISAPPROVAL,
+}
 @Entity('sb_post')
 export class SbPostModel extends PostModel {
     @ManyToOne(() => UserModel, (user) => user.sbPosts, {
@@ -18,4 +24,22 @@ export class SbPostModel extends PostModel {
 
     @OneToMany(() => CommentModel, (comment) => comment.sbtPost)
     comments?: CommentModel[];
+
+    @Column({
+        name: 'approval_user_ids',
+        type: 'jsonb',
+        default: [],
+    })
+    approvalUserIds: number[];
+
+    @Column({
+        name: 'disapproval_user_ids',
+        type: 'jsonb',
+        default: [],
+    })
+    disapprovalUserIds: number[];
+
+    @IsEnum(VoteResult)
+    @IsString()
+    voteResult: VoteResult;
 }

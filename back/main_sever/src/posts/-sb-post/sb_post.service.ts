@@ -8,6 +8,8 @@ import { UpdatePostDto } from '../dto/update-post.dto';
 import { PostModel } from '../entities/post.entity';
 import { SbPostModel } from '../entities/sb_post.entity';
 import { postCreateOption } from '../const/post-create-options.const';
+
+const APPROVAL_PASS_COUNT = 5;
 @Injectable()
 export class SbPostsService {
     constructor(
@@ -62,6 +64,7 @@ export class SbPostsService {
         contentInfo: Pick<SbPostModel, 'title' | 'content' | 'cloudinaryPublicId'>,
         qr?: QueryRunner,
     ) {
+        console.log(`questId : ${questId}`);
         try {
             const _repository = this._getRepository(qr);
 
@@ -70,7 +73,7 @@ export class SbPostsService {
                 author: {
                     id: authorId,
                 },
-                parentPost: {},
+                parentPost: { id: questId },
                 ...contentInfo,
                 ...postCreateOption,
             });
@@ -225,5 +228,68 @@ export class SbPostsService {
             },
         });
         return posts;
+    }
+
+    async appendApproval(userId: number, postId: number, qr: QueryRunner) {
+        const approvalUserIds = (await this.loadById(postId)).approvalUserIds;
+
+        approvalUserIds.push(userId);
+
+        const result = await this.postsRepository.update(postId, {
+            approvalUserIds,
+        });
+
+        return result;
+    }
+
+    async appendDisapproval(userId: number, postId: number, qr: QueryRunner) {
+        const disapprovalUserIds = (await this.loadById(postId)).disapprovalUserIds;
+
+        disapprovalUserIds.push(userId);
+        const result = await this.postsRepository.update(postId, {
+            disapprovalUserIds,
+        });
+
+        return result;
+    }
+
+    async hasApprovalVoted(userId: number, postId: number) {
+        const post = await this.loadById(postId);
+
+        const approvalUserIds = post.approvalUserIds;
+
+        if (approvalUserIds.length < 1) return false;
+
+        const approvalResult = approvalUserIds.find((_userId: number) => {
+            return _userId == userId;
+        });
+        if (approvalResult) {
+            console.log(approvalResult);
+            console.log('isAlready vote user');
+
+            return true;
+        }
+
+        return false;
+    }
+
+    async hasDisapprovalVoted(userId: number, postId: number) {
+        const post = await this.loadById(postId);
+
+        const disapprovalUserIds = post.disapprovalUserIds;
+
+        if (disapprovalUserIds.length < 1) return false;
+
+        const disapprovalResult = disapprovalUserIds.find((_userId: number) => {
+            return _userId == userId;
+        });
+        if (disapprovalResult) {
+            console.log(disapprovalResult);
+            console.log('isAlready vote user');
+
+            return true;
+        }
+
+        return false;
     }
 }

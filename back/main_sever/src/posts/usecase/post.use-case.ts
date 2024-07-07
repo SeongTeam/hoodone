@@ -114,6 +114,26 @@ export class PostsUseCases {
         return await this.sbService.save(post, null);
     }
 
+    async appendApproval(userId: number, postId: number, qr: QueryRunner) {
+        const isApprovalVoted = await this.sbService.hasApprovalVoted(userId, postId);
+        const isDisapprovalVoted = await this.sbService.hasDisapprovalVoted(userId, postId);
+
+        if (isApprovalVoted || isDisapprovalVoted) {
+            return 'appendApproval() =>Users who have already voted';
+        }
+        return this.sbService.appendApproval(userId, postId, qr);
+    }
+
+    async appendDisapproval(userId: number, postId: number, qr: QueryRunner) {
+        const isApprovalVoted = await this.sbService.hasApprovalVoted(userId, postId);
+        const isDisapprovalVoted = await this.sbService.hasDisapprovalVoted(userId, postId);
+
+        if (isApprovalVoted || isDisapprovalVoted) {
+            return 'appendDisapproval() => Users who have already voted';
+        }
+        return this.sbService.appendDisapproval(userId, postId, qr);
+    }
+
     async deleteQuest(postId: number, qr: QueryRunner): Promise<boolean> {
         const post: QuestPostModel = await this.questService.loadById(postId);
 
