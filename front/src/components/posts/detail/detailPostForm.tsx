@@ -1,29 +1,36 @@
 'use client';
 
-import { userAccountState } from '@/atoms/userAccount';
 import { customColors } from '@/utils/chakra/customColors';
 import { Box, Button, Divider, Flex, HStack, Image, Spacer, Tag, Text } from '@chakra-ui/react';
 import DetailPostHeader from './components/DetailPostHeader';
 import ParentPostCard from './components/ParentPostCard';
-import { PostType } from '@/type/postType';
+import { POST_TYPE, PostType } from '@/type/postType';
 
 type DetailPostFormProps = {
-    writerAccount: userAccountState;
     post: PostType;
-    communityImageURL?: string;
+    type : POST_TYPE
 };
 
-export const DetailPostForm: React.FC<DetailPostFormProps> = ({ writerAccount, post }) => {
+export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) => {
     const bg = customColors.white[100];
     const borderColor = customColors.shadeLavender[300];
-    // const { title, content, author, createdAt, tags } = post;
+
+
+
+    const handleFavorite = () => {
+        alert('Favorite is not implemented yet');
+    }
+    const handleDoIt = () => {
+        alert('Do it is not implemented yet');
+    }
+
 
     return (
         <Box w="100%" minW="300px">
             <DetailPostHeader
-                writerAccount={writerAccount}
-                createDate={post.createdAt}
-            ></DetailPostHeader>
+                post = {post}
+            />
+
 
             <Flex flexDirection="column" align="left" justify="center" w="100%">
                 {/* title */}
@@ -31,7 +38,7 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ writerAccount, p
                     /**TODO bold를 사용해서 좀 더 제목처럼 보이게 하자 */
                     py={4}
                     // fontSize="1.6em"
-                    fontSize={{ sm: '1.5em', md: '1.6em', lg: '1.7em' }}
+                    fontSize={{ md: '24px', lg: '28px' }}
                     noOfLines={4}
                     overflow="hidden"
                     textOverflow="ellipsis"
@@ -47,7 +54,7 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ writerAccount, p
 
                 <Box height={5}></Box>
 
-                <ParentPostCard post={post} type="quest"></ParentPostCard>
+                {type === POST_TYPE.SB && <ParentPostCard post={post} type="quest"/>}
 
                 <Box height={35}></Box>
                 {/* content */}
@@ -57,7 +64,7 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ writerAccount, p
                 <Spacer h="20px" />
 
                 {/* Tag area */}
-                <HStack>
+                {/*<HStack>
                     {post.tags.map((value) => (
                         <Tag
                             maxW="200px"
@@ -76,31 +83,25 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ writerAccount, p
                         </Tag>
                     ))}
                 </HStack>
+                */}
                 <Box height={5}></Box>
                 <Divider orientation="horizontal" borderColor={customColors.shadeLavender[100]} />
                 <Box height={15}></Box>
 
                 <HStack>
                     <Button
-                        bg={customColors.purple[100]}
-                        _hover={{ bg: customColors.white[300] }}
-                        borderRadius="8px"
-                        width="5em"
-                        fontSize="20px"
-                        py="20px"
-                        px="15px"
+                        w="100px"
+                        variant={"purple"}
+                        onClick={handleFavorite}
                     >
                         {/* <AddIcon /> */}
-                        1k
+                        {post.favoriteCount}
                     </Button>
                     <Button
-                        bg={customColors.purple[100]}
-                        _hover={{ bg: customColors.white[300] }}
-                        borderRadius="8px"
-                        width="5em"
-                        fontSize="20px"
-                        py="20px"
-                        px="15px"
+                        w="100px"
+                        variant={"purple"}
+                        fontSize = "24px"
+                        onClick={handleDoIt}
                     >
                         Do it
                     </Button>

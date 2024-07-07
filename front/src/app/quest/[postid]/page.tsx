@@ -16,7 +16,6 @@ const PostSlider = dynamic(() => import('@/components/_global/slider/postSlider'
 export type QuestPageProps = {
     params: {
         postid: string;
-        writer: userAccountState;
         rootCommentID?: number;
     };
     searchParams: {
@@ -25,7 +24,6 @@ export type QuestPageProps = {
 };
 
 const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => {
-    const { writer, rootCommentID } = params;
     const inputBorderColor = customColors.shadeLavender[300];
     const postFetchService = new PostFetchService(POST_TYPE.QUEST);
 
@@ -35,7 +33,6 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
     const post: PostType | null = await postFetchService.getPostByID(params.postid, parseInt(searchParams.index));
 
     const allPosts: PostType[] | null = await postFetchService.getCachedPaginatedPosts(1);
-
     if (!post) {
         logger.error(`post${params.postid} not found`);
         throw new ReferenceError(`post not found`);
@@ -72,7 +69,7 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
                         borderRadius="15px"
                         border={`1px solid ${inputBorderColor}`}
                     >
-                        <DetailPostForm writerAccount={writer} post={post}></DetailPostForm>
+                        <DetailPostForm type= {POST_TYPE.QUEST} post={post}></DetailPostForm>
 
                         <Spacer h="6px" />
 
