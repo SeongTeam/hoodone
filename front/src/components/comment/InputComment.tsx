@@ -4,7 +4,6 @@ import { CommentType } from '@/atoms/comment';
 import React, { useState, useOptimistic } from 'react';
 import { Box, Button, Container, Flex, HStack, Input, Spacer } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
-import { AuthorType } from '@/atoms/post';
 import { leaveComment } from '@/server-actions/commentAction';
 import { useParams, usePathname } from 'next/navigation';
 

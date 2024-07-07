@@ -14,11 +14,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Content from "@/components/sidebar/components/Content";
-import {
-  renderThumb,
-  renderTrack,
-  renderView,
-} from "@/components/scrollbar/Scrollbar";
 import { customColors } from "@/utils/chakra/customColors";
 import { usePathname } from "next/navigation";
 import { Icon } from '@iconify-icon/react'
