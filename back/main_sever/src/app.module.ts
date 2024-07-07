@@ -6,15 +6,13 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
-import { CommonModule } from 'src/common/common.module';
+import { CommonModule } from 'src/_common/common.module';
 import { BoardModule } from 'src/boards/boards.module';
-import { TypeormConfig } from 'src/configs/typeorm.config';
 import { PostsModule } from 'src/posts/post.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommentModule } from './posts/-comment/comment.module';
-import { LocalTypeormConfig } from './configs/local-typeorm.config';
 import { MailModule } from './mail/mail.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import {
@@ -22,8 +20,11 @@ import {
     ENV_SMTP_ID,
     ENV_SMTP_PORT,
     ENV_SMTP_PW,
-} from './common/const/env-keys.const';
+} from './_common/const/env-keys.const';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { LocalTypeormConfig } from './_configs/local-typeorm.config';
+import { TicketModel } from './tickets/entities/ticket.entity';
+import { TicketModule } from './tickets/ticket.module';
 
 @Module({
     imports: [
@@ -69,6 +70,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         BoardModule,
         PostsModule,
         CommentModule,
+        TicketModule,
     ],
     controllers: [AppController],
     providers: [

@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common/decorators';
 import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
-import { AuthException } from 'src/common/exception/auth-exception';
+import { AuthException } from 'src/_common/exception/auth-exception';
 import { UsersService } from 'src/users/users.service';
 
 import { UserModel } from '../entities/user.entity';
 import { BadRequestException, Logger } from '@nestjs/common';
+import { TicketUseCase } from 'src/tickets/usecase/ticket_use_case';
 
 @Injectable()
 export class UserUseCase {
-    constructor(private readonly userService: UsersService) {}
+    constructor(
+        private readonly userService: UsersService,
+        private readonly ticketUseCase: TicketUseCase,
+    ) {}
 
     /**내부에 Exception logic이 없습니다. 반환 받는 값을 확인하는 로직을 추가하세요
      *
@@ -25,7 +29,12 @@ export class UserUseCase {
         try {
             if (!(isEmailExisted || isNicknameExisted)) {
                 console.log('createNewUser 실행');
-                return this.userService.createUser(userInfo, qr);
+
+                let ticket = await this.ticketUseCase.create(qr);
+                let newUser = await this.userService.createUser(userInfo, ticket, qr);
+                await this.ticketUseCase.addUser(ticket, newUser, qr);
+
+                return newUser;
             }
             return null;
         } catch (e) {

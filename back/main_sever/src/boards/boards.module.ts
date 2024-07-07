@@ -6,7 +6,7 @@ import { BoardModel } from './entities/board.entity';
 import { BoardUseCase } from './usecase/board.use-case';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
-import { CommonModule } from 'src/common/common.module';
+import { CommonModule } from 'src/_common/common.module';
 @Module({
     imports: [TypeOrmModule.forFeature([BoardModel]), AuthModule, UsersModule, CommonModule],
     controllers: [BoardController],
