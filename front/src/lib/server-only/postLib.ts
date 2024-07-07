@@ -5,9 +5,6 @@ import assert from 'assert';
 import { unstable_cache } from 'next/cache';
 import { PostType, POST_TYPE } from '@/type/postType';
 
-/*TODO
-- Timer 사용 고려하여 fetch 동작 실패시 무한 대기 예방
- */
 type PostRoute = 'sbs' | 'quests';
 
 enum CACHE_KEY_PART {

@@ -8,14 +8,13 @@ import PostThumbnail from './components/postThumbnail';
 import UserProfileImage from '@/components/common/server-component/UserProfileImage';
 import QuestButtons from './components/QuestButtons';
 import { formatCreatedAt } from '@/lib/Date';
-import { PostType } from '@/type/postType';
+import { PostType, POST_TYPE } from '@/type/postType';
 
-type PostVariety = 'quest' | 'sb';
 
 type PostCardProps = {
     post: PostType;
     index: number;
-    type: PostVariety;
+    type: POST_TYPE;
 };
 
 /*TODO
