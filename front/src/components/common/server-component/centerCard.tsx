@@ -1,9 +1,9 @@
 import { Box, Flex, SimpleGrid, Slider, Text } from '@chakra-ui/react';
 import React, { Suspense } from 'react';
-import LoadMorePostCards from '@/components/posts/card/LoadMorePostCards';
-import LoadMoreAdminPostCards from '@/components/posts/card/LoadMoreAdminCards';
 import { customColors } from '@/utils/chakra/customColors';
 import { POST_TYPE } from '@/type/postType';
+import AdminPostSliderWidnow from '@/components/posts/card/AdminPostSliderWidnow';
+import PostSliderWindow from '@/components/posts/card/PostSliderWindow';
 
 /*TODO
 - <PostList/> 컴포넌트에 Suspense 구현 
@@ -32,15 +32,17 @@ const CenterCard: React.FC = async () => {
                 alignContent="center"
                 spacing="4px"
             >
-                <Box>
-                    <Text mx="5px" mt="10px">
-                        Admin Quest
-                    </Text>
-                </Box>
-                <LoadMoreAdminPostCards />
 
-                <LoadMorePostCards
-                  type = {POST_TYPE.QUEST}
+                <AdminPostSliderWidnow />
+
+                <PostSliderWindow
+                    windowName = "User Quest"
+                    type = {POST_TYPE.QUEST}
+                 />
+
+                <PostSliderWindow
+                    windowName = "User Submissions"
+                    type = {POST_TYPE.SB}
                  />
             </SimpleGrid>
         </Flex>
