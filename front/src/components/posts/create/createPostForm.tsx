@@ -57,15 +57,14 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ type = POST_TYPE.QUEST 
         console.log(result);
     };
 
-    useEffect(() => {
-        /*TODO
-        - check login State
-        if(!userAccount.isLogin){
-            alert('pleae login first');
-            router.push('/login');
-        }
-        */
-    }, []);
+
+    if(!userAccount.isLogin){
+        alert('pleae login first');
+        router.push('/authentication/sign-in');
+        return null;
+    }
+
+
 
     return (
         <Box>

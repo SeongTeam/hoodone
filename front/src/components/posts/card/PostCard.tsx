@@ -25,7 +25,7 @@ type PostCardProps = {
 - 좋아요 클릭시 Icon 변경하기
 */
 
-const PostCard: React.FC<PostCardProps> = ({ post, index }) => {
+const PostCard: React.FC<PostCardProps> = ({ post, index, type }) => {
     const fontColor = customColors.black[100];
     const bg = customColors.white[100];
     const borderColor = customColors.shadeLavender[100];
@@ -41,8 +41,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, index }) => {
     };
     const handleOnClickItem = (event: React.MouseEvent<HTMLDivElement>) => {
         const id = post.id;
+        const route = type === POST_TYPE.QUEST ? 'quest' : 'sb';
         alert('id : ' + id);
-        router.push(`/post/${id}?index=${index}`);
+        router.push(`/${route}/${id}?index=${index}`);
     };
 
     return (

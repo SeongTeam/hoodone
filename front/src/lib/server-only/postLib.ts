@@ -143,7 +143,7 @@ export class PostFetchService {
 
     private async getPostWithIDFromServer(id: string) {
         try {
-            const res = await fetch(`${this.backendURL}/posts/${id}`);
+            const res = await fetch(`${this.backendURL}/${this.routeSegment}/${id}`);
 
             if (!res.ok) {
                 logger.error('getPostWithID error', { message: res });
