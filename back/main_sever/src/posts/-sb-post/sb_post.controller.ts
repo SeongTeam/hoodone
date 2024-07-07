@@ -1,5 +1,10 @@
 import { PostApiResponseDto } from 'hoodone-shared';
-import { ParseIntPipe, DefaultValuePipe, ValidationPipe } from '@nestjs/common/pipes';
+import {
+    ParseIntPipe,
+    DefaultValuePipe,
+    ValidationPipe,
+    ParseBoolPipe,
+} from '@nestjs/common/pipes';
 import { Controller, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common/decorators/core';
 import {
     Body,
@@ -57,6 +62,8 @@ export class SbPostsController {
     ) {
         // 로직 실행
         console.log(body);
+        console.log(`questId==> ${questId}`);
+
         const newPost = await this.postUseCase.createSb(userId, questId, body, qr);
 
         return newPost;
@@ -112,6 +119,24 @@ export class SbPostsController {
         @QueryRunner() qr: QR,
     ) {
         return this.postUseCase.updateSb(id, body);
+    }
+
+    @Patch('/:id/:isApproval')
+    @Roles(RoleType.USER, RoleType.ADMIN)
+    @UseGuards(AccessTokenGuard, SbPostOwnerGuard, RoleGuard)
+    @UseInterceptors(TransactionInterceptor)
+    async patchVote(
+        @User('id') userId: number,
+        @Param('id', ParseIntPipe) id: number,
+        @Param('isApproval', ParseBoolPipe) isApproval: boolean,
+        @QueryRunner() qr: QR,
+    ) {
+        if (isApproval) {
+            return this.postUseCase.appendApproval(userId, id, qr);
+        }
+        return this.postUseCase.appendDisapproval(userId, id, qr);
+
+        // return this.postUseCase.updateSb(id, body);
     }
 
     @Delete('/:id')
