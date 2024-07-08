@@ -9,6 +9,7 @@ import { assert, log } from 'console';
 import { validateAuth } from '@/lib/server-only/authLib';
 import { getUserBasicInfo } from '@/lib/server-only/authLib';
 import { validateImage, uploadQuestImage, uploadSubmissionImage } from '@/utils/cloudinary/lib';
+import { cloudinaryTempData } from '@/utils/cloudinary/mockUpData';
 
 /*
 ref : https://www.youtube.com/watch?v=5L5YoFm1obk
@@ -77,6 +78,10 @@ export async function createPosts(formData: FormData) {
 
             if (publicId) newPost.cloudinaryPublicId = publicId;
             else throw new Error('[createPosts] uploadQuestImage error');
+        } else if (!imageFile) {
+            if (type === POST_TYPE.QUEST)
+                newPost.cloudinaryPublicId = cloudinaryTempData.defaultQuestPublicId;
+            else newPost.cloudinaryPublicId = cloudinaryTempData.defaultSBPublicId;
         }
         /*TODO
         - token get 실패시, 홈이동 > 로그인 창 오픈. 
