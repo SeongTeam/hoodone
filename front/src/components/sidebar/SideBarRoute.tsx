@@ -27,8 +27,8 @@ export function getRoutes(currentRoute : string) : RouteInterface[] {
           icon: <Icon icon="arcticons:block-blast-adventure-master" width="26px" height="26px"/>,
       },
       {
-          name: 'submissions',
-          path: '/submissions',
+          name: 'submission',
+          path: '/sb',
           icon: <Icon icon="carbon:certificate-check" width="24px" height="24px"/>,
       },
   ];

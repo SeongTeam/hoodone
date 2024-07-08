@@ -1,13 +1,15 @@
 "use client";
-import { Button, Box ,Flex, Image,Spacer ,Text } from '@chakra-ui/react';
+import { Button, Box ,Flex, Image,Spacer ,Text,  } from '@chakra-ui/react';
 import SearchBar from './components/searchBar';
 import { customColors } from '@/utils/chakra/customColors';
 import { useUserAccountWithSSR } from "@/hooks/userAccount";
 import LoginButton from './components/LoginButton';
 import UserMenu from './components/UserMenu';
 import SidebarResponsive from '../sidebar/SideBarDrawer';
+import { useRouter } from 'next/navigation';
 
 export default function NaviBar() {
+    const router = useRouter();
     const bg = customColors.white[100];
     const [userAccount] = useUserAccountWithSSR();
 
@@ -20,8 +22,19 @@ export default function NaviBar() {
          border = '3px solid red'>
             <Flex alignContent={'center'} alignItems={'center'} >
                 <SidebarResponsive />
-                <Box  alignContent={'center'} me= {{base : "0px" , lg: "150px"}}>
-                    <Text fontFamily={'Lato'} fontWeight={'bold'} fontSize = {{md : "20px" ,  lg: "28px"}}> Small Quest</Text>
+                <Box  
+                    alignContent={'center'} 
+                    me= {{base : "0px" , lg: "150px"}}
+                    onClick={() => router.push("/")}
+                    cursor="pointer"
+                    >
+                    <Text 
+                        fontFamily={'Lato'} 
+                        fontWeight={'bold'} 
+                        fontSize = {{md : "20px" ,  lg: "28px"}}
+                    > 
+                        Small Quest
+                    </Text>
                 </Box>
                 <Box display = { {base : "none",  lg: "block" }} alignContent={'center'} 
                 >
