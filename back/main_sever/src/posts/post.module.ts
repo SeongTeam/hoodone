@@ -8,10 +8,11 @@ import { PostsUseCases } from './usecase/post.use-case';
 import { BoardModule } from 'src/boards/boards.module';
 import { QuestPostModel } from './entities/quest_post.entity';
 import { SbPostModel } from './entities/sb_post.entity';
-import { QuestPostsController as QuestPostController } from './-quest/quest.controller';
+import { QuestPostsController as QuestPostController } from './-quest/quest_post.controller';
 import { SbPostsController as SbPostController } from './-sb-post/sb_post.controller';
 import { QuestPostsService } from './-quest/quest_post.service';
 import { SbPostsService } from './-sb-post/sb_post.service';
+import { FavoriteModule } from 'src/favorite/favorite.module';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { SbPostsService } from './-sb-post/sb_post.service';
         UsersModule,
         CommonModule,
         BoardModule,
+        FavoriteModule,
     ],
     controllers: [QuestPostController, SbPostController],
 

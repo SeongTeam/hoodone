@@ -1,11 +1,6 @@
 import { PostApiResponseDto } from 'hoodone-shared';
-import {
-    ParseIntPipe,
-    DefaultValuePipe,
-    ValidationPipe,
-    ParseBoolPipe,
-} from '@nestjs/common/pipes';
-import { Controller, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common/decorators/core';
+import { ParseIntPipe, ValidationPipe, ParseBoolPipe } from '@nestjs/common/pipes';
+import { Controller, UseGuards, UseInterceptors } from '@nestjs/common/decorators/core';
 import {
     Body,
     Delete,
@@ -84,7 +79,7 @@ export class SbPostsController {
     ) {
         const { offset, limit } = queryParams;
         const res = new PostApiResponseDto();
-        res.getPaginatedPosts = await this.postUseCase.getPaginatedPosts(offset, limit);
+        res.getPaginatedPosts = await this.postUseCase.getPaginatedSbs(offset, limit);
 
         return res;
     }
@@ -121,9 +116,33 @@ export class SbPostsController {
         return this.postUseCase.updateSb(id, body);
     }
 
+    @Patch('/:id/increaseFavorite')
+    @Roles(RoleType.USER, RoleType.ADMIN)
+    @UseGuards(AccessTokenGuard, RoleGuard)
+    @UseInterceptors(TransactionInterceptor)
+    async patchIncreaseFavorite(
+        @Param('id', ParseIntPipe) postId: number,
+        @User('id') userId: number,
+        @QueryRunner() qr: QR,
+    ) {
+        return this.postUseCase.increaseSbFavorite(userId, postId, qr);
+    }
+
+    @Patch('/:id/decreaseFavorite')
+    @Roles(RoleType.USER, RoleType.ADMIN)
+    @UseGuards(AccessTokenGuard, RoleGuard)
+    @UseInterceptors(TransactionInterceptor)
+    async patchDecreaseFavorite(
+        @Param('id', ParseIntPipe) postId: number,
+        @User('id') userId: number,
+        @QueryRunner() qr: QR,
+    ) {
+        return this.postUseCase.decreaseSbFavorite(userId, postId, qr);
+    }
+
     @Patch('/:id/:isApproval')
     @Roles(RoleType.USER, RoleType.ADMIN)
-    @UseGuards(AccessTokenGuard, SbPostOwnerGuard, RoleGuard)
+    @UseGuards(AccessTokenGuard, RoleGuard)
     @UseInterceptors(TransactionInterceptor)
     async patchVote(
         @User('id') userId: number,
@@ -152,7 +171,7 @@ export class SbPostsController {
     */
     @Get('/board/:boardId')
     async getPostsByBoardId(@Param('boardId', ParseIntPipe) boardId: number) {
-        return await this.postUseCase.getPostFromBoard(boardId, 1, 10);
+        return await this.postUseCase.getSbFromBoard(boardId, 1, 10);
     }
 
     @Post('/board/:boardId')
