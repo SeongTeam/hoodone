@@ -6,5 +6,7 @@ export const COMMON_FIND_USER_OPTIONS: FindManyOptions<UserModel> = {
         comments: true,
         questPosts: true,
         sbPosts: true,
+        favoriteQuests: true,
+        favoriteSbs: true,
     },
 };

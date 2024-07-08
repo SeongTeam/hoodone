@@ -8,6 +8,7 @@ import { QuestPostModel } from '../entities/quest_post.entity';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { PostModel } from '../entities/post.entity';
 import { postCreateOption } from '../const/post-create-options.const';
+import { UserModel } from 'src/users/entities/user.entity';
 @Injectable()
 export class QuestPostsService {
     constructor(
@@ -69,6 +70,7 @@ export class QuestPostsService {
                 author: {
                     id: authorId,
                 },
+                favoriteUsers: [],
                 ...contentInfo,
                 ...postCreateOption,
             });
@@ -120,6 +122,17 @@ export class QuestPostsService {
         return updatedPost;
     }
 
+    async appendFavorite(user: UserModel, postId: number, qr: QueryRunner) {
+        const repository = this._getRepository(qr);
+
+        let post = await this.loadById(postId);
+        console.log(post.favoriteUsers);
+
+        const result = await repository.save(post);
+
+        return result;
+    }
+
     async delete(postId: number, qr: QueryRunner): Promise<boolean> {
         try {
             const repository = this._getRepository(qr);
@@ -162,6 +175,32 @@ export class QuestPostsService {
                 id: postId,
             },
             'commentCount',
+            1,
+        );
+    }
+
+    async incrementFavoriteCount(postId: number, qr: QueryRunner) {
+        const repository = this._getRepository(qr);
+
+        return await repository.increment(
+            {
+                id: postId,
+            },
+            'favoriteCount',
+            1,
+        );
+    }
+
+    async decrementFavoriteCount(postId: number, qr: QueryRunner) {
+        const repository = this._getRepository(qr);
+        const post = await this.loadById(postId);
+        if (post.favoriteCount < 1) return 'favoriteCount가 1보다 작습니다';
+
+        return await repository.decrement(
+            {
+                id: postId,
+            },
+            'favoriteCount',
             1,
         );
     }

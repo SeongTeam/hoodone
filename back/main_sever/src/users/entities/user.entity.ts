@@ -1,7 +1,7 @@
 // import { Board } from "src/boards/board.entity";
 import { Exclude, Expose } from 'class-transformer';
 import { IsEmail, IsEnum, IsString, Length, Matches } from 'class-validator';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne } from 'typeorm';
 
 import { emailValidationMessage } from 'src/_common/validation-message/email-validation.message';
 import { lengthValidationMessage } from 'src/_common/validation-message/length-validation.message';
@@ -15,6 +15,8 @@ import { CommentModel } from 'src/posts/-comment/entities/comment.entity';
 import { QuestPostModel } from 'src/posts/entities/quest_post.entity';
 import { SbPostModel } from 'src/posts/entities/sb_post.entity';
 import { TicketModel } from 'src/users/_tickets/entities/ticket.entity';
+import { QuestFavoriteModel } from 'src/favorite/entities/quest_favorite.entity';
+import { SbFavoriteModel } from 'src/favorite/entities/sb_favorite.entity';
 
 export enum UserModelStatus {
     ACTIVE,
@@ -93,4 +95,10 @@ export class UserModel extends BaseModel {
     @OneToOne(() => TicketModel, (ticket) => ticket.user)
     @JoinColumn()
     ticket: TicketModel;
+
+    @OneToMany(() => QuestFavoriteModel, (questFavorite) => questFavorite.favoriteUsers)
+    favoriteQuests: QuestFavoriteModel[];
+
+    @OneToMany(() => SbFavoriteModel, (sbFavorite) => sbFavorite.favoriteUsers)
+    favoriteSbs: SbFavoriteModel[];
 }
