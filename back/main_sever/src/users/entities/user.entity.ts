@@ -14,7 +14,7 @@ import { PostModel } from 'src/posts/entities/post.entity';
 import { CommentModel } from 'src/posts/-comment/entities/comment.entity';
 import { QuestPostModel } from 'src/posts/entities/quest_post.entity';
 import { SbPostModel } from 'src/posts/entities/sb_post.entity';
-import { TicketModel } from 'src/tickets/entities/ticket.entity';
+import { TicketModel } from 'src/users/_tickets/entities/ticket.entity';
 
 export enum UserModelStatus {
     ACTIVE,

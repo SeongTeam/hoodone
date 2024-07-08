@@ -23,8 +23,8 @@ import {
 } from './_common/const/env-keys.const';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { LocalTypeormConfig } from './_configs/local-typeorm.config';
-import { TicketModel } from './tickets/entities/ticket.entity';
-import { TicketModule } from './tickets/ticket.module';
+import { TicketModel } from './users/_tickets/entities/ticket.entity';
+import { TicketModule } from './users/_tickets/ticket.module';
 
 @Module({
     imports: [
