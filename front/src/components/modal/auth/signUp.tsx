@@ -269,6 +269,7 @@ const SignUp: React.FC = () => {
                         inputName="Email"
                         formData={{ ...form.register('email', { required: true }) }}
                         inputType="email"
+                        inputPlaceHolder="Enter Email"
                     ></CommonInput>
 
                     <ButtonAndInput
@@ -279,6 +280,7 @@ const SignUp: React.FC = () => {
                         onClickButton={() => {
                             handleSendPintCodeButton();
                         }}
+                        inputPlaceHolder="Enter Pin code from your email"
                     />
                     <Box>
                         {isTimerStart ? (
@@ -318,14 +320,14 @@ const SignUp: React.FC = () => {
                         inputName="Nickname"
                         inputType="text"
                         formData={{ ...form.register('nickname', { required: true, max: 20 }) }}
+                        inputPlaceHolder="Enter Nickname"
                     />
                     <CommonInput
                         inputName="Password"
                         inputType="password"
                         inputPlaceHolder="Enter password"
                         isUsedPasswordButton={true}
-                        formData={{ ...form.register('password', { required: true, max: 20 }) }}
-                    />
+                        formData={{ ...form.register('password', { required: true, max: 20 }) }}                    />
                     <Text
                         textAlign="center"
                         color={isPassword ? 'green' : 'red'}
@@ -337,7 +339,7 @@ const SignUp: React.FC = () => {
                     <CommonInput
                         inputName="Confirm Password"
                         inputType="password"
-                        inputPlaceHolder="Enter confirm password"
+                        inputPlaceHolder="Enter confirmed password"
                         isUsedPasswordButton={true}
                         formData={{
                             ...form.register('confirmPassword', { required: true, max: 20 }),
