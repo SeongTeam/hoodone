@@ -2,16 +2,16 @@
 import { Button, Box ,Flex, Image,Spacer ,Text } from '@chakra-ui/react';
 import SearchBar from './components/searchBar';
 import { customColors } from '@/utils/chakra/customColors';
-import { useUserAccountValue } from "@/hooks/userAccount";
+import { useUserAccountWithSSR } from "@/hooks/userAccount";
 import LoginButton from './components/LoginButton';
 import UserMenu from './components/UserMenu';
 import SidebarResponsive from '../sidebar/SideBarDrawer';
 
 export default function NaviBar() {
     const bg = customColors.white[100];
-    const user = useUserAccountValue();
+    const [userAccount] = useUserAccountWithSSR();
 
-    const gretting = user.isLogin ? `Hello, ${user.nickname}!` : 'Hello, Visistor!';
+    const gretting = userAccount.isLogin ? `Hello, ${userAccount.nickname}!` : 'Hello, Visistor!';
 
 
     return (
@@ -29,7 +29,7 @@ export default function NaviBar() {
                 </Box>
                 <Spacer />
                 <SearchBar />
-                { user.isLogin ? <UserMenu /> : <LoginButton /> }
+                { userAccount.isLogin ? <UserMenu /> : <LoginButton /> }
             </Flex>
 
         </Box>

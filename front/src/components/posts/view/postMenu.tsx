@@ -4,7 +4,7 @@ import { Menu, MenuList, MenuButton, MenuItem, IconButton } from "@chakra-ui/rea
 import { HamburgerIcon } from "@chakra-ui/icons";
 import React from "react";
 import { customColors } from "@/utils/chakra/customColors";
-import { useUserAccountValue } from "@/hooks/userAccount";
+import { useUserAccountWithSSR } from "@/hooks/userAccount";
 
 type PostMenuProps = {
     post : PostType
@@ -16,7 +16,7 @@ type PostMenuProps = {
 
 const PostMenu: React.FC<PostMenuProps> = ({post}) => {
     const normalColor = customColors.black[100];
-    const userAccount  = useUserAccountValue();
+    const [userAccount ] = useUserAccountWithSSR();
 
     const handleReport= () => {
         alert('Report function is not implemented yet');

@@ -10,7 +10,7 @@ import Tab, { type TabItem } from './tab';
 import { createPosts } from '@/server-actions/postsActions';
 import { showErrorToast } from '@/components/modal/auth/components/toast/toast';
 import ImageUploadArea from '@/components/common/ImageUpload';
-import { useUserAccountValue } from '@/hooks/userAccount';
+import { useUserAccountWithoutSSR } from '@/hooks/userAccount';
 import { NEW_POST_FORMAT, POST_TYPE, NewPostFormType, tagDelimiter } from '@/type/postType';
 import { contentTexts, titleTexts } from '../card/const/rule_card_texts';
 import { useRecoilState } from 'recoil';
@@ -21,7 +21,7 @@ type CreatePostFormProps = {
 };
 
 const CreatePostForm: React.FC<CreatePostFormProps> = ({ type = POST_TYPE.QUEST }) => {
-    const userAccount = useUserAccountValue(); //사용자가 브라우저 자원을 훼손할 여지가 있으므로, accessToken을 통해 서버에서 직접 정보를 가져오기
+    const userAccount = useUserAccountWithoutSSR(); 
     const router = useRouter();
     const useToastOption = useToast();
     const [newPost, setNewPost] = useState<NewPostFormType>({
