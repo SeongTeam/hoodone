@@ -1,4 +1,4 @@
-import { useUserAccountWithSSR } from "@/hooks/userAccount";
+import { useUserAccountValue } from "@/hooks/userAccount";
 import { CommentType } from '@/atoms/comment';
 import React , { useState, useOptimistic } from 'react';
 import { Button,Flex, Input, Text, Textarea} from '@chakra-ui/react';
@@ -23,7 +23,7 @@ const InputReply : React.FC<InputReplyProps> = ({
 
     const buttonColor = customColors.link[100];
     const [ content, setContent ] = useState('');
-    const [ userAccount, setUserAccount ] = useUserAccountWithSSR();
+    const userAccount = useUserAccountValue();
     const [ isLoading, setIsLoading ] = useState(false);
     const [ msg, setmsg ] = useState('');
     const params = useParams<{postid:string; } >();

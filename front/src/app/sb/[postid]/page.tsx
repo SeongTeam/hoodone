@@ -1,11 +1,9 @@
 import { NextPage } from 'next';
-import { PostType } from '@/type/postType';
-import { getAllPosts, getPostWithID } from '@/lib/server-only/postLib';
+import { POST_TYPE, PostType } from '@/type/postType';
+import { PostFetchService } from '@/lib/server-only/postLib';
 import { Box, Text, Spacer, Flex, Grid, VStack, SimpleGrid, Image } from '@chakra-ui/react';
 import logger from '@/utils/log/logger';
 import { customColors } from '@/utils/chakra/customColors';
-import { useUserAccountWithSSR } from '@/hooks/userAccount';
-import { userAccountState } from '@/atoms/userAccount';
 import RuleCard from '@/components/posts/card/RuleCard';
 import CommentArea from '@/components/comment/server-component/commentArea';
 import DetailPostForm from '@/components/posts/detail/detailPostForm';
@@ -18,8 +16,6 @@ const PostSlider = dynamic(() => import('@/components/_global/slider/postSlider'
 export type SbPageProps = {
     params: {
         postid: string;
-        writer: userAccountState;
-        rootCommentID?: number;
     };
     searchParams: {
         index: string;
@@ -27,15 +23,16 @@ export type SbPageProps = {
 };
 
 const SbPage: NextPage<SbPageProps> = async ({ params, searchParams }) => {
-    const { writer, rootCommentID } = params;
     const borderColor = customColors.shadeLavender[300];
 
     logger.info('#PostPage Rendered', { message: params.postid });
     console.log(params.postid, searchParams.index);
 
-    const post: PostType | null = await getPostWithID(params.postid, parseInt(searchParams.index));
+    const postService = new PostFetchService( POST_TYPE.SB );
 
-    const allPosts: PostType[] | null = await getAllPosts();
+    const post: PostType | null = await postService.getPostByID(params.postid, parseInt(searchParams.index));
+
+    const allPosts: PostType[] | null = await postService.getCachedPaginatedPosts(1);
 
     if (!post) {
         logger.error(`post${params.postid} not found`);
@@ -85,7 +82,7 @@ const SbPage: NextPage<SbPageProps> = async ({ params, searchParams }) => {
                             borderRadius="15px"
                             border={`1px solid ${borderColor}`}
                         >
-                            <DetailPostForm writerAccount={writer} post={post}></DetailPostForm>
+                            <DetailPostForm type = {POST_TYPE.SB} post={post}></DetailPostForm>
 
                             <Box h="16px" />
 
