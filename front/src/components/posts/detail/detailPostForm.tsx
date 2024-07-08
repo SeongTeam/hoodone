@@ -63,27 +63,22 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) =>
                 </Text>
                 <Spacer h="20px" />
 
-                {/* Tag area */}
-                {/*<HStack>
-                    {post.tags.map((value) => (
+
+                <Box
+                    id="tags-list"
+                    >
+                    {post.tags && Array.isArray(post.tags) && post.tags.map((value) => (
                         <Tag
-                            maxW="200px"
-                            size="lg"
-                            // h="40px"
-                            overflow="hidden"
-                            textOverflow="ellipsis"
-                            whiteSpace="nowrap"
                             key={value}
-                            borderRadius="15px"
-                            bg={customColors.skyBlue[300]}
-                            variant="solid"
-                            color={customColors.black}
+                            variant="postTag"
+                            color={customColors.black[100]}
+                            mb = "5px"
+                            mr = "5px"
                         >
                             #{value}
                         </Tag>
                     ))}
-                </HStack>
-                */}
+                </Box>
                 <Box height={5}></Box>
                 <Divider orientation="horizontal" borderColor={customColors.shadeLavender[100]} />
                 <Box height={15}></Box>
