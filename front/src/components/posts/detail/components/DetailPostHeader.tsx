@@ -1,32 +1,36 @@
 'use client';
 
-import { AuthorType } from '@/type/postType';
-import { userAccountState } from '@/atoms/userAccount';
+import { AuthorType, PostType } from '@/type/postType';
 import { formatTimeFromNow } from '@/lib/Date';
 import { customColors } from '@/utils/chakra/customColors';
 import { ChevronDownIcon, DragHandleIcon, StarIcon } from '@chakra-ui/icons';
 import { Box, Flex, HStack, Text, Image, Spacer } from '@chakra-ui/react';
+import { CldImage } from 'next-cloudinary';
+import { cloudinaryTempData } from '@/utils/cloudinary/mockUpData'
+import PostMenu from '../../view/postMenu';
 
 type DetailPostHeaderProps = {
-    writerAccount: userAccountState;
-    createDate: Date;
+    post : PostType
 };
 
-const DetailPostHeader: React.FC<DetailPostHeaderProps> = ({ writerAccount, createDate }) => {
-    const time = formatTimeFromNow(createDate);
+const DetailPostHeader: React.FC<DetailPostHeaderProps> = ({ post }) => {
+    const time = formatTimeFromNow(post.createdAt);
+
+    const author = post.author;
 
     return (
         <Flex w="100%" direction="row" pl="15px" pr="3px">
             <HStack w="100%" align="center">
-                <Image
-                    borderRadius="full"
-                    boxSize="60px"
-                    src="https://bit.ly/dan-abramov"
-                    alt="Dan Abramov"
-                />
+                <Box borderRadius={'full'} w="60px" h="60px" overflow={'hidden'} position= { 'relative'}>
+                    <CldImage
+                        alt=' Ower profile image'
+                        src={author.profileImagePublicId ?  author.profileImagePublicId : cloudinaryTempData.defaultProfilePublicId }                     
+                        fill={true}
+                    />
+                </Box>
                 <Spacer w="2px" />
                 <Text w="180px" fontSize="16px">
-                    mock autour
+                    {author.nickname}
                 </Text>
                 {/* TODO  write 시간 기록하기 동작 에러 확인하기 */}
                 {/* <Spacer width="100px" /> */}
@@ -36,9 +40,8 @@ const DetailPostHeader: React.FC<DetailPostHeaderProps> = ({ writerAccount, crea
                 <Text w="90px" noOfLines={1} fontSize="12px">
                     {time}
                 </Text>
-                <StarIcon boxSize={5} />
                 <Spacer> </Spacer>
-                <ChevronDownIcon boxSize={7} />
+                <PostMenu post={post}/>
             </HStack>
         </Flex>
     );

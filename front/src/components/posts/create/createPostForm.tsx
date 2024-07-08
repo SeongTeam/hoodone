@@ -10,16 +10,18 @@ import Tab, { type TabItem } from './tab';
 import { createPosts } from '@/server-actions/postsActions';
 import { showErrorToast } from '@/components/modal/auth/components/toast/toast';
 import ImageUploadArea from '@/components/common/ImageUpload';
-import { useUserAccountWithSSR } from '@/hooks/userAccount';
+import { useUserAccountValue } from '@/hooks/userAccount';
 import { NEW_POST_FORMAT, POST_TYPE, NewPostFormType, tagDelimiter } from '@/type/postType';
 import { contentTexts, titleTexts } from '../card/const/rule_card_texts';
+import { useRecoilState } from 'recoil';
+import { UserAccountState } from '@/atoms/userAccount';
 
 type CreatePostFormProps = {
     type: POST_TYPE;
 };
 
 const CreatePostForm: React.FC<CreatePostFormProps> = ({ type = POST_TYPE.QUEST }) => {
-    const [userAccount] = useUserAccountWithSSR(); //사용자가 브라우저 자원을 훼손할 여지가 있으므로, accessToken을 통해 서버에서 직접 정보를 가져오기
+    const userAccount = useUserAccountValue(); //사용자가 브라우저 자원을 훼손할 여지가 있으므로, accessToken을 통해 서버에서 직접 정보를 가져오기
     const router = useRouter();
     const useToastOption = useToast();
     const [newPost, setNewPost] = useState<NewPostFormType>({
@@ -57,15 +59,14 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ type = POST_TYPE.QUEST 
         console.log(result);
     };
 
+
     useEffect(() => {
-        /*TODO
-        - check login State
+        console.log('LoginStatus : ',userAccount.isLogin);
         if(!userAccount.isLogin){
             alert('pleae login first');
-            router.push('/login');
+            router.push('/authentication/sign-in');
         }
-        */
-    }, []);
+    },[userAccount.isLogin,router]);
 
     return (
         <Box>

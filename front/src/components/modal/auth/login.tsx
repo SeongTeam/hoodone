@@ -1,11 +1,13 @@
 'use client';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import { useUserAccountWithSSR } from "@/hooks/userAccount";
 import { signIn } from '@/server-actions/AuthAction';
 import { useForm } from 'react-hook-form';
 import { CommonInput } from './components/input/common_input';
 import { SignInDTO } from '@/type/server-action/AuthType';
+import { useRecoilState } from 'recoil';
+import { UserAccountState } from '@/atoms/userAccount';
+import { useRouter } from 'next/navigation';
 
 type LoginProps = {};
 
@@ -27,7 +29,8 @@ const Login: React.FC<LoginProps> = () => {
         },
     });
 
-    const [userState, setUserState] = useUserAccountWithSSR();
+    const router = useRouter();
+    const [userState, setUserState] = useRecoilState(UserAccountState);
     const [msg, setMsg] = useState('');
 
     const loginWithEmailAndPassword = async (email: string, password: string) => {
@@ -44,6 +47,8 @@ const Login: React.FC<LoginProps> = () => {
                 nickname: nickname,
                 isLogin: true,
             }));
+
+            router.push('/');
         } else {
             setMsg(res.message);
         }

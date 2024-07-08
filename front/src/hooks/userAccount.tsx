@@ -1,4 +1,5 @@
 import { defaultUserAccount, UserAccountState ,userAccountState } from "@/atoms/userAccount";
+import logger from "@/utils/log/logger";
 import react , { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
@@ -8,12 +9,17 @@ import { useRecoilState } from "recoil";
 export function useUserAccountWithSSR() {
     const [isInitial, setIsInitial] = useState(true);
     const [userAccount, setUserAccount] = useRecoilState(UserAccountState);
-
     useEffect(() => {
         setIsInitial(false);
     }, []);
 
     return [isInitial ? defaultUserAccount : userAccount, setUserAccount] as const;
+}
+
+export function useUserAccountValue() {
+    const [userAccount] = useRecoilState(UserAccountState);
+    
+    return userAccount
 }
 
 export function useIsOwner(nickname : string ) {

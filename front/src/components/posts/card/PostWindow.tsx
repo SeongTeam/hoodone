@@ -2,15 +2,10 @@
 import Image from 'next/image';
 import { useInView } from 'react-intersection-observer';
 import { useCallback, useEffect, useState } from 'react';
-import { Box, Grid, GridItem, Text } from '@chakra-ui/react';
-import { PostType } from '@/atoms/post';
+import { Grid, GridItem, } from '@chakra-ui/react';
 import PostCard from './PostCard';
 import MotionDiv from '@/components/common/motionDiv';
-import AdminPostCard from './AdminPostCard';
-import PostSlider from '@/components/_global/slider/postSlider';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { customColors } from '@/utils/chakra/customColors';
+import { POST_TYPE, PostType } from '@/type/postType';
 
 /*TODO
 - route handler GET METHOD cache 활용 여부 확인
@@ -23,32 +18,29 @@ import { customColors } from '@/utils/chakra/customColors';
     - implement inifinte scroll to show PostListItem
     - Using motion.div on Server component. 
 */
+
+const apiUrl = process.env.NEXT_PUBLIC_FRONT_API_URL;
+
 const INITIAL_OFFSET = 1;
 const BatchSize = 1;
 
-//** TODO 작성자를 admin것으로 찾아서 변경하자 */
-const getPaginatedPostsFromAPI = async (offset: number) => {
-    const res = await fetch(`http://localhost:4000/api/posts?offset=${offset}`);
+const getPaginatedPostsFromAPI = async (offset: number, type : POST_TYPE) => {
+    console.log('getPaginatedPostsFromAPI', {offset, type});
+    const res = await fetch(`${apiUrl}/posts?offset=${offset}&type=${type}`);
     const posts = res.json();
     return posts;
 };
 
-interface LoadMoreAdminPostCardsProps {
-    // isLoadinh
+type PostWinowProps = {
+    type: POST_TYPE
 }
 
-const LoadMoreAdminPostCards: React.FC = () => {
+const PostWinow: React.FC<PostWinowProps> = ({ type }) => {
     const { ref, inView } = useInView();
     const [posts, setPosts] = useState<PostType[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [offset, setOffset] = useState<number>(INITIAL_OFFSET);
-
-    const postColor = [
-        customColors.pastelGreen[300],
-        customColors.aqua[100],
-        customColors.pastelYellow[100],
-    ];
 
     const variants = {
         hidden: { opacity: 0 },
@@ -61,7 +53,7 @@ const LoadMoreAdminPostCards: React.FC = () => {
         }
         setIsLoading(true);
         try {
-            const newPosts = await getPaginatedPostsFromAPI(offset);
+            const newPosts = await getPaginatedPostsFromAPI(offset,type);
             setPosts((posts) => [...posts, ...newPosts]);
             setOffset((prev) => prev + BatchSize);
             if (newPosts.length <= 0) setHasMore(false);
@@ -88,36 +80,43 @@ const LoadMoreAdminPostCards: React.FC = () => {
     }, [inView, loadPosts]);
 
     return (
-        <Box h={110 + 20 + 'px'} bg="white" alignContent="center">
-            <PostSlider sliderName="AdminQuests" gap="10px">
-                {posts.map((post, index) => {
-                    if (index < 6)
+        <div>
+            <Grid
+                id = 'PostCard grid'
+                templateColumns="repeat(auto-fill,minmax(250px,1fr))"
+                gap ="20px"
+                width="100%"
+                >
+                {
+                    posts.map((post, index) => {
                         return (
+                        <GridItem key = {post.id} maxW="340px">
                             <MotionDiv
                                 variants={variants}
                                 initial="hidden"
                                 animate="visible"
                                 exit="hidden"
-                                transition={{
+                                transition={{ 
                                     delay: index * 0.1,
-                                    ease: 'easeInOut',
-                                    duration: 0.5,
+                                    ease: "easeInOut",
+                                    duration: 0.5 
                                 }}
-                                viewport={{ amount: 0 }}
+                                viewport={{amount: 0}}
                             >
-                                <AdminPostCard
-                                    pushedPath={`/quest/${post.id}?index=${index}`}
-                                    post={post}
-                                    key={post.id}
-                                    index={index}
-                                    bg={postColor[index % postColor.length]}
-                                />
+                                <PostCard 
+                                    type={type}
+                                    post={post} 
+                                    key={post.id} 
+                                    index={index}/>
                             </MotionDiv>
+                        </GridItem>
                         );
                 })}
-            </PostSlider>
-            <section>
-                <div ref={ref}>
+            </Grid>
+            <section
+                id = 'LoadMorepost'
+            >
+                <span ref={ref}>
                     {isLoading && (
                         <Image
                             src="/hood1/spinner.svg"
@@ -127,10 +126,10 @@ const LoadMoreAdminPostCards: React.FC = () => {
                             className="object-contain"
                         />
                     )}
-                </div>
+                </span>
             </section>
-        </Box>
+        </div>
     );
 };
 
-export default LoadMoreAdminPostCards;
+export default PostWinow;

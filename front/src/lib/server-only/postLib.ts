@@ -5,129 +5,158 @@ import assert from 'assert';
 import { unstable_cache } from 'next/cache';
 import { PostType, POST_TYPE } from '@/type/postType';
 
-const backendURL = process.env.BACKEND_URL;
+type PostRoute = 'sbs' | 'quests';
 
-/*
-const configCld = {
-    secure: true,
-};
+enum CACHE_KEY_PART {
+    QUSET_KEY = 'Quest-Paginated',
+    SUBMISSION_KEY = 'Submission-Paginated',
+}
+export class PostFetchService {
+    type: POST_TYPE;
 
-cloudinary.config({
-    ...configCld,
-});
-*/
+    private routeSegment: PostRoute;
+    private cacheTag: POST_TYPE;
+    private cacheKeyPart;
+    private defaultLimit = 5;
+    private initialOffset = 1;
+    private backendURL = process.env.BACKEND_URL;
 
-export const getPostLibConfig = () => {
-    const defaultLimit = 5;
-    const initialOffset = 0;
+    constructor(type: POST_TYPE) {
+        this.type = type;
 
-    return { defaultLimit, initialOffset };
-};
-
-export async function getAllPosts() {
-    try {
-        const res = await fetch(`${backendURL}/posts/all`, {
-            next: { tags: ['Allposts'] },
-        });
-        if (!res.ok) {
-            logger.error('getPosts error', { message: res });
-            throw new Error('getPosts error');
+        switch (type) {
+            case POST_TYPE.QUEST:
+                this.routeSegment = 'quests';
+                this.cacheTag = POST_TYPE.QUEST;
+                this.cacheKeyPart = CACHE_KEY_PART.QUSET_KEY;
+                break;
+            case POST_TYPE.SB:
+                this.routeSegment = 'sbs';
+                this.cacheTag = POST_TYPE.SB;
+                this.cacheKeyPart = CACHE_KEY_PART.SUBMISSION_KEY;
+                break;
+            default:
+                logger.error('Construct PostInfo error. Invalid post type', {
+                    message: { type },
+                });
+                throw new Error('Invalid post type');
+                break;
         }
-        const data: PostApiResponseDto = await res.json();
-
-        return data.getAll as PostType[];
-    } catch (error) {
-        logger.error('getPosts error', { message: error });
-        return null;
     }
-}
 
-export async function getPostWithIDFromCache(id: string, PostsPos: number) {
-    const { defaultLimit } = getPostLibConfig();
+    async getCachedPaginatedPosts(offset: number, limit: number = this.defaultLimit) {
+        const cachdFunc = unstable_cache(
+            async (offset, limit) => this.getPaginatedPosts(offset, limit),
+            [this.cacheKeyPart],
+            {
+                tags: [this.cacheTag],
+            },
+        );
 
-    try {
-        const offset = Math.floor(PostsPos / defaultLimit) + 1;
-        const posts = await getCachedPaginatedPosts(offset, defaultLimit);
-
-        assert(Array.isArray(posts));
-
-        const post = posts.find((post) => {
-            return post.id === parseInt(id);
-        });
-
-        if (!post) {
-            throw new Error(`post with id ${id} not found in cache`);
-        }
-
-        return post;
-    } catch (error) {
-        logger.error('getPostWithIDFromCache error', { message: error });
-        return null;
+        return await cachdFunc(offset, limit);
     }
-}
 
-export async function getPostWithIDFromServer(id: string) {
-    try {
-        const res = await fetch(`${backendURL}/posts/${id}`);
-
-        if (!res.ok) {
-            logger.error('getPostWithID error', { message: res });
-            throw new Error('getPostWithID error');
-        }
-
-        const data: PostApiResponseDto = await res.json();
-        logger.info('getPostWithIDFromServer is called');
-
-        return data.getById as PostType;
-    } catch (error) {
-        logger.error('getPostWithID error', { message: error });
-        return null;
-    }
-}
-
-export async function getPostWithID(id: string, PostsPos: number) {
-    try {
-        const cacheData = getPostWithIDFromCache(id, PostsPos);
-        const backendData = getPostWithIDFromServer(id);
-
-        const post = await Promise.race([cacheData, backendData]);
-
-        assert(post !== undefined, 'post shoulde be defined or null');
-        return post;
-    } catch (error) {
-        logger.error('getPostWithID error', { message: error });
-        return null;
-    }
-}
-
-export async function getPaginatedPosts(offset: number, limit: number) {
-    try {
-        const res = await fetch(`${backendURL}/quests/paginated?offset=${offset}&limit=${limit}`);
-
-        if (!res.ok) {
-            logger.error('getPaginatedPosts error', {
-                message: `(offset: ${offset}, limit: ${limit}) ${JSON.stringify(res.body)} ${
-                    res.status
-                }`,
+    async getPostByID(id: string, PostsPos: number) {
+        try {
+            const cachePromise = this.getPostWithIDFromCache(id, PostsPos);
+            const backendPromise = this.getPostWithIDFromServer(id);
+            const timeOutPromise = new Promise<null>((_, reject) => {
+                const timeOutMs = 5000;
+                setTimeout(() => {
+                    reject(new Error('getPostWithID time out'));
+                }, timeOutMs);
+            }).catch((error) => {
+                logger.error('getPostWithID time out error', { message: error });
+                return null;
             });
-            throw new Error('getPaginatedPosts error');
+
+            const post = await Promise.race([cachePromise, backendPromise, timeOutPromise]);
+
+            assert(post !== undefined, 'post shoulde be defined or null');
+
+            if (post === null) {
+                logger.error('getPostWithID error', { message: { id, PostsPos } });
+                throw new Error(`post with id ${id} not found in cache and server`);
+            }
+            return post;
+        } catch (error) {
+            logger.error('getPostWithID error', { message: error });
+            return null;
         }
+    }
 
-        const dto: PostApiResponseDto = await res.json();
-        const data = dto.getPaginatedPosts as PostType[];
+    private async getPaginatedPosts(offset: number, limit: number) {
+        try {
+            if (offset <= 0) {
+                logger.error('offset <= 0', { message: { offset } });
+                throw new Error('offset is invalid');
+            }
+            if (limit <= 0) {
+                logger.error('limit <= 0', { message: { limit } });
+                throw new Error('limit is invalid');
+            }
 
-        return data;
-    } catch (error) {
-        logger.error('Error getPaginatedPosts', { message: error });
-        return null;
+            const res = await fetch(
+                `${this.backendURL}/${this.routeSegment}/paginated?offset=${offset}&limit=${limit}`,
+            );
+
+            if (!res.ok) {
+                logger.error('getPaginatedPosts error', {
+                    message: `(offset: ${offset}, limit: ${limit}) ${JSON.stringify(res.body)} ${
+                        res.status
+                    }`,
+                });
+                throw new Error('getPaginatedPosts error');
+            }
+
+            const dto: PostApiResponseDto = await res.json();
+            const data = dto.getPaginatedPosts as PostType[];
+
+            return data;
+        } catch (error) {
+            logger.error('Error getPaginatedPosts', { message: error });
+            return null;
+        }
+    }
+
+    private async getPostWithIDFromCache(id: string, PostsPos: number) {
+        try {
+            const offset = Math.floor(PostsPos / this.defaultLimit) + 1;
+            const posts = await this.getCachedPaginatedPosts(offset, this.defaultLimit);
+
+            assert(Array.isArray(posts));
+
+            const post = posts.find((post) => {
+                return post.id === parseInt(id);
+            });
+
+            if (!post) {
+                throw new Error(`post with id ${id} not found in cache`);
+            }
+
+            return post;
+        } catch (error) {
+            logger.error('getPostWithIDFromCache error', { message: error });
+            return null;
+        }
+    }
+
+    private async getPostWithIDFromServer(id: string) {
+        try {
+            const res = await fetch(`${this.backendURL}/${this.routeSegment}/${id}`);
+
+            if (!res.ok) {
+                logger.error('getPostWithID error', { message: res });
+                throw new Error('getPostWithID error');
+            }
+
+            const data: PostApiResponseDto = await res.json();
+            logger.info('getPostWithIDFromServer is called');
+
+            return data.getById as PostType;
+        } catch (error) {
+            logger.error('getPostWithID error', { message: error });
+            return null;
+        }
     }
 }
-
-/*TODO
-- unstable_cache() 안정성 확인 후, 사용 유지 고려하기
-*/
-export const getCachedPaginatedPosts = unstable_cache(
-    async (offset: number, limit: number) => getPaginatedPosts(offset, limit),
-    ['posts-paginated'],
-    { tags: [POST_TYPE.QUEST] },
-);

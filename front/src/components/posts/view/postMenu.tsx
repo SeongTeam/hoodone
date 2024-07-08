@@ -4,6 +4,7 @@ import { Menu, MenuList, MenuButton, MenuItem, IconButton } from "@chakra-ui/rea
 import { HamburgerIcon } from "@chakra-ui/icons";
 import React from "react";
 import { customColors } from "@/utils/chakra/customColors";
+import { useUserAccountValue } from "@/hooks/userAccount";
 
 type PostMenuProps = {
     post : PostType
@@ -15,8 +16,18 @@ type PostMenuProps = {
 
 const PostMenu: React.FC<PostMenuProps> = ({post}) => {
     const normalColor = customColors.black[100];
-    const focusColor = customColors.purple[100];
-    const isOwner = false;
+    const userAccount  = useUserAccountValue();
+
+    const handleReport= () => {
+        alert('Report function is not implemented yet');
+    }
+
+    const handleEdit = () => {
+        alert('Edit function is not implemented yet');
+    }
+    const handleDelete = () => {
+        alert('Delete function is not implemented yet');
+    }
 
     return (
         <Menu>
@@ -30,8 +41,26 @@ const PostMenu: React.FC<PostMenuProps> = ({post}) => {
 
             />
             <MenuList>
-                <MenuItem>Report</MenuItem>
-                <MenuItem color={customColors.error[100]}>Delete</MenuItem>
+                <MenuItem 
+                    onClick={handleReport}
+                >
+                    Report
+                </MenuItem>
+                { userAccount.nickname === post.author.nickname 
+                && <MenuItem
+                    onClick={handleEdit}
+                    >
+                    Edit
+                    </MenuItem> 
+                }
+                { userAccount.nickname === post.author.nickname 
+                && <MenuItem 
+                    onClick={handleDelete} 
+                    color={customColors.error[100]}
+                    >
+                        Delete
+                    </MenuItem> 
+                }
             </MenuList>
         </Menu>
     )  

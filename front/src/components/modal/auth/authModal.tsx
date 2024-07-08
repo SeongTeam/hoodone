@@ -14,7 +14,7 @@ import {
 import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { AuthModalState } from '@/atoms/authModal';
-import { useUserAccountWithSSR } from "@/hooks/userAccount";
+import { useUserAccountValue } from "@/hooks/userAccount";
 import AuthInput from './authInput';
 import ResetPassword from './resetPassword';
 import { customColors } from '@/utils/chakra/customColors';
@@ -27,7 +27,7 @@ import { customColors } from '@/utils/chakra/customColors';
 const AuthModal: React.FC = () => {
     //const { isOpen, onOpen, onClose } = useDisclosure();
     const [modalState, setModalState] = useRecoilState(AuthModalState);
-    const [userState, setUserState] = useUserAccountWithSSR();
+    const userState = useUserAccountValue();
     const bg = customColors.black[200];
     const fontColor = customColors.white[100];
 

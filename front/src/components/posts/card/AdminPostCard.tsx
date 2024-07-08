@@ -3,11 +3,9 @@ import { Box, Flex, Text, Image, Spacer } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-
-import { PostType } from '@/atoms/post';
 import { userAccountState } from '@/atoms/userAccount';
 import UserProfileImage from '@/components/common/server-component/UserProfileImage';
-
+import { PostType } from '@/type/postType';
 type AdminPostCardProps = {
     post: PostType;
     index: number;

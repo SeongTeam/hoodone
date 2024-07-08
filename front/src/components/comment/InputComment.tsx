@@ -1,10 +1,9 @@
 'use client';
-import { useUserAccountWithSSR } from '@/hooks/userAccount';
+import { useUserAccountValue } from '@/hooks/userAccount';
 import { CommentType } from '@/atoms/comment';
 import React, { useState, useOptimistic } from 'react';
 import { Box, Button, Container, Flex, HStack, Input, Spacer } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
-import { AuthorType } from '@/atoms/post';
 import { leaveComment } from '@/server-actions/commentAction';
 import { useParams, usePathname } from 'next/navigation';
 
@@ -17,7 +16,7 @@ type InputCommentProps = {};
 const InputComment: React.FC<InputCommentProps> = ({}) => {
     const buttonColor = customColors.link[100];
     const [content, setContent] = useState('');
-    const [userAccount, setUserAccount] = useUserAccountWithSSR();
+    const userAccount = useUserAccountValue();
     const [isLoading, setIsLoading] = useState(false);
     const [msg, setmsg] = useState('');
     const params = useParams<{ postid: string }>();
