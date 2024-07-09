@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { QueryRunner, Repository, UpdateResult } from 'typeorm';
+import { FindManyOptions, QueryRunner, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { AuthException } from 'src/_common/exception/auth-exception';
@@ -128,28 +128,22 @@ export class UsersService {
         });
     }
 
-    async getUserByEmail(email: string) {
+    async getUser(
+        where: Pick<UserModel, 'id' | 'nickname' | 'email'>,
+        option?: FindManyOptions<UserModel>,
+    ) {
+        const findOption = option ?? COMMON_FIND_USER_OPTIONS;
+        const existingUser = await this.usersRepository.findOne({
+            where: where,
+            ...findOption,
+        });
+        return existingUser;
+    }
+
+    async getUserUsingAccessToken(email: string) {
         const existingUser = await this.usersRepository.findOne({
             where: {
                 email,
-            },
-        });
-        return existingUser;
-    }
-
-    async getUserByNickname(nickname: string) {
-        const existingUser = await this.usersRepository.findOne({
-            where: {
-                nickname,
-            },
-        });
-        return existingUser;
-    }
-
-    async getUserById(id: number) {
-        const existingUser = await this.usersRepository.findOne({
-            where: {
-                id,
             },
         });
         return existingUser;
