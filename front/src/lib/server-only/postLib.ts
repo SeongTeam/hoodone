@@ -162,7 +162,9 @@ export class PostFetchService {
 
     private async getPostByIDFromServer(id: string) {
         try {
-            const res = await fetch(`${this.backendURL}/${this.routeSegment}/${id}`);
+            const res = await fetch(`${this.backendURL}/${this.routeSegment}/${id}`, {
+                method: 'GET',
+            });
 
             if (!res.ok) {
                 logger.error('getPostWithID error', { message: res });
@@ -170,10 +172,14 @@ export class PostFetchService {
             }
 
             const data: PostApiResponseDto = await res.json();
+            logger.info(`path ${this.backendURL}/${this.routeSegment}/${id}`);
+
             logger.info('getPostByIDFromServer is called');
 
             return data.getById as PostType;
         } catch (error) {
+            logger.error(`path ${this.backendURL}/${this.routeSegment}/${id}`);
+
             logger.error('getPostWithID error', { message: error });
             return null;
         }

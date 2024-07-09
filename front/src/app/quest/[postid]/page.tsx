@@ -30,7 +30,10 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
     logger.info('#PostPage Rendered', { message: params.postid });
     console.log(params.postid, searchParams.index);
 
-    const post: PostType | null = await postFetchService.getPostByID(params.postid, parseInt(searchParams.index));
+    const post: PostType | null = await postFetchService.getPostByID(
+        params.postid,
+        parseInt(searchParams.index),
+    );
 
     const allPosts: PostType[] | null = await postFetchService.getCachedPaginatedPosts(1);
     if (!post) {
@@ -69,7 +72,7 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
                         borderRadius="15px"
                         border={`1px solid ${inputBorderColor}`}
                     >
-                        <DetailPostForm type= {POST_TYPE.QUEST} post={post}></DetailPostForm>
+                        <DetailPostForm type={POST_TYPE.QUEST} post={post}></DetailPostForm>
 
                         <Spacer h="6px" />
 
@@ -82,7 +85,7 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
 
                         <Spacer h="26px" />
 
-                        <CommentArea postID={post.id}></CommentArea>
+                        <CommentArea postType={POST_TYPE.QUEST} postID={post.id}></CommentArea>
                     </VStack>
                     <RuleCard
                         title="Quest"

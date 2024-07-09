@@ -200,6 +200,7 @@ export class CommentsService {
 
     changeToTwoPostIds(postId: PostId) {
         const { id, postType } = postId;
+        if (typeof postId === 'number') return { questId: postId, sbId: null };
 
         // isQuestPost을 기준으로 현재 들어온 id가 어떤 post의 id인지 확인합니다
         if (postType === PostType.QUEST) {

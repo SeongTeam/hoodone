@@ -9,4 +9,6 @@ export class PostApiResponseDto {
     post?: object;
 
     getPaginatedPosts?: object;
+
+    patchFavorite?: number[];
 }

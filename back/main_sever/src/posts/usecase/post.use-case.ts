@@ -13,6 +13,7 @@ import { DtoUtils } from 'src/_common/dto/dtoUtils';
 import { FavoriteService } from 'src/favorite/favorite.service';
 import { PostType } from '../-comment/enum/post_type';
 import { DeleteResult } from 'typeorm';
+import { QuestFavoriteModel } from 'src/favorite/entities/quest_favorite.entity';
 
 @Injectable()
 export class PostsUseCases {
@@ -130,7 +131,10 @@ export class PostsUseCases {
                 await qr.commitTransaction();
                 await qr.startTransaction();
 
-                return await this.favoriteService.getAllFavoritesByUserId(userId);
+                let QuestFavorites: QuestFavoriteModel[] =
+                    await this.favoriteService.getAllFavoritesByUserId(userId);
+                const postIds = QuestFavorites.map((favorite) => favorite.postId);
+                return postIds;
             } else {
                 return 'DB에 저장은 성공 하지만, return User.FavoriteQuest 실패';
             }
@@ -152,7 +156,10 @@ export class PostsUseCases {
                 await qr.commitTransaction();
                 await qr.startTransaction();
 
-                return await this.favoriteService.getAllFavoritesByUserId(userId);
+                let QuestFavorites: QuestFavoriteModel[] =
+                    await this.favoriteService.getAllFavoritesByUserId(userId);
+                const postIds = QuestFavorites.map((favorite) => favorite.postId);
+                return postIds;
             } else {
                 return 'DB에 저장은 성공 하지만, return User.FavoriteQuest 실패';
             }

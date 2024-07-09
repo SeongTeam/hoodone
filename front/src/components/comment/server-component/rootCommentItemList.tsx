@@ -9,20 +9,23 @@ import {
     isLeafCommentOfPage,
 } from '@/lib/server-only/commentLib';
 import CommentItemList from './commentItemtList';
+import { POST_TYPE } from '@/type/postType';
 
 type RootCommentItemListProps = {
     postID: number;
     rootCommentID?: number;
+    postType: POST_TYPE;
 };
 
 const RootCommentItemList: React.FC<RootCommentItemListProps> = async ({
     postID,
     rootCommentID,
+    postType,
 }) => {
     const isCommentsPage = rootCommentID === undefined;
 
     const comments: CommentType[] | null = isCommentsPage
-        ? await getInitialComments(postID)
+        ? await getInitialComments(postType, postID)
         : [await getCommentsWithReply(postID, rootCommentID)];
 
     if (!comments || comments.length === 0) return null;
