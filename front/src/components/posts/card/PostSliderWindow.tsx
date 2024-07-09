@@ -46,7 +46,8 @@ const PostSliderWindow: React.FC<PostSliderWindowProp> = async ({ windowName , t
                 {windowName}
             </Text>
             <PostSlider sliderName="User Quests" gap="20px" hight="440px">
-                {posts.map((post, index) => {
+                {posts && Array.isArray(posts) 
+                && posts.map((post, index) => {
                     return (
                         <MotionDiv
                             key={post.id}

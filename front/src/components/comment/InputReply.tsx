@@ -3,7 +3,7 @@ import { CommentType } from '@/atoms/comment';
 import React , { useState, useOptimistic } from 'react';
 import { Button,Flex, Input, Text, Textarea} from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
-import { AuthorType } from '@/atoms/post';
+import { AuthorType } from '@/type/postType';
 import { leaveComment } from '@/server-actions/commentAction';
 import { useParams , usePathname} from 'next/navigation';
 import { leaveReply } from '@/server-actions/commentAction';
