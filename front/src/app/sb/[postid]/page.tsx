@@ -28,9 +28,12 @@ const SbPage: NextPage<SbPageProps> = async ({ params, searchParams }) => {
     logger.info('#PostPage Rendered', { message: params.postid });
     console.log(params.postid, searchParams.index);
 
-    const postService = new PostFetchService( POST_TYPE.SB );
+    const postService = new PostFetchService(POST_TYPE.SB);
 
-    const post: PostType | null = await postService.getPostByID(params.postid, parseInt(searchParams.index));
+    const post: PostType | null = await postService.getPostByID(
+        params.postid,
+        parseInt(searchParams.index),
+    );
 
     const allPosts: PostType[] | null = await postService.getCachedPaginatedPosts(1);
 
@@ -82,7 +85,7 @@ const SbPage: NextPage<SbPageProps> = async ({ params, searchParams }) => {
                             borderRadius="15px"
                             border={`1px solid ${borderColor}`}
                         >
-                            <DetailPostForm type = {POST_TYPE.SB} post={post}></DetailPostForm>
+                            <DetailPostForm type={POST_TYPE.SB} post={post}></DetailPostForm>
 
                             <Box h="16px" />
 
@@ -95,7 +98,7 @@ const SbPage: NextPage<SbPageProps> = async ({ params, searchParams }) => {
 
                             <Spacer h="26px" />
 
-                            <CommentArea postID={post.id}></CommentArea>
+                            <CommentArea postType={POST_TYPE.SB} postID={post.id}></CommentArea>
                         </VStack>
 
                         <RuleCard
