@@ -1,9 +1,5 @@
 import { ArgumentMetadata, PipeTransform } from '@nestjs/common';
-
-export enum PostType {
-    QUEST = 'QUEST',
-    SB = 'SB',
-}
+import { PostType } from '../-comment/enum/post_type';
 
 export interface PostId {
     postType: PostType;

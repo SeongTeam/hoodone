@@ -92,13 +92,16 @@ export class UserModel extends BaseModel {
     @OneToMany(() => BoardModel, (board) => board.author)
     boards: BoardModel[];
 
+    @Expose()
     @OneToOne(() => TicketModel, (ticket) => ticket.user)
     @JoinColumn()
     ticket: TicketModel;
 
+    @Expose()
     @OneToMany(() => QuestFavoriteModel, (questFavorite) => questFavorite.favoriteUsers)
     favoriteQuests: QuestFavoriteModel[];
 
+    @Expose()
     @OneToMany(() => SbFavoriteModel, (sbFavorite) => sbFavorite.favoriteUsers)
     favoriteSbs: SbFavoriteModel[];
 }

@@ -7,6 +7,7 @@ import { UsersService } from 'src/users/users.service';
 import { UserModel } from '../entities/user.entity';
 import { BadRequestException, Logger } from '@nestjs/common';
 import { TicketUseCase } from 'src/users/_tickets/usecase/ticket_use_case';
+import { FindManyOptions } from 'typeorm';
 
 @Injectable()
 export class UserUseCase {
@@ -58,25 +59,57 @@ export class UserUseCase {
         }
         return existingUser;
     }
+
+    async getUserUsingAccessToken(email: string) {
+        const existingUser = await this.userService.getUserUsingAccessToken(email);
+        if (!existingUser) {
+            throw new AuthException('EMAIL_NOT_FOUND');
+        }
+        return existingUser;
+    }
     /** User가 존재하면 반환, User가 null이면  */
-    async getUserByNickname(nickname: string): Promise<UserModel> {
-        const existingUser = await this.userService.getUserByNickname(nickname);
+    async getUserByNickname(
+        nickname: string,
+        option?: FindManyOptions<UserModel>,
+    ): Promise<UserModel> {
+        const existingUser = await this.userService.getUser(
+            {
+                email: null,
+                id: null,
+                nickname: nickname,
+            },
+            option,
+        );
         if (!existingUser) {
             throw new AuthException('EMAIL_NOT_FOUND');
         }
         return existingUser;
     }
 
-    async getUserByEmail(email: string): Promise<UserModel> {
-        const existingUser = await this.userService.getUserByEmail(email);
+    async getUserByEmail(email: string, option?: FindManyOptions<UserModel>): Promise<UserModel> {
+        const existingUser = await this.userService.getUser(
+            {
+                email: email,
+                id: null,
+                nickname: null,
+            },
+            option,
+        );
         if (!existingUser) {
             throw new AuthException('EMAIL_NOT_FOUND');
         }
         return existingUser;
     }
 
-    async getUserById(id: number) {
-        const existingUser = await this.userService.getUserById(id);
+    async getUserById(id: number, option?: FindManyOptions<UserModel>) {
+        const existingUser = await this.userService.getUser(
+            {
+                email: null,
+                id: id,
+                nickname: null,
+            },
+            option,
+        );
         if (!existingUser) {
             Logger.error('UserUseCase getUserById', { message: `User[${id}] does not exist` });
             throw new AuthException('EMAIL_NOT_FOUND');
