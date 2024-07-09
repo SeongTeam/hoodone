@@ -84,7 +84,7 @@ export class CommentsController {
     */
     @Get('/range')
     async getCommentsByRange(
-        @Param('postId', ParseIntPipe) postId: number,
+        @Param('postId', PostIdPip) postId: PostId,
         @Query('depthBegin') depthBegin: number,
         @Query('depthEnd') depthEnd: number,
     ) {
@@ -98,7 +98,7 @@ export class CommentsController {
     }
 
     @Get('/all')
-    async getAllComments(@Param('postId', ParseIntPipe) postId: number) {
+    async getAllComments(@Param('postId', ParseIntPipe) postId: PostId) {
         const res = new CommentApiResponseDto();
         res.getAllComments = await this.commentUseCases.getCommentsByPostId(postId);
 
@@ -106,7 +106,7 @@ export class CommentsController {
     }
     @Get('/reply')
     async getReplyComments(
-        @Param('postId', ParseIntPipe) postId: number,
+        @Param('postId', PostIdPip) postId: PostId,
         @Query('commentId', ParseIntPipe) commentId: number,
         @Query('limit', ParseIntPipe) limit: number,
     ) {

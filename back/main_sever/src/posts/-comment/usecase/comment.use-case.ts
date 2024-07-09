@@ -29,18 +29,8 @@ export class CommentUseCase {
         qr?: QueryRunner,
     ) {
         let comment: CommentModel;
-        const { id, postType } = postId;
         try {
-            // isQuestPost을 기준으로 현재 들어온 id가 어떤 post의 id인지 확인합니다
-            if (postType === PostType.QUEST) {
-                comment = await this.commentService.createComment(author, commentInfo, {
-                    questId: id,
-                });
-            } else {
-                comment = await this.commentService.createComment(author, commentInfo, {
-                    sbId: id,
-                });
-            }
+            comment = await this.commentService.createComment(author, commentInfo, postId, qr);
 
             const newComment = this.commentService.save(comment, qr);
             await this.postUseCase.incrementCommentCount(postId, qr);
@@ -62,32 +52,13 @@ export class CommentUseCase {
         let replyComment: CommentModel;
         try {
             // depth의 값에 따라서 댓글 관계가 확인 0이면 댓글, depth가 1이상이면 대댓글
-            // const replyComment: CommentModel = await this.commentService.createReplyComment(
-            //     author,
-            //     postId,
-            //     commentInfo,
-            //     qr,
-            // );
 
-            if (postType === PostType.QUEST) {
-                replyComment = await this.commentService.createReplyComment(
-                    author,
-                    commentInfo,
-                    {
-                        questId: id,
-                    },
-                    qr,
-                );
-            } else {
-                replyComment = await this.commentService.createReplyComment(
-                    author,
-                    commentInfo,
-                    {
-                        sbId: id,
-                    },
-                    qr,
-                );
-            }
+            replyComment = await this.commentService.createReplyComment(
+                author,
+                commentInfo,
+                postId,
+                qr,
+            );
 
             const newReplyComment = await this.commentService.save(replyComment, qr);
             this.commentService.appendReplyCommentId(
@@ -153,13 +124,13 @@ export class CommentUseCase {
         return this.commentService.isCommentOwner(userId, commentId);
     }
 
-    getCommentsByPostId(postId: number) {
+    getCommentsByPostId(postId: PostId) {
         const comments = this.commentService.findCommentsByPostId(postId);
 
         return comments;
     }
 
-    async getGroupedCommentsByPostIdWithRange(postId: number, depthRange: number[]) {
+    async getGroupedCommentsByPostIdWithRange(postId: PostId, depthRange: number[]) {
         const comments = await this.commentService.findCommentsByPostIdWithDepth(
             postId,
             depthRange,
@@ -169,7 +140,7 @@ export class CommentUseCase {
         return commentList;
     }
 
-    async getReplyComments(postId: number, responseToId: number, limit: number) {
+    async getReplyComments(postId: PostId, responseToId: number, limit: number) {
         const parentComment = await this.commentService.findById(responseToId);
         const range = [parentComment.depth + 1, parentComment.depth + limit];
 
