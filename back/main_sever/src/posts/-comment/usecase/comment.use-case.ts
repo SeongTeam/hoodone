@@ -12,7 +12,8 @@ import { CommentsService } from '../comment.service';
 import { CommentModel } from '../entities/comment.entity';
 import { PostsUseCases } from 'src/posts/usecase/post.use-case';
 import { UpdateCommentDto } from '../dto/update-comment.dto';
-import { PostId, PostType } from 'src/posts/pips/post-id.pip';
+import { PostId } from 'src/posts/pips/post-id.pip';
+import { PostType } from '../enum/post_type';
 
 @Injectable()
 export class CommentUseCase {

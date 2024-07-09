@@ -33,7 +33,7 @@ import { RoleType } from 'src/users/const/role.type';
 import { RoleGuard } from 'src/auth/guard/role.guard';
 import { CommentOwnerGuard } from './guard/comment-owner.guard';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { PostId, PostIdPip, PostType } from '../pips/post-id.pip';
+import { PostId, PostIdPip } from '../pips/post-id.pip';
 
 /** 
 
