@@ -3,7 +3,6 @@ import {
     Controller,
     Delete,
     Get,
-    Headers,
     Param,
     Patch,
     Post,
@@ -22,13 +21,14 @@ import { TransactionInterceptor } from 'src/_common/interceptor/transaction.inte
 import { PostApiResponseDto } from 'hoodone-shared/dist/response-dto/post-api-reponse.dto';
 import { GetPaginatedPostsQueryDTO } from '../dto/get-paginated-posts.dto';
 import { IsPublic } from 'src/_common/decorator/is-public.decorator';
-import { ParseIntPipe, ValidationPipe } from '@nestjs/common/pipes';
+import { ParseBoolPipe, ParseIntPipe, ValidationPipe } from '@nestjs/common/pipes';
 import { Roles } from 'src/users/decorator/roles.decorator';
 import { RoleType } from 'src/users/const/role.type';
 import { QuestPostOwnerGuard } from '../guard/quest-post-owner.guard';
 import { RoleGuard } from 'src/auth/guard/role.guard';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { Logger } from '@nestjs/common';
+import { UserModel } from 'src/users/entities/user.entity';
 
 /*TODO
 - Comment list 미포함하여 반환하도록 수정
@@ -74,7 +74,7 @@ export class QuestPostsController {
     ) {
         const { offset, limit } = queryParams;
         const res = new PostApiResponseDto();
-        res.getPaginatedPosts = await this.postUseCase.getPaginatedPosts(offset, limit);
+        res.getPaginatedPosts = await this.postUseCase.getPaginatedQuests(offset, limit);
 
         return res;
     }
@@ -111,6 +111,34 @@ export class QuestPostsController {
         return this.postUseCase.updateQuest(id, body);
     }
 
+    @Patch('/:id/increaseFavorite')
+    @Roles(RoleType.USER, RoleType.ADMIN)
+    @UseGuards(AccessTokenGuard, RoleGuard)
+    @UseInterceptors(TransactionInterceptor)
+    async patchIncreaseFavorite(
+        @Param('id', ParseIntPipe) postId: number,
+        // @Param('isFavorite', ParseBoolPipe) isFavorite: boolean,
+        @User('id') userId: number,
+        @QueryRunner() qr: QR,
+    ) {
+        console.log(userId);
+        return this.postUseCase.increaseQuestFavorite(userId, postId, qr);
+    }
+
+    @Patch('/:id/decreaseFavorite')
+    @Roles(RoleType.USER, RoleType.ADMIN)
+    @UseGuards(AccessTokenGuard, RoleGuard)
+    @UseInterceptors(TransactionInterceptor)
+    async patchDecreaseFavorite(
+        @Param('id', ParseIntPipe) postId: number,
+        // @Param('isFavorite', ParseBoolPipe) isFavorite: boolean,
+        @User('id') userId: number,
+        @QueryRunner() qr: QR,
+    ) {
+        console.log(userId);
+        return this.postUseCase.decreaseQuestFavorite(userId, postId, qr);
+    }
+
     @Delete('/quest:id')
     @Roles(RoleType.USER, RoleType.ADMIN)
     @UseGuards(AccessTokenGuard, QuestPostOwnerGuard, RoleGuard)
@@ -124,7 +152,7 @@ export class QuestPostsController {
     */
     @Get('/board/:boardId')
     async getPostsByBoardId(@Param('boardId', ParseIntPipe) boardId: number) {
-        return await this.postUseCase.getPostFromBoard(boardId, 1, 10);
+        return await this.postUseCase.getQuestFromBoard(boardId, 1, 10);
     }
 
     @Post('/board/:boardId')

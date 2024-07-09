@@ -170,6 +170,30 @@ export class SbPostsService {
             1,
         );
     }
+
+    async incrementFavoriteCount(postId: number, qr: QueryRunner) {
+        const repository = this._getRepository(qr);
+
+        await repository.increment(
+            {
+                id: postId,
+            },
+            'favoriteCount',
+            1,
+        );
+    }
+
+    async decrementFavoriteCount(postId: number, qr: QueryRunner) {
+        const repository = this._getRepository(qr);
+
+        await repository.decrement(
+            {
+                id: postId,
+            },
+            'favoriteCount',
+            1,
+        );
+    }
     // hasExistedEmail
     async hasExistedId(id: number) {
         return this.postsRepository.exists({

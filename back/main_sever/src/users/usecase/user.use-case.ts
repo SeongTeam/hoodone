@@ -6,7 +6,7 @@ import { UsersService } from 'src/users/users.service';
 
 import { UserModel } from '../entities/user.entity';
 import { BadRequestException, Logger } from '@nestjs/common';
-import { TicketUseCase } from 'src/tickets/usecase/ticket_use_case';
+import { TicketUseCase } from 'src/users/_tickets/usecase/ticket_use_case';
 
 @Injectable()
 export class UserUseCase {

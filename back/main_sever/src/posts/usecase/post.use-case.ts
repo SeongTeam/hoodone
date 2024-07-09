@@ -2,19 +2,22 @@ import { Injectable } from '@nestjs/common/decorators';
 import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 import { PostModel } from '../entities/post.entity';
 import { UpdatePostDto } from '../dto/update-post.dto';
-import { HttpException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Logger, HttpException, NotFoundException } from '@nestjs/common';
+
 import { QuestPostModel } from '../entities/quest_post.entity';
 import { SbPostModel } from '../entities/sb_post.entity';
 import { PostId as PostId, PostType } from '../pips/post-id.pip';
 import { QuestPostsService } from '../-quest/quest_post.service';
 import { SbPostsService } from '../-sb-post/sb_post.service';
 import { DtoUtils } from 'src/_common/dto/dtoUtils';
+import { FavoriteService } from 'src/favorite/favorite.service';
 
 @Injectable()
 export class PostsUseCases {
     constructor(
         private readonly questService: QuestPostsService,
         private readonly sbService: SbPostsService,
+        private readonly favoriteService: FavoriteService,
     ) {}
 
     async createQuest(
@@ -110,6 +113,53 @@ export class PostsUseCases {
         return await this.sbService.save(post, null);
     }
 
+    async increaseQuestFavorite(userId: number, questId: number, qr: QueryRunner) {
+        const isExist = await this.favoriteService.confirmQuestFavorite(userId, questId, qr);
+        if (isExist === false) {
+            console.log('increaseQuestFavorite');
+            const result = await this.favoriteService.addQuestFavorite(userId, questId, qr);
+            const _ = await this.questService.incrementFavoriteCount(questId, qr);
+
+            return result;
+        } else {
+            throw new BadRequestException('이미 좋아요 한 post 입니다');
+        }
+    }
+
+    async decreaseQuestFavorite(userId: number, questId: number, qr: QueryRunner) {
+        const isExist = await this.favoriteService.confirmQuestFavorite(userId, questId, qr);
+        if (isExist === true) {
+            const result = await this.favoriteService.minusQuestFavorite(userId, questId, qr);
+            const _ = await this.questService.decrementFavoriteCount(questId, qr);
+
+            return result;
+        }
+
+        return isExist;
+    }
+
+    async increaseSbFavorite(userId: number, sbId: number, qr: QueryRunner) {
+        const isExist = await this.favoriteService.confirmQuestFavorite(userId, sbId, qr);
+        if (isExist === false) {
+            const result = await this.favoriteService.addSbFavorite(userId, sbId, qr);
+            const _ = await this.sbService.incrementFavoriteCount(sbId, qr);
+            return result;
+        } else {
+            throw new BadRequestException('이미 좋아요 한 post 입니다');
+        }
+    }
+
+    async decreaseSbFavorite(userId: number, sbId: number, qr: QueryRunner) {
+        const isExist = await this.favoriteService.confirmQuestFavorite(userId, sbId, qr);
+        if (isExist === true) {
+            const result = await this.favoriteService.minusSbFavorite(userId, sbId, qr);
+            const _ = await this.sbService.decrementFavoriteCount(sbId, qr);
+            return result;
+        }
+
+        return isExist;
+    }
+
     async appendApproval(userId: number, postId: number, qr: QueryRunner) {
         const isApprovalVoted = await this.sbService.hasApprovalVoted(userId, postId);
         const isDisapprovalVoted = await this.sbService.hasDisapprovalVoted(userId, postId);
@@ -195,11 +245,20 @@ export class PostsUseCases {
     }
 
     // TODO PaginatedPost 사용 논의
-    getPaginatedPosts(offset: number, limit: number) {
+    getPaginatedQuests(offset: number, limit: number) {
         return this.questService.getPaginatedPosts(offset, limit);
     }
 
-    getPostFromBoard(boardId: number, offset: number, limit: number) {
+    getQuestFromBoard(boardId: number, offset: number, limit: number) {
         return this.questService.getPostFromBoard(boardId, offset, limit);
+    }
+
+    // TODO PaginatedPost 사용 논의
+    getPaginatedSbs(offset: number, limit: number) {
+        return this.sbService.getPaginatedPosts(offset, limit);
+    }
+
+    getSbFromBoard(boardId: number, offset: number, limit: number) {
+        return this.sbService.getPostFromBoard(boardId, offset, limit);
     }
 }

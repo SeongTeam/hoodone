@@ -6,8 +6,8 @@ import { UserModel } from './entities/user.entity';
 import { UserUseCase } from './usecase/user.use-case';
 import { TempUserModel } from './entities/temp-user.entity';
 import { TempUserUseCase } from './usecase/temp-user.case';
-import { TicketUseCase } from 'src/tickets/usecase/ticket_use_case';
-import { TicketModule } from 'src/tickets/ticket.module';
+import { TicketUseCase } from 'src/users/_tickets/usecase/ticket_use_case';
+import { TicketModule } from 'src/users/_tickets/ticket.module';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({

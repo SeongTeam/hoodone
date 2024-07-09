@@ -1,9 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { CommentModel } from '../-comment/entities/comment.entity';
 import { PostModel } from './post.entity';
 import { QuestPostModel } from './quest_post.entity';
 import { UserModel } from 'src/users/entities/user.entity';
 import { IsEnum, IsString } from 'class-validator';
+import { SbFavoriteModel } from 'src/favorite/entities/sb_favorite.entity';
 
 export enum VoteResult {
     NOT_YET,
@@ -24,6 +25,9 @@ export class SbPostModel extends PostModel {
 
     @OneToMany(() => CommentModel, (comment) => comment.sbtPost)
     comments?: CommentModel[];
+
+    @OneToMany(() => SbFavoriteModel, (sbFavorite) => sbFavorite.favoriteUsers)
+    favoriteUsers: SbFavoriteModel[];
 
     @Column({
         name: 'approval_user_ids',
