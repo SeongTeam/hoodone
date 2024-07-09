@@ -29,6 +29,7 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) =>
         <Box w="100%" minW="300px">
             <DetailPostHeader
                 post = {post}
+                type = {type}
             />
 
 
