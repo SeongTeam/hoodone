@@ -28,6 +28,8 @@ import { QuestPostOwnerGuard } from '../guard/quest-post-owner.guard';
 import { RoleGuard } from 'src/auth/guard/role.guard';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { UserModel } from 'src/users/entities/user.entity';
+import { UserUseCase } from 'src/users/usecase/user.use-case';
+import { FavoriteService } from 'src/favorite/favorite.service';
 
 /*TODO
 - Comment list 미포함하여 반환하도록 수정
@@ -120,7 +122,9 @@ export class QuestPostsController {
         @QueryRunner() qr: QR,
     ) {
         console.log(userId);
-        return this.postUseCase.increaseQuestFavorite(userId, postId, qr);
+        const result = await this.postUseCase.increaseQuestFavorite(userId, postId, qr);
+
+        return result;
     }
 
     @Patch('/:id/decreaseFavorite')
@@ -134,7 +138,9 @@ export class QuestPostsController {
         @QueryRunner() qr: QR,
     ) {
         console.log(userId);
-        return this.postUseCase.decreaseQuestFavorite(userId, postId, qr);
+
+        const result = await this.postUseCase.decreaseQuestFavorite(userId, postId, qr);
+        return result;
     }
 
     @Delete('/quest:id')
