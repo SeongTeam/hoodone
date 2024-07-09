@@ -30,8 +30,12 @@ export function SidebarLinks({ routes } : SideBarLinksType) {
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (route : string) => {
     const currentRoute = usePathname().toLowerCase();
+    
+    const currentRootRoute = '/'+ currentRoute.split("/")[1];
 
-    return currentRoute === route.toLowerCase();
+    
+
+    return currentRootRoute === route.toLowerCase();
   };
 
   // this function creates the links from the secondary accordions (for example auth -> sign-in -> default)

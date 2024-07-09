@@ -16,7 +16,9 @@ export function useUserAccountWithSSR() {
     return [isInitial ? defaultUserAccount : userAccount, setUserAccount] as const;
 }
 
-export function useUserAccountValue() {
+// For using userAccount state not related to component rendering
+// If you want userAccount to condition component rendering use useUserAccountWithSSR 
+export function useUserAccountWithoutSSR() {
     const [userAccount] = useRecoilState(UserAccountState);
     
     return userAccount

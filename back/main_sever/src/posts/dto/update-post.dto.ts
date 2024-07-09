@@ -16,4 +16,13 @@ export class UpdatePostDto extends PartialType(CreatePostDto) {
     })
     @IsOptional()
     content?: string;
+
+    @IsString({
+        message: stringValidationMessage,
+    })
+    @IsOptional()
+    cloudinaryPublicId?: string;
+
+    @IsOptional()
+    tags?: string[];
 }

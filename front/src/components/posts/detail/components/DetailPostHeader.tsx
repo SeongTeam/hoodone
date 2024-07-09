@@ -1,6 +1,6 @@
 'use client';
 
-import { AuthorType, PostType } from '@/type/postType';
+import { AuthorType, POST_TYPE, PostType } from '@/type/postType';
 import { formatTimeFromNow } from '@/lib/Date';
 import { customColors } from '@/utils/chakra/customColors';
 import { ChevronDownIcon, DragHandleIcon, StarIcon } from '@chakra-ui/icons';
@@ -11,9 +11,10 @@ import PostMenu from '../../view/postMenu';
 
 type DetailPostHeaderProps = {
     post : PostType
+    type : POST_TYPE
 };
 
-const DetailPostHeader: React.FC<DetailPostHeaderProps> = ({ post }) => {
+const DetailPostHeader: React.FC<DetailPostHeaderProps> = ({ post, type }) => {
     const time = formatTimeFromNow(post.createdAt);
 
     const author = post.author;
@@ -41,7 +42,7 @@ const DetailPostHeader: React.FC<DetailPostHeaderProps> = ({ post }) => {
                     {time}
                 </Text>
                 <Spacer> </Spacer>
-                <PostMenu post={post}/>
+                <PostMenu type={type} post={post}/>
             </HStack>
         </Flex>
     );

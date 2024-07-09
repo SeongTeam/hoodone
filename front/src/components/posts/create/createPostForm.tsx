@@ -10,31 +10,43 @@ import Tab, { type TabItem } from './tab';
 import { createPosts } from '@/server-actions/postsActions';
 import { showErrorToast } from '@/components/modal/auth/components/toast/toast';
 import ImageUploadArea from '@/components/common/ImageUpload';
-import { useUserAccountValue } from '@/hooks/userAccount';
-import { NEW_POST_FORMAT, POST_TYPE, NewPostFormType, tagDelimiter } from '@/type/postType';
+import { useUserAccountWithoutSSR } from '@/hooks/userAccount';
+import { NEW_POST_FORMAT, POST_TYPE, NewPostFormType, tagDelimiter, PostType } from '@/type/postType';
 import { contentTexts, titleTexts } from '../card/const/rule_card_texts';
 import { useRecoilState } from 'recoil';
 import { UserAccountState } from '@/atoms/userAccount';
+import { getCldImageUrl } from 'next-cloudinary';
 
 type CreatePostFormProps = {
     type: POST_TYPE;
+    existPost? : PostType | null;
 };
 
-const CreatePostForm: React.FC<CreatePostFormProps> = ({ type = POST_TYPE.QUEST }) => {
-    const userAccount = useUserAccountValue(); //사용자가 브라우저 자원을 훼손할 여지가 있으므로, accessToken을 통해 서버에서 직접 정보를 가져오기
+const CreatePostForm: React.FC<CreatePostFormProps> = ({ 
+    type,
+    existPost,
+}) => {
+    const userAccount = useUserAccountWithoutSSR(); 
     const router = useRouter();
     const useToastOption = useToast();
-    const [newPost, setNewPost] = useState<NewPostFormType>({
+    const defaultNewPost : NewPostFormType = existPost ? { 
+        title: existPost.title,
+        content: existPost.content,
+        tags: existPost.tags,
+        type: type
+    } : {
         title: '',
         content: '',
         tags: [],
         type: type,
-    } as NewPostFormType);
+    }
+    const [newPost, setNewPost] = useState<NewPostFormType>(defaultNewPost);
     const { selectedFile, setSelectedFile, onSelectedFile, onDroppedFile } = useSelectFile();
-    const [error, setError] = useState(false);
     const bg = customColors.white[100];
     const inputBorderColor = customColors.shadeLavender[300];
     const isQuestPost = type === POST_TYPE.QUEST;
+
+
 
     const onSubmit = async () => {
         console.log('onSubmit()');
@@ -55,13 +67,32 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ type = POST_TYPE.QUEST 
             formData.append(NEW_POST_FORMAT.IMAGE, selectedFile);
         }
 
-        const result = await createPosts(formData);
+        const result = existPost ? await createPosts(formData, existPost.id) : await createPosts(formData);
         console.log(result);
     };
 
+    const convertUrlToFile = async (imgUrl : string) => {
+        const fileName = 'questThumbnail'
+        const res = await fetch(imgUrl);
+        const blob = await res.blob();
+        const file = new File([blob], fileName, { type: blob.type});
+        setSelectedFile(file);
+    }
 
     useEffect(() => {
-        console.log('LoginStatus : ',userAccount.isLogin);
+        if(existPost){
+            const publicId = existPost.cloudinaryPublicId;
+            if(publicId){
+                const url = getCldImageUrl({ 
+
+                    src : publicId});
+                convertUrlToFile(url);
+            }
+    
+        }
+    },[])
+
+    useEffect(() => {
         if(!userAccount.isLogin){
             alert('pleae login first');
             router.push('/authentication/sign-in');
@@ -102,20 +133,21 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ type = POST_TYPE.QUEST 
                         onClick={() => {
                             onSubmit();
                         }}
-                        bg={customColors.purple[100]}
-                        _hover={{ bg: customColors.white[300] }}
+                        variant="purple"
                         borderRadius="8px"
                         fontSize="20px"
+                        width="100px"
                         py="20px"
                         px="15px"
                     >
-                        Create
+                        {existPost ? 'Edit' : 'Create'}
                     </Button>
                     <Button
                         bg={customColors.red[100]}
-                        _hover={{ bg: customColors.white[300] }}
+                        _hover={{ bg: customColors.red[200] }}
                         borderRadius="8px"
                         fontSize="20px"
+                        width="100px"
                         py="20px"
                         px="15px"
                     >

@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common/decorators';
 import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
-
 import { PostModel } from '../entities/post.entity';
 import { UpdatePostDto } from '../dto/update-post.dto';
-import { BadRequestException, HttpException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Logger, HttpException, NotFoundException } from '@nestjs/common';
 
 import { QuestPostModel } from '../entities/quest_post.entity';
 import { SbPostModel } from '../entities/sb_post.entity';
 import { PostId as PostId, PostType } from '../pips/post-id.pip';
 import { QuestPostsService } from '../-quest/quest_post.service';
 import { SbPostsService } from '../-sb-post/sb_post.service';
+import { DtoUtils } from 'src/_common/dto/dtoUtils';
 import { FavoriteService } from 'src/favorite/favorite.service';
 
 @Injectable()
@@ -86,32 +86,29 @@ export class PostsUseCases {
     //TODO update할때 title과 content의 문자열 상태에 따른 case 나누기
     // ex title = "    " => 공백으로 이뤄져 있을 경우 어떻게 할 것인가?
     async updateQuest(postId: number, updateData: UpdatePostDto) {
-        const { title, content } = updateData;
-
         const post: QuestPostModel = await this.questService.loadById(postId);
         if (!post) {
             console.log(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
             throw new NotFoundException(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
         }
 
-        if (title) post.title = title;
-
-        if (content) post.content = content;
+        DtoUtils.getExistPropertyNames(updateData).forEach((key) => {
+            post[key] = updateData[key] as any;
+        });
 
         return await this.questService.save(post, null);
     }
 
     async updateSb(postId: number, updateData: UpdatePostDto) {
-        const { title, content } = updateData;
         const post: SbPostModel = await this.sbService.loadById(postId);
         if (!post) {
             console.log(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
             throw new NotFoundException(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
         }
 
-        if (title) post.title = title;
-
-        if (content) post.content = content;
+        DtoUtils.getExistPropertyNames(updateData).forEach((key) => {
+            post[key] = updateData[key] as any;
+        });
 
         return await this.sbService.save(post, null);
     }

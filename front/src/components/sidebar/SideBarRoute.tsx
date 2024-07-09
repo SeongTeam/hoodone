@@ -27,8 +27,8 @@ export function getRoutes(currentRoute : string) : RouteInterface[] {
           icon: <Icon icon="arcticons:block-blast-adventure-master" width="26px" height="26px"/>,
       },
       {
-          name: 'submissions',
-          path: '/submissions',
+          name: 'submission',
+          path: '/sb',
           icon: <Icon icon="carbon:certificate-check" width="24px" height="24px"/>,
       },
   ];
@@ -36,17 +36,17 @@ export function getRoutes(currentRoute : string) : RouteInterface[] {
   const authRoutes : RouteInterface[] = [
       {
           name: 'Sign in',
-          path: '/auth/sign-in',
+          path: '/authentication/sign-in',
           icon: null,
       },
       {
           name: 'Sign Up',
-          path: '/auth/sign-up',
+          path: '/authentication/sign-up',
           icon: null,
       },
       {
           name: 'Reset Password',
-          path: '/auth/reset-password',
+          path: '/authentication/reset-password',
           icon: null,
       }, 
   ];
@@ -77,7 +77,7 @@ export function getRoutes(currentRoute : string) : RouteInterface[] {
     const rootSegment = current.split("/") [1];
   
     switch (rootSegment) {
-      case "auth":
+      case "authentication":
         return authRoutes;
       case "profile":
         return profileRoutes;

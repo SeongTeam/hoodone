@@ -4,6 +4,7 @@ import { PostApiResponseDto } from 'hoodone-shared';
 import assert from 'assert';
 import { unstable_cache } from 'next/cache';
 import { PostType, POST_TYPE } from '@/type/postType';
+import { setTimeout as setTimeoutPromise } from 'timers/promises';
 
 type PostRoute = 'sbs' | 'quests';
 
@@ -57,30 +58,45 @@ export class PostFetchService {
     }
 
     async getPostByID(id: string, PostsPos: number) {
+        const abortController = new AbortController();
+        const { signal } = abortController;
+        const timeoutMs = 5000;
         try {
-            const cachePromise = this.getPostWithIDFromCache(id, PostsPos);
-            const backendPromise = this.getPostWithIDFromServer(id);
-            const timeOutPromise = new Promise<null>((_, reject) => {
-                const timeOutMs = 5000;
-                setTimeout(() => {
-                    reject(new Error('getPostWithID time out'));
-                }, timeOutMs);
-            }).catch((error) => {
-                logger.error('getPostWithID time out error', { message: error });
-                return null;
+            const backendPromise = this.getPostByIDFromServer(id);
+            const cachePromise = this.getPostByIDFromCache(id, PostsPos).then(async (post) => {
+                if (post === null) {
+                    await backendPromise;
+                }
+                return post;
             });
 
+            const timeOutPromise = setTimeoutPromise(timeoutMs, null, { signal })
+                .then(() => {
+                    throw new Error(`[getPostByID]] postId ${id} not found in cache and server`);
+                })
+                .catch((error) => {
+                    if (error.name === 'AbortError') {
+                        return null;
+                    }
+                    logger.error(`[getPostByID] time out. postId: ${id}, PostsPos: ${PostsPos}`, {
+                        message: error,
+                    });
+                    return null;
+                });
+
             const post = await Promise.race([cachePromise, backendPromise, timeOutPromise]);
+
+            abortController.abort();
 
             assert(post !== undefined, 'post shoulde be defined or null');
 
             if (post === null) {
-                logger.error('getPostWithID error', { message: { id, PostsPos } });
-                throw new Error(`post with id ${id} not found in cache and server`);
+                logger.error('getPostByID error', { message: { id, PostsPos } });
+                throw new Error(`[getPostByID]] postId ${id} not found in cache and server`);
             }
             return post;
         } catch (error) {
-            logger.error('getPostWithID error', { message: error });
+            logger.error('getPostByID error', { message: error });
             return null;
         }
     }
@@ -119,29 +135,32 @@ export class PostFetchService {
         }
     }
 
-    private async getPostWithIDFromCache(id: string, PostsPos: number) {
+    private async getPostByIDFromCache(id: string, PostsPos: number) {
         try {
             const offset = Math.floor(PostsPos / this.defaultLimit) + 1;
             const posts = await this.getCachedPaginatedPosts(offset, this.defaultLimit);
 
             assert(Array.isArray(posts));
 
-            const post = posts.find((post) => {
+            let post: PostType | null | undefined = posts.find((post) => {
                 return post.id === parseInt(id);
             });
 
             if (!post) {
-                throw new Error(`post with id ${id} not found in cache`);
+                logger.error(
+                    `[getPostByIDFromCache] post id : ${id} , PostsPos: ${PostsPos} not found in cache`,
+                );
+                post = null;
             }
 
             return post;
         } catch (error) {
-            logger.error('getPostWithIDFromCache error', { message: error });
+            logger.error('getPostByIDFromCache error', { message: error });
             return null;
         }
     }
 
-    private async getPostWithIDFromServer(id: string) {
+    private async getPostByIDFromServer(id: string) {
         try {
             const res = await fetch(`${this.backendURL}/${this.routeSegment}/${id}`);
 
@@ -151,7 +170,7 @@ export class PostFetchService {
             }
 
             const data: PostApiResponseDto = await res.json();
-            logger.info('getPostWithIDFromServer is called');
+            logger.info('getPostByIDFromServer is called');
 
             return data.getById as PostType;
         } catch (error) {
