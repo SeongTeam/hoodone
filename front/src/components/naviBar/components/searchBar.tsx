@@ -26,8 +26,7 @@ const SearchBar: React.FC<SearchInputProps> = ({ user }) => {
                 color = {black}
                 borderRadius="20px" 
              >
-                <InputLeftElement
-                    children = {
+                <InputLeftElement>          
                         <IconButton 
                             bg='inherit'
                             borderRadius='inherit'
@@ -45,8 +44,8 @@ const SearchBar: React.FC<SearchInputProps> = ({ user }) => {
                             color = {customColors.gray[100]}
                             icon = {<Icon icon ="iconamoon:search-light" width="24px" height="24px"/>}
                             onClick={() => alert ("Searh functionality is not implemented yet.")}
-                        />}
-                ></InputLeftElement>
+                        />
+                </InputLeftElement>
                 <Input
                     placeholder = " Search for quests and more"
                     _placeholder={{color: gray, fontSize: {base : "12px" ,  lg: "16px"}}}

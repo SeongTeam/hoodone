@@ -11,7 +11,7 @@ import {
     useDisclosure,
     Text,
 } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { AuthModalState } from '@/atoms/authModal';
 import { useUserAccountValue } from "@/hooks/userAccount";
@@ -31,12 +31,12 @@ const AuthModal: React.FC = () => {
     const bg = customColors.black[200];
     const fontColor = customColors.white[100];
 
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
         setModalState((prev) => ({
             ...prev,
             isOpen: false,
         }));
-    };
+    }, [setModalState]);
 
     /* TODO
     - recoil state와 useEffect 혼합 사용 구현하기 
@@ -44,7 +44,7 @@ const AuthModal: React.FC = () => {
     useEffect(() => {
         if (userState.isLogin) handleClose();
         //console.log(user, "🔥🔥");
-    }, [userState]);
+    }, [userState,handleClose]);
 
     return (
         <>

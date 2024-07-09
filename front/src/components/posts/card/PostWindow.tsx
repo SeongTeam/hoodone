@@ -63,7 +63,7 @@ const PostWinow: React.FC<PostWinowProps> = ({ type }) => {
         } finally {
             setIsLoading(false);
         }
-    }, [isLoading, hasMore, offset]);
+    }, [isLoading, hasMore, offset,type]);
 
     useEffect(() => {
         return () => {

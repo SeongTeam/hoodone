@@ -58,7 +58,8 @@ const AdminPostSliderWidnow: React.FC<AdminPostSliderWidnowProps> = async () => 
             <Box h={110 + 20 + 'px'} bg="white" alignContent="center">
 
                 <PostSlider sliderName="AdminQuests" gap="10px">
-                    {posts.map((post, index) => {
+                    { posts && Array.isArray(posts) 
+                    && posts.map((post, index) => {
                             return (
                                 <MotionDiv
                                     variants={variants}
@@ -71,6 +72,7 @@ const AdminPostSliderWidnow: React.FC<AdminPostSliderWidnowProps> = async () => 
                                         duration: 0.5,
                                     }}
                                     viewport={{ amount: 0 }}
+                                    key={post.id}
                                 >
                                     <AdminPostCard
                                         pushedPath={`/quest/${post.id}?index=${index}`}

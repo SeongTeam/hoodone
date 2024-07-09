@@ -1,6 +1,6 @@
 import { NextPage } from "next";
-import { getPostWithID } from "@/lib/server-only/postLib";
-import { PostType } from '@/type/postType';
+import { PostFetchService } from "@/lib/server-only/postLib";
+import { POST_TYPE, PostType } from '@/type/postType';
 import { Flex } from "@chakra-ui/react";
 import logger from "@/utils/log/logger";
 import Post from "@/components/posts/view/server-component/post";
@@ -20,7 +20,8 @@ const PostPageWithReply : NextPage<PostPageWithReplyProps> = async (
     searchParams
 }
 ) => {
-    const post : PostType | null = await getPostWithID(params.postid, parseInt(searchParams.index));
+    const postService = new PostFetchService(POST_TYPE.QUEST);
+    const post : PostType | null = await postService.getPostByID(params.postid, parseInt(searchParams.index));
     logger.info('#PostPageWithReply Rendered', { message: JSON.stringify(params) });
     if(!post ) {
         logger.error(`post${params.postid} not found`);
