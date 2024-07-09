@@ -28,6 +28,7 @@ import { RoleType } from 'src/users/const/role.type';
 import { QuestPostOwnerGuard } from '../guard/quest-post-owner.guard';
 import { RoleGuard } from 'src/auth/guard/role.guard';
 import { UpdatePostDto } from '../dto/update-post.dto';
+import { Logger } from '@nestjs/common';
 
 /*TODO
 - Comment list 미포함하여 반환하도록 수정
@@ -106,6 +107,7 @@ export class QuestPostsController {
         @Body() body: UpdatePostDto,
         @QueryRunner() qr: QR,
     ) {
+        Logger.log('/quests/:id [patch]', { message: body });
         return this.postUseCase.updateQuest(id, body);
     }
 
