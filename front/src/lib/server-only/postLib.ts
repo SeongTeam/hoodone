@@ -5,6 +5,7 @@ import assert from 'assert';
 import { unstable_cache } from 'next/cache';
 import { PostType, POST_TYPE } from '@/type/postType';
 import { setTimeout as setTimeoutPromise } from 'timers/promises';
+import { LoggableResponse } from '@/utils/log/types';
 
 type PostRoute = 'sbs' | 'quests';
 
@@ -117,10 +118,10 @@ export class PostFetchService {
             );
 
             if (!res.ok) {
+                const resLog = new LoggableResponse(res);
                 logger.error('getPaginatedPosts error', {
-                    message: `(offset: ${offset}, limit: ${limit}) ${JSON.stringify(res.body)} ${
-                        res.status
-                    }`,
+                    message: `(offset: ${offset}, limit: ${limit})`,
+                    response: resLog,
                 });
                 throw new Error('getPaginatedPosts error');
             }
@@ -167,8 +168,9 @@ export class PostFetchService {
             });
 
             if (!res.ok) {
-                logger.error('getPostWithID error', { message: res });
-                throw new Error('getPostWithID error');
+                const resLog = new LoggableResponse(res);
+                logger.error('getPostByIDFromServer error', { response: resLog });
+                throw new Error('getPostByIDFromServer error');
             }
 
             const data: PostApiResponseDto = await res.json();
@@ -178,9 +180,8 @@ export class PostFetchService {
 
             return data.getById as PostType;
         } catch (error) {
+            logger.error('getPostByIDFromServer error', { message: error });
             logger.error(`path ${this.backendURL}/${this.routeSegment}/${id}`);
-
-            logger.error('getPostWithID error', { message: error });
             return null;
         }
     }
