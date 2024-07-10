@@ -62,7 +62,8 @@ export class CommentsService {
         return this.commentRepository.find({
             ...COMMON_COMMENT_FIND_OPTION,
             where: {
-                // post: { id: postId },
+                questPost: { id: questId },
+                sbtPost: { id: sbId },
                 depth: Between(depthRange[0], depthRange[1]),
             },
             order: {
