@@ -24,18 +24,23 @@ const InputComment: React.FC<InputCommentProps> = ({
     const [content, setContent] = useState('');
     const [userAccount] = useUserAccountWithSSR();
     const [isLoading, setIsLoading] = useState(false);
-    const [msg, setmsg] = useState('');
     const path = usePathname();
     const fontColor = customColors.black[100];
 
     const handleLeaveInput = () => {
         console.log('handleLeaveInput is clicked', content);
         const formdata = new FormData();
+
+        if(content.length <= 0) {
+            alert('Comment is empty');
+            return;
+        }
+
         formdata.append('content', content);
         setIsLoading(true);
         leaveComment(formdata, postType ,postID, path).then((newComment) => {
             if (!newComment) {
-                setmsg('Comment failed');
+                alert('Comment failed!, please, retry later');
                 console.log('failed', newComment);
                 setIsLoading(false);
                 return;
@@ -48,6 +53,7 @@ const InputComment: React.FC<InputCommentProps> = ({
 
     return (
         <Flex w="100%" px="12px" py="8px" alignItems="center" h="84px">
+            
             <Input
                 type="text"
                 autoFocus

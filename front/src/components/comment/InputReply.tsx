@@ -27,13 +27,17 @@ const InputReply : React.FC<InputReplyProps> = ({
     const [ content, setContent ] = useState('');
     const [userAccount] = useUserAccountWithSSR();
     const [ isLoading, setIsLoading ] = useState(false);
-    const [ msg, setmsg ] = useState('');
     const params = useParams<{postid:string; } >();
     const path = usePathname();
 
     const handleLeaveInput = () => {
         const formdata = new FormData();
         formdata.append('content', content);
+        if(content.length <= 0) {
+            alert('Reply is empty');
+            return;
+        }
+
         setIsLoading(true);
         const postid = parseInt(params.postid);
         leaveReply(formdata, postType, postid , parentComment.id , path).then(() => {
@@ -41,7 +45,7 @@ const InputReply : React.FC<InputReplyProps> = ({
             handleAddReply();
             
         }).catch((err) => {
-            setmsg('Reply failed');
+            alert('Reply failed, please retry later');
             setIsLoading(false);
         });
 
@@ -51,7 +55,6 @@ const InputReply : React.FC<InputReplyProps> = ({
 
     return (
         <Box w="full" flexDirection={"column"}>
-            <Text color={customColors.error[100]}>{msg}</Text>
             <Textarea
                 autoFocus
                 isDisabled={!userAccount.isLogin}
