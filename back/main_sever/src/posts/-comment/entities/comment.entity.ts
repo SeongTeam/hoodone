@@ -20,7 +20,7 @@ export class CommentModel extends BaseModel {
 
     @ManyToOne(() => SbPostModel, (post) => post.comments, { nullable: true })
     @JoinColumn({ name: 'sb_post_id' })
-    sbtPost: SbPostModel;
+    sbPost: SbPostModel;
 
     @Column()
     @IsNotEmpty()

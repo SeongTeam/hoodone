@@ -5,7 +5,7 @@ export const COMMON_COMMENT_FIND_OPTION: FindManyOptions<CommentModel> = {
     relations: {
         author: true,
         questPost: true,
-        sbtPost: true,
+        sbPost: true,
     },
     select: {
         deletedAt: false,
@@ -18,7 +18,7 @@ export const COMMON_COMMENT_FIND_OPTION: FindManyOptions<CommentModel> = {
             favoriteCount: true,
             title: true,
         },
-        sbtPost: {
+        sbPost: {
             favoriteCount: true,
             title: true,
         },
