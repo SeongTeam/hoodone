@@ -3,10 +3,7 @@ import { Box, Flex } from '@chakra-ui/react';
 import CommentItem from '../commentItem';
 import { CommentType } from '@/atoms/comment';
 import {
-    getInitialComments,
-    getCommentsWithReply,
-    getCommentListConfig,
-    isLeafCommentOfPage,
+    CommentFetchService
 } from '@/lib/server-only/commentLib';
 import CommentItemList from './commentItemtList';
 import { POST_TYPE } from '@/type/postType';
@@ -23,14 +20,15 @@ const RootCommentItemList: React.FC<RootCommentItemListProps> = async ({
     postType,
 }) => {
     const isCommentsPage = rootCommentID === undefined;
+    const fetchService = new CommentFetchService(postType);
 
     const comments: CommentType[] | null = isCommentsPage
-        ? await getInitialComments(postType, postID)
-        : [await getCommentsWithReply(postID, rootCommentID)];
+        ? await fetchService.getInitialComments(postType, postID)
+        : [await fetchService.getCommentsWithReply(postID, rootCommentID)];
 
     if (!comments || comments.length === 0) return null;
 
-    const { rootComponentDepth } = getCommentListConfig();
+    const rootComponentDepth  = fetchService.rootComponentDepth;
     const commentListDepth = comments[0].depth;
 
     return (
@@ -41,7 +39,7 @@ const RootCommentItemList: React.FC<RootCommentItemListProps> = async ({
                         <CommentItem
                             key={comment.id}
                             comment={comment}
-                            isWritingOnCurrentPage={isLeafCommentOfPage(
+                            isWritingOnCurrentPage={fetchService.isLeafCommentOfPage(
                                 rootComponentDepth,
                                 commentListDepth,
                             )}
