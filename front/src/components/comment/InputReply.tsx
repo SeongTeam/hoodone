@@ -1,7 +1,7 @@
 import { useUserAccountWithSSR } from "@/hooks/userAccount";
 import { CommentType } from '@/atoms/comment';
 import React , { useState, useOptimistic } from 'react';
-import { Button,Flex, Input, Text, Textarea} from '@chakra-ui/react';
+import { Button,Box, Flex, Input, Text, Textarea} from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import { AuthorType, POST_TYPE } from '@/type/postType';
 import { leaveComment } from '@/server-actions/commentAction';
@@ -50,36 +50,33 @@ const InputReply : React.FC<InputReplyProps> = ({
 
 
     return (
-        <Flex w="full" flexDirection={"column"} gap={"0.5rem"}>
+        <Box w="full" flexDirection={"column"}>
             <Text color={customColors.error[100]}>{msg}</Text>
             <Textarea
                 autoFocus
                 isDisabled={!userAccount.isLogin}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                bg= {customColors.black[200]}
-                color={customColors.white[300]}
+                bg= {customColors.white[100]}
+                color={customColors.black[100]}
                 placeholder="Please, Leave a Reply"
-                _placeholder={{ color: "gray.500" }}
-            >
-            </Textarea>
-            <Flex gap="0.5rem">
+            />
+            <Flex mt = "10px" gap="10px">
                 <Button
                     isLoading={isLoading}
+                    variant={'purple'}
                     onClick={() => handleLeaveInput()}
-                    color={customColors.black[300]}
-                    bg={buttonColor}
                 >
                     Reply
                 </Button>
                 <Button
-                    onClick={() => handleCancelReply()}
-                    bg={customColors.black[200]}
+                    variant = 'cancel'
+                    onClick={() => handleCancelReply()}   
                 >
                     Cancel
                 </Button>
             </Flex>
-        </Flex>
+        </Box>
     )  
 }
 

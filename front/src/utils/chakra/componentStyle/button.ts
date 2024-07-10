@@ -37,6 +37,11 @@ const Button: ComponentStyleConfig = {
             bg: customColors.purple[100],
             _hover: { bg: customColors.purple[200] },
         },
+        cancel: {
+            color: customColors.white[100],
+            bg: customColors.red[100],
+            _hover: { bg: customColors.red[200] },
+        },
     },
 };
 
