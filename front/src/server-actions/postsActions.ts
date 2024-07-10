@@ -209,30 +209,13 @@ export async function addFavorite(postType: POST_TYPE, questId: number) {
     const ret: responseData = {
         ok: false,
         message: '',
-        response: { favoriteQuestIds: [] },
+        response: { favoriteQuestIds: [] as number[] },
     };
-    // try {
-    //     const accessToken = await validateAuth();
-    //     // logger.log(' addFavorite res ', {
-    //     //     message: `${backendURL}/quests/${questId}/increaseFavorite`,
-    //     // });
-
-    //     const res = await fetch(`${backendURL}/quests/${questId}/increaseFavorite`, {
-    //         method: 'PATCH',
-    //         headers: {
-    //             'content-type': 'application/json',
-    //             authorization: `Bearer ${accessToken}`,
-    //         },
-    //     });
-    //     // Logger.error(`registerWithEmail() =>>> ${JSON.stringify(newUser)}`);
-
-    //     logger.info(' addFavorite res ', { message: `${res.text()}` });
-    //     return res;
 
     try {
         const accessToken = await validateAuth();
 
-        const res = await fetch(`${backendURL}/quests/${questId}/decreaseFavorite`, {
+        const res = await fetch(`${backendURL}/quests/${questId}/increaseFavorite`, {
             method: 'PATCH',
             headers: {
                 'content-type': 'application/json',
@@ -244,17 +227,17 @@ export async function addFavorite(postType: POST_TYPE, questId: number) {
         // logger.info(' deleteFavorite res ', { message: `${res.text()}` });
         if (res.ok) {
             const responseData: PostApiResponseDto = await res.json();
-            logger.info('Backend Response', { message: responseData });
+            logger.info('addFavorite Response', { message: responseData });
             ret.response = responseData;
             ret.ok = true;
         } else {
             const data = await res.json();
-            logger.error('Backend Error', {
+            logger.error('addFavorite Error', {
                 message: `deleteFavorite() :  ${JSON.stringify(data)}`,
             });
             ret.message = `favorite 취소 실패`;
         }
-        return { ok: true, mock: 'fdfdfdfdfd' };
+        return ret;
     } catch (error) {
         logger.info('addFavorite error', { message: error });
 
@@ -278,9 +261,7 @@ export async function deleteFavorite(postType: POST_TYPE, questId: number) {
                 authorization: `Bearer ${accessToken}`,
             },
         });
-        // Logger.error(`registerWithEmail() =>>> ${JSON.stringify(newUser)}`);
 
-        // logger.info(' deleteFavorite res ', { message: `${res.text()}` });
         if (res.ok) {
             const responseData: PostApiResponseDto = await res.json();
             logger.info('Backend Response', { message: responseData });
@@ -293,7 +274,7 @@ export async function deleteFavorite(postType: POST_TYPE, questId: number) {
             });
             ret.message = `favorite 취소 실패`;
         }
-        return res;
+        return ret;
     } catch (error) {
         logger.info('deleteFavorite error', { message: error });
         throw new Error('deleteFavorite error');

@@ -8,6 +8,7 @@ export const QUEST_POST_FIND_OPTION: FindManyOptions<QuestPostModel> = {
         author: true,
         comments: true,
         sbPosts: true,
+        favoriteUsers: true,
     },
     select: {
         deletedAt: false,
@@ -25,6 +26,7 @@ export const SB_POST_FIND_OPTION: FindManyOptions<SbPostModel> = {
         author: true,
         comments: true,
         parentPost: true,
+        favoriteUsers: true,
     },
     select: {
         deletedAt: false,

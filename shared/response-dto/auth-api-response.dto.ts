@@ -10,6 +10,7 @@ export class AuthApiResponseDto {
 
     postLoginEmail?: {
         nickname: string;
+        favoriteQuests: number[];
         refreshToken: string;
         accessToken: string;
     };

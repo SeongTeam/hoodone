@@ -66,6 +66,7 @@ export class CommentsService {
         return this.commentRepository.find({
             ...COMMON_COMMENT_FIND_OPTION,
             where: {
+
                 [name]: { id },
                 depth: Between(depthRange[0], depthRange[1]),
             },
