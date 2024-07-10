@@ -5,9 +5,13 @@ import { Box, Button, Divider, Flex, HStack, Image, Spacer, Tag, Text } from '@c
 import DetailPostHeader from './components/DetailPostHeader';
 import ParentPostCard from './components/ParentPostCard';
 import { POST_TYPE, PostType } from '@/type/postType';
-import { addFavorite } from '@/server-actions/postsActions';
+import { addFavorite, deleteFavorite } from '@/server-actions/postsActions';
 import { UserAccountState } from '@/atoms/userAccount';
 import { useRecoilState } from 'recoil';
+import { useUserAccountWithSSR, useUserAccountWithoutSSR } from '@/hooks/userAccount';
+import { responseData } from '@/type/server-action/responseType';
+import { Icon } from '@iconify-icon/react/dist/iconify.mjs';
+import { useEffect, useState } from 'react';
 
 type DetailPostFormProps = {
     post: PostType;
@@ -17,29 +21,48 @@ type DetailPostFormProps = {
 export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) => {
     const bg = customColors.white[100];
     const borderColor = customColors.shadeLavender[300];
+    // userState.favoriteQuests.includes(post.id),
+    const [favoriteCount, setFavoriteCount] = useState<number>(post.favoriteCount);
+    const [userState, setUserState] = useUserAccountWithSSR();
 
-    const [userState, setUserState] = useRecoilState(UserAccountState);
+    const [isFavorite, setIsUserFavorite] = useState<boolean>(false);
 
     const handleFavorite = async () => {
-        alert('Favorite is not implemented yet');
+        const res = await _callFavoriteAPI(isFavorite);
 
-        const res = await addFavorite(POST_TYPE.QUEST, post.id);
-        console.log(res);
         if (res.ok) {
-            // const {  favoritePostIds} = res.response;
-            // setUserState((prev) => ({
-            //     ...prev,
-            //     nickname: nickname,
-            //     isLogin: true,
-            // }));
-            // router.push('/');
-        } else {
-            // setMsg(res.message);
+            const favoriteQuests = res.response as number[];
+
+            setUserState((prev) => ({
+                ...prev,
+                favoriteQuests: favoriteQuests,
+            }));
         }
+
+        setIsUserFavorite(!isFavorite);
     };
+    const _callFavoriteAPI = async (isFavorite: boolean): Promise<responseData> => {
+        if (!isFavorite) {
+            setFavoriteCount(favoriteCount + 1);
+            return await addFavorite(POST_TYPE.QUEST, post.id);
+        }
+        setFavoriteCount(favoriteCount - 1);
+
+        return await deleteFavorite(POST_TYPE.QUEST, post.id);
+    };
+
     const handleDoIt = () => {
         alert('Do it is not implemented yet');
     };
+
+    const mockBtn = () => {
+        console.log(userState);
+        console.log(isFavorite, post.id);
+    };
+
+    useEffect(() => {
+        setIsUserFavorite(userState.favoriteQuests.includes(post.id));
+    }, [userState]);
 
     return (
         <Box w="100%" minW="300px">
@@ -96,12 +119,26 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) =>
                 <Box height={15}></Box>
 
                 <HStack>
-                    <Button w="100px" variant={'purple'} onClick={handleFavorite}>
-                        {/* <AddIcon /> */}
-                        {post.favoriteCount}
+                    {/* favorite Button */}
+                    <Button
+                        w="100px"
+                        variant={'purple'}
+                        onClick={handleFavorite}
+                        leftIcon={
+                            isFavorite ? (
+                                <Icon icon="solar:heart-bold" width="20px" height="20px" />
+                            ) : (
+                                <Icon icon="solar:heart-linear" width="20px" height="20px" />
+                            )
+                        }
+                    >
+                        {favoriteCount}
                     </Button>
                     <Button w="100px" variant={'purple'} fontSize="24px" onClick={handleDoIt}>
                         Do it
+                    </Button>
+                    <Button w="100px" variant={'purple'} fontSize="24px" onClick={mockBtn}>
+                        mock
                     </Button>
                 </HStack>
             </Flex>

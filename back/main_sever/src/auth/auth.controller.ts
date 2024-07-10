@@ -101,7 +101,17 @@ export class AuthController {
         const credentials: AuthCredentialsDto = this.authUseCase.decodeBasicToken(token);
 
         let res = new AuthApiResponseDto();
-        res.postLoginEmail = await this.authUseCase.loginWithEmail(credentials);
+        const { user, accessToken, refreshToken } =
+            await this.authUseCase.loginWithEmail(credentials);
+        const favoriteQuests = user.favoriteQuests.map((favorite) => favorite.postId);
+
+        /**front에게 보내줄 데이터 집어 넣기 */
+        res.postLoginEmail = {
+            nickname: user.nickname,
+            favoriteQuests,
+            accessToken,
+            refreshToken,
+        };
 
         return res;
     }
