@@ -6,9 +6,12 @@ import { deleteComment } from "@/server-actions/commentAction";
 import { usePathname , useParams } from "next/navigation";
 import { useIsOwner } from "@/hooks/userAccount";
 import { customColors } from "@/utils/chakra/customColors";
+import { POST_TYPE } from "@/type/postType";
 
 type CommentMenuType = {
     commentInstance: CommentClass
+    postType : POST_TYPE
+    postId : number
 }
 
 /*TODO
@@ -20,9 +23,12 @@ type CommentMenuType = {
     - menu 디자인 설정
     - 삭제된 comment 디자인 설정
 */
-const CommentMenu : React.FC<CommentMenuType> = ({commentInstance}) => {
+const CommentMenu : React.FC<CommentMenuType> = ({
+    commentInstance,
+    postType,
+    postId
+}) => {
     const path = usePathname();
-    const params = useParams<{ postid: string}>();
     const isOwner = useIsOwner(commentInstance.getComment().author.nickname);
 
     const handleReport = () => {
@@ -33,9 +39,8 @@ const CommentMenu : React.FC<CommentMenuType> = ({commentInstance}) => {
         alert('Edit');
     }
     const handleDelete = () => {
-        const postId = parseInt(params.postid);
         const commentId = commentInstance.getComment().id;
-        deleteComment(postId, commentId , path);
+        deleteComment(postType,postId, commentId , path);
     }
     return(
         <Menu isLazy>

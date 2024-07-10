@@ -10,12 +10,15 @@ import { useIsOwner } from '@/hooks/userAccount';
 import { SP } from 'next/dist/shared/lib/utils';
 import { ProfileImage } from '../common/ProfileImage';
 import { formatCreatedAt } from '@/lib/Date';
+import { POST_TYPE } from '@/type/postType';
 
 type CommentProps = {
     commentInstance: CommentClass;
     handleReplyButtonClicked: () => void;
     isShowReply: boolean;
     handleShowReplyIconClicked: () => void;
+    postType : POST_TYPE
+    postId : number
 };
 
 /*TODO
@@ -27,6 +30,8 @@ const Comment: React.FC<CommentProps> = ({
     handleReplyButtonClicked,
     isShowReply,
     handleShowReplyIconClicked,
+    postType,
+    postId,
 }) => {
     const comment = commentInstance.getComment();
     const content = comment.content;
@@ -60,7 +65,7 @@ const Comment: React.FC<CommentProps> = ({
                         {formatCreatedAt(comment.createdAt)}
                     </Text>
                 </HStack>
-                <CommentMenu commentInstance={commentInstance}/>
+                <CommentMenu commentInstance={commentInstance} postType={postType} postId={postId}/>
             </Flex>
             <Text color={fontColor} fontSize="20px">
                 {content}

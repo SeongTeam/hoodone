@@ -3,7 +3,7 @@ import { CommentType } from '@/atoms/comment';
 import React , { useState, useOptimistic } from 'react';
 import { Button,Flex, Input, Text, Textarea} from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
-import { AuthorType } from '@/type/postType';
+import { AuthorType, POST_TYPE } from '@/type/postType';
 import { leaveComment } from '@/server-actions/commentAction';
 import { useParams , usePathname} from 'next/navigation';
 import { leaveReply } from '@/server-actions/commentAction';
@@ -13,12 +13,14 @@ type InputReplyProps = {
     handleAddReply: () => void
     handleCancelReply: () => void
     parentComment : CommentType
+    postType : POST_TYPE
 };
 
 const InputReply : React.FC<InputReplyProps> = ({
     handleAddReply,
     handleCancelReply,
     parentComment,
+    postType,
 }) => {
 
     const buttonColor = customColors.link[100];
@@ -34,7 +36,7 @@ const InputReply : React.FC<InputReplyProps> = ({
         formdata.append('content', content);
         setIsLoading(true);
         const postid = parseInt(params.postid);
-        leaveReply(formdata, postid , parentComment.id , path).then(() => {
+        leaveReply(formdata, postType, postid , parentComment.id , path).then(() => {
             setIsLoading(false);
             handleAddReply();
             

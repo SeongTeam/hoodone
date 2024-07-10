@@ -8,7 +8,6 @@ type CommentAreaProps = {
     postType: POST_TYPE;
     postID: number;
     rootCommentID?: number;
-    postType : POST_TYPE;
 };
 
 /*TODO
@@ -21,7 +20,7 @@ const CommentArea: React.FC<CommentAreaProps> = ({ postType, postID, rootComment
     return (
         <Box maxW="100%" overflow="hidden">
             <VStack w="100%" h="full" flexDirection={'column'} gap="10px">
-                {isCommentsPage && <InputComment />}
+                {isCommentsPage && <InputComment postType={postType} postID={postID} />}
                 <Suspense fallback={<LoadingCommentList />}>
                     <RootCommentItemList
                         postType={postType}
