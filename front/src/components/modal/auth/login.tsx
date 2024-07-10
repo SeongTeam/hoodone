@@ -8,6 +8,7 @@ import { SignInDTO } from '@/type/server-action/AuthType';
 import { useRecoilState } from 'recoil';
 import { UserAccountState } from '@/atoms/userAccount';
 import { useRouter } from 'next/navigation';
+import { useUserAccountWithSSR } from '@/hooks/userAccount';
 
 type LoginProps = {};
 
@@ -30,7 +31,7 @@ const Login: React.FC<LoginProps> = () => {
     });
 
     const router = useRouter();
-    const [userState, setUserState] = useRecoilState(UserAccountState);
+    const [userState, setUserState] = useUserAccountWithSSR();
     const [msg, setMsg] = useState('');
 
     const loginWithEmailAndPassword = async (email: string, password: string) => {
@@ -41,11 +42,12 @@ const Login: React.FC<LoginProps> = () => {
         const res = await signIn(formData);
 
         if (res.ok) {
-            const { nickname }  = res.response as SignInDTO;
+            const { nickname, favoriteQuests } = res.response as SignInDTO;
             setUserState((prev) => ({
                 ...prev,
                 nickname: nickname,
                 isLogin: true,
+                favoriteQuests,
             }));
 
             router.push('/');
@@ -65,38 +67,28 @@ const Login: React.FC<LoginProps> = () => {
 
     return (
         <Box>
-        <form onSubmit={onSubmit} className="form-modalPage">
-            <Flex 
-                mt = "30px"
-                w='full'
-                justifyContent="center"
-
-                >
-                <Text textAlign="center" color="red" fontSize="16pt">
-                    {msg}
-                </Text>
-            </Flex>
-            <CommonInput
-                inputName="Email"
-                inputType="email"
-                inputPlaceHolder="Enter email"
-                formData={{ ...form.register('email', { required: true, max: 20 }) }}
-            ></CommonInput>
-            <CommonInput
-                inputName="Password"
-                inputType="password"
-                inputPlaceHolder="Enter password"
-                formData={{ ...form.register('password', { required: true, max: 20 }) }}
-            ></CommonInput>
-            <Button
-                w="160px"
-                h="60px"
-                fontSize="24px" 
-                variant="purple" 
-                type="submit">
-                Log In
-            </Button>
-        </form>
+            <form onSubmit={onSubmit} className="form-modalPage">
+                <Flex mt="30px" w="full" justifyContent="center">
+                    <Text textAlign="center" color="red" fontSize="16pt">
+                        {msg}
+                    </Text>
+                </Flex>
+                <CommonInput
+                    inputName="Email"
+                    inputType="email"
+                    inputPlaceHolder="Enter email"
+                    formData={{ ...form.register('email', { required: true, max: 20 }) }}
+                ></CommonInput>
+                <CommonInput
+                    inputName="Password"
+                    inputType="password"
+                    inputPlaceHolder="Enter password"
+                    formData={{ ...form.register('password', { required: true, max: 20 }) }}
+                ></CommonInput>
+                <Button w="160px" h="60px" fontSize="24px" variant="purple" type="submit">
+                    Log In
+                </Button>
+            </form>
         </Box>
     );
 };
