@@ -6,6 +6,8 @@ import { UserModel } from 'src/users/entities/user.entity';
 import { COMMON_COMMENT_FIND_OPTION } from './const/comment-find-options.const';
 import { CommentModel } from './entities/comment.entity';
 import { Between } from 'typeorm';
+import { PostId } from '../pips/post-id.pip';
+import { PostType } from './enum/post_type';
 
 @Injectable()
 export class CommentsService {
@@ -32,10 +34,13 @@ export class CommentsService {
         });
     }
 
-    async findCommentsByPostId(postId: number) {
+    async findCommentsByPostId(postId: PostId) {
+        const { questId, sbId } = this.changeToTwoPostIds(postId);
         return this.commentRepository.find({
             ...COMMON_COMMENT_FIND_OPTION,
             where: {
+                questPost: { id: questId },
+                sbtPost: { id: sbId },
                 // post: { id: postId },
             },
             order: {
@@ -46,7 +51,8 @@ export class CommentsService {
             },
         });
     }
-    async findCommentsByPostIdWithDepth(postId: number, depthRange: number[]) {
+    async findCommentsByPostIdWithDepth(postId: PostId, depthRange: number[]) {
+        const { questId, sbId } = this.changeToTwoPostIds(postId);
         if (depthRange.length !== 2) {
             throw new BadRequestException('depthRange is wrong');
         }
@@ -86,22 +92,13 @@ export class CommentsService {
     async createComment(
         author: UserModel,
         commentInfo: Pick<CommentModel, 'content'>,
-        postId: { questId?: number; sbId?: number },
+        postId: PostId,
+        qr: QueryRunner,
     ) {
-        const { questId, sbId } = postId;
+        const { questId, sbId } = this.changeToTwoPostIds(postId);
+        const repository = this._getRepository(qr);
 
-        // TODO 새로운 exception 정의하지
-        if (questId && sbId) {
-            throw new BadRequestException(
-                'createComment(), questId, sbId가 들어 있으면 안됩니다. 1개만 들어 있어야 합니다. ',
-            );
-        }
-
-        if (!(questId || sbId)) {
-            throw new BadRequestException('questId, sbId에 값이 모두 비어 있습니다 ');
-        }
-
-        const newComment: CommentModel = this.commentRepository.create({
+        const newComment: CommentModel = repository.create({
             questPost: {
                 id: questId,
             },
@@ -122,10 +119,10 @@ export class CommentsService {
     async createReplyComment(
         author: UserModel,
         commentInfo: Pick<CommentModel, 'content' | 'responseToId'>,
-        postId: { questId?: number; sbId?: number },
+        postId: PostId,
         qr: QueryRunner,
     ) {
-        const { questId, sbId } = postId;
+        const { questId, sbId } = this.changeToTwoPostIds(postId);
         const repository = this._getRepository(qr);
         const responseToComment = await this.loadById(commentInfo.responseToId);
         const depth = responseToComment.depth + 1;
@@ -201,6 +198,32 @@ export class CommentsService {
         });
     }
 
+    changeToTwoPostIds(postId: PostId) {
+        const { id, postType } = postId;
+        if (typeof postId === 'number') return { questId: postId, sbId: null };
+
+        // isQuestPost을 기준으로 현재 들어온 id가 어떤 post의 id인지 확인합니다
+        if (postType === PostType.QUEST) {
+            return { questId: id, sbId: null };
+        } else {
+            return { questId: null, sbId: id };
+        }
+    }
+
+    async validatePostId(
+        questId: number & { __brand: 'questId' },
+        sbId: number & { __brand: 'sbId' },
+    ) {
+        if (questId && sbId) {
+            throw new BadRequestException(
+                'createComment(), questId, sbId가 들어 있으면 안됩니다. 1개만 들어 있어야 합니다. ',
+            );
+        }
+
+        if (!(questId || sbId)) {
+            throw new BadRequestException('questId, sbId에 값이 모두 비어 있습니다 ');
+        }
+    }
     _getRepository(qr?: QueryRunner) {
         return qr ? qr.manager.getRepository<CommentModel>(CommentModel) : this.commentRepository;
     }

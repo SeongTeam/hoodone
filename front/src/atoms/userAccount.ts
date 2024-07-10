@@ -8,6 +8,7 @@ export interface userAccountState {
     isLogin: boolean;
     status: 'activated' | 'suspended' | 'banned';
     profileImg: string;
+    favoriteQuests: number[];
 }
 
 export const defaultUserAccount: userAccountState = {
@@ -16,6 +17,7 @@ export const defaultUserAccount: userAccountState = {
     isLogin: false,
     status: 'activated',
     profileImg: '',
+    favoriteQuests: [],
 };
 
 export const UserAccountState = atom<userAccountState>({

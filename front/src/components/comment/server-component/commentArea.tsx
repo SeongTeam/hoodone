@@ -5,6 +5,7 @@ import RootCommentItemList from './rootCommentItemList';
 import { POST_TYPE } from '@/type/postType';
 
 type CommentAreaProps = {
+    postType: POST_TYPE;
     postID: number;
     rootCommentID?: number;
     postType : POST_TYPE;
@@ -13,7 +14,8 @@ type CommentAreaProps = {
 /*TODO
 - commentlist(replylist) 가져올때, pagination 적용하여 부분적으로 가져오기
 */
-const CommentArea: React.FC<CommentAreaProps> = ({ postID, postType, rootCommentID }) => {
+
+const CommentArea: React.FC<CommentAreaProps> = ({ postType, postID, rootCommentID }) => {
     const isCommentsPage = rootCommentID === undefined;
 
     return (
@@ -21,7 +23,11 @@ const CommentArea: React.FC<CommentAreaProps> = ({ postID, postType, rootComment
             <VStack w="100%" h="full" flexDirection={'column'} gap="10px">
                 {isCommentsPage && <InputComment />}
                 <Suspense fallback={<LoadingCommentList />}>
-                    <RootCommentItemList postType={postType} postID={postID} rootCommentID={rootCommentID} />
+                    <RootCommentItemList
+                        postType={postType}
+                        postID={postID}
+                        rootCommentID={rootCommentID}
+                    />
                 </Suspense>
             </VStack>
         </Box>

@@ -10,7 +10,7 @@ import { Request } from 'express';
 import { RoleType } from 'src/users/const/role.type';
 import { UserModel } from 'src/users/entities/user.entity';
 import { PostsUseCases } from '../usecase/post.use-case';
-import { PostType } from '../pips/post-id.pip';
+import { PostType } from '../-comment/enum/post_type';
 
 /** post의 작성자 인지 확인합니다. 만약 ADMIN이라면 true를 반환 */
 @Injectable()

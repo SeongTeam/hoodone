@@ -57,6 +57,12 @@ export class UsersController {
         return this.tempUserUseCase.comparePinCodes(userInfo);
     }
 
+    @Get('/me')
+    @UseGuards(AccessTokenGuard)
+    getMe(@User('email') email: string) {
+        return this.userUseCase.getUserByEmail(email);
+    }
+
     @Get('/all')
     // 직렬화를 할 때 데이터 포맷을 변경 (@Exclude()를 이용하면 제거 가능)
     // @UseInterceptors(ClassSerializerInterceptor) // AppModule에서 전체 적용으로 설정가능
@@ -83,6 +89,7 @@ export class UsersController {
     @UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
     incrementTicket(@User('ticket') ticket: TicketModel, @QueryRunner() qr: QR) {
+        console.log(ticket.id);
         return this.ticketUserUseCase.incrementCount(ticket.id, qr);
     }
     @Patch('/tickets/decrease')

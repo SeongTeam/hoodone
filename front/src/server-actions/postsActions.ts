@@ -10,6 +10,8 @@ import { validateAuth } from '@/lib/server-only/authLib';
 import { getUserBasicInfo } from '@/lib/server-only/authLib';
 import { validateImage, uploadQuestImage, uploadSubmissionImage } from '@/utils/cloudinary/lib';
 import { cloudinaryTempData } from '@/utils/cloudinary/mockUpData';
+import { responseData } from '@/type/server-action/responseType';
+import { PostApiResponseDto } from 'hoodone-shared';
 
 /*
 ref : https://www.youtube.com/watch?v=5L5YoFm1obk
@@ -200,5 +202,100 @@ async function uploadImage(imageFile: File, type: POST_TYPE, newPost: PostType) 
         if (type === POST_TYPE.QUEST)
             newPost.cloudinaryPublicId = cloudinaryTempData.defaultQuestPublicId;
         else newPost.cloudinaryPublicId = cloudinaryTempData.defaultSBPublicId;
+    }
+}
+
+export async function addFavorite(postType: POST_TYPE, questId: number) {
+    const ret: responseData = {
+        ok: false,
+        message: '',
+        response: { favoriteQuestIds: [] },
+    };
+    // try {
+    //     const accessToken = await validateAuth();
+    //     // logger.log(' addFavorite res ', {
+    //     //     message: `${backendURL}/quests/${questId}/increaseFavorite`,
+    //     // });
+
+    //     const res = await fetch(`${backendURL}/quests/${questId}/increaseFavorite`, {
+    //         method: 'PATCH',
+    //         headers: {
+    //             'content-type': 'application/json',
+    //             authorization: `Bearer ${accessToken}`,
+    //         },
+    //     });
+    //     // Logger.error(`registerWithEmail() =>>> ${JSON.stringify(newUser)}`);
+
+    //     logger.info(' addFavorite res ', { message: `${res.text()}` });
+    //     return res;
+
+    try {
+        const accessToken = await validateAuth();
+
+        const res = await fetch(`${backendURL}/quests/${questId}/decreaseFavorite`, {
+            method: 'PATCH',
+            headers: {
+                'content-type': 'application/json',
+                authorization: `Bearer ${accessToken}`,
+            },
+        });
+        // Logger.error(`registerWithEmail() =>>> ${JSON.stringify(newUser)}`);
+
+        // logger.info(' deleteFavorite res ', { message: `${res.text()}` });
+        if (res.ok) {
+            const responseData: PostApiResponseDto = await res.json();
+            logger.info('Backend Response', { message: responseData });
+            ret.response = responseData;
+            ret.ok = true;
+        } else {
+            const data = await res.json();
+            logger.error('Backend Error', {
+                message: `deleteFavorite() :  ${JSON.stringify(data)}`,
+            });
+            ret.message = `favorite 취소 실패`;
+        }
+        return { ok: true, mock: 'fdfdfdfdfd' };
+    } catch (error) {
+        logger.info('addFavorite error', { message: error });
+
+        throw new Error('addFavorite error');
+    }
+}
+
+export async function deleteFavorite(postType: POST_TYPE, questId: number) {
+    const ret: responseData = {
+        ok: false,
+        message: '',
+        response: { favoriteQuestIds: [] },
+    };
+    try {
+        const accessToken = await validateAuth();
+
+        const res = await fetch(`${backendURL}/quests/${questId}/decreaseFavorite`, {
+            method: 'PATCH',
+            headers: {
+                'content-type': 'application/json',
+                authorization: `Bearer ${accessToken}`,
+            },
+        });
+        // Logger.error(`registerWithEmail() =>>> ${JSON.stringify(newUser)}`);
+
+        // logger.info(' deleteFavorite res ', { message: `${res.text()}` });
+        if (res.ok) {
+            const responseData: PostApiResponseDto = await res.json();
+            logger.info('Backend Response', { message: responseData });
+            ret.response = responseData;
+            ret.ok = true;
+        } else {
+            const data = await res.json();
+            logger.error('Backend Error', {
+                message: `deleteFavorite() :  ${JSON.stringify(data)}`,
+            });
+            ret.message = `favorite 취소 실패`;
+        }
+        return res;
+    } catch (error) {
+        logger.info('deleteFavorite error', { message: error });
+        throw new Error('deleteFavorite error');
     }
 }

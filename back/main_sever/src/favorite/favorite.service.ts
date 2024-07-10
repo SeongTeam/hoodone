@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { QuestFavoriteModel } from './entities/quest_favorite.entity';
 import { SbFavoriteModel } from './entities/sb_favorite.entity';
+import { PostType } from 'src/posts/-comment/enum/post_type';
+import { validate } from 'class-validator';
 
 @Injectable()
 export class FavoriteService {
@@ -17,13 +19,15 @@ export class FavoriteService {
 
     async addQuestFavorite(userId: number, questId: number, qr: QueryRunner) {
         const repository = this._getQuestFavoriteRepository(qr);
-
-        const result = repository.save({
+        const newData = {
             favoriteUsers: { id: userId },
             favoriteQuests: { id: questId },
-        });
+            postId: questId,
+            postType: PostType.QUEST,
+        } as QuestFavoriteModel;
+        const result = await repository.save(newData);
 
-        return result;
+        return result as QuestFavoriteModel;
     }
 
     async minusQuestFavorite(userId: number, questId: number, qr: QueryRunner) {
@@ -41,12 +45,14 @@ export class FavoriteService {
         return result;
     }
 
-    async addSbFavorite(userId: number, sbId: number, qr: QueryRunner) {
+    async addSbFavorite(userId: number, sbId: number, qr: QueryRunner): Promise<SbFavoriteModel> {
         const repository = this._getSbFavoriteRepository(qr);
 
         const result = await repository.save({
             favoriteUsers: { id: userId },
             favoriteQuests: { id: sbId },
+            postId: sbId,
+            postType: PostType.SB,
         });
 
         return result;
@@ -115,6 +121,23 @@ export class FavoriteService {
         }
 
         return false;
+    }
+
+    getAllFavoritesByUserId(userId: number) {
+        console.log('getAllFavoritesByUserId() work !!');
+        return this.questFavoriteRepository.find({
+            where: {
+                favoriteUsers: { id: userId },
+            },
+        });
+    }
+
+    async validateQuestModel(obj: any): Promise<boolean> {
+        const validator = new QuestFavoriteModel();
+        Object.assign(validator, obj);
+        const errors = await validate(validator);
+
+        return errors.length === 0;
     }
 
     _getQuestFavoriteRepository(qr?: QueryRunner) {

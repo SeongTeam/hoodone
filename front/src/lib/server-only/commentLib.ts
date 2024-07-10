@@ -3,6 +3,7 @@ import logger from '@/utils/log/logger';
 import { CommentApiResponseDto } from 'hoodone-shared';
 import { CommentType } from '@/atoms/comment';
 import assert from 'assert';
+import { POST_TYPE } from '@/type/postType';
 
 const backendURL = process.env.BACKEND_URL;
 
@@ -31,10 +32,15 @@ export const getCommentByID = async (postID: number, commentID: number) => {
     }
 };
 
-const getCommenWithRange = async (postID: number, offset: number, limit: number) => {
+const getCommenWithRange = async (
+    postType: POST_TYPE,
+    postID: number,
+    offset: number,
+    limit: number,
+) => {
     try {
         const res = await fetch(
-            `${backendURL}/posts/${postID}/comments/range?depthBegin=${offset}&depthEnd=${
+            `${backendURL}/posts/${postType}:${postID}/comments/range?depthBegin=${offset}&depthEnd=${
                 offset + limit - 1
             }`,
             { next: { tags: [`commentOnpost-${postID}`] } },
@@ -97,10 +103,10 @@ export const getCommentsWithReply = async (PostID: number, commentID: number) =>
     return comment;
 };
 
-export const getInitialComments = async (postID: number) => {
+export const getInitialComments = async (postType: POST_TYPE, postID: number) => {
     const { depthLimit } = getConfigConst();
     const initialOffset = 0;
-    const comments = await getCommenWithRange(postID, initialOffset, depthLimit);
+    const comments = await getCommenWithRange(postType, postID, initialOffset, depthLimit);
     return comments;
 };
 

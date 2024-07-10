@@ -86,7 +86,7 @@ export class AuthUseCase {
     ): Promise<{ nickname: string; accessToken: string; refreshToken: string }> {
         const existingUser = await this.userUseCase.getUserByEmail(loginInfo.email);
         let accessToken, refreshToken;
-        Logger.log(`loginWithEmail() =>>> ${JSON.stringify(existingUser)}`);
+        Logger.log(`loginWithEmail() =>>>${existingUser.id} ${existingUser.nickname}`);
 
         if (existingUser) {
             const is = await this.authService.authenticateWithEmailAndPassword(

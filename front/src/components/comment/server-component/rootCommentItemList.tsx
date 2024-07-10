@@ -25,7 +25,7 @@ const RootCommentItemList: React.FC<RootCommentItemListProps> = async ({
     const isCommentsPage = rootCommentID === undefined;
 
     const comments: CommentType[] | null = isCommentsPage
-        ? await getInitialComments(postID)
+        ? await getInitialComments(postType, postID)
         : [await getCommentsWithReply(postID, rootCommentID)];
 
     if (!comments || comments.length === 0) return null;

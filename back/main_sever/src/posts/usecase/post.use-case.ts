@@ -6,11 +6,14 @@ import { BadRequestException, Logger, HttpException, NotFoundException } from '@
 
 import { QuestPostModel } from '../entities/quest_post.entity';
 import { SbPostModel } from '../entities/sb_post.entity';
-import { PostId as PostId, PostType } from '../pips/post-id.pip';
+import { PostId as PostId } from '../pips/post-id.pip';
 import { QuestPostsService } from '../-quest/quest_post.service';
 import { SbPostsService } from '../-sb-post/sb_post.service';
 import { DtoUtils } from 'src/_common/dto/dtoUtils';
 import { FavoriteService } from 'src/favorite/favorite.service';
+import { PostType } from '../-comment/enum/post_type';
+import { DeleteResult } from 'typeorm';
+import { QuestFavoriteModel } from 'src/favorite/entities/quest_favorite.entity';
 
 @Injectable()
 export class PostsUseCases {
@@ -116,26 +119,53 @@ export class PostsUseCases {
     async increaseQuestFavorite(userId: number, questId: number, qr: QueryRunner) {
         const isExist = await this.favoriteService.confirmQuestFavorite(userId, questId, qr);
         if (isExist === false) {
-            console.log('increaseQuestFavorite');
-            const result = await this.favoriteService.addQuestFavorite(userId, questId, qr);
+            const increaseFavorite = await this.favoriteService.addQuestFavorite(
+                userId,
+                questId,
+                qr,
+            );
             const _ = await this.questService.incrementFavoriteCount(questId, qr);
 
-            return result;
-        } else {
-            throw new BadRequestException('이미 좋아요 한 post 입니다');
+            const isFavorite = await this.favoriteService.validateQuestModel(increaseFavorite);
+            if (isFavorite) {
+                await qr.commitTransaction();
+                await qr.startTransaction();
+
+                let QuestFavorites: QuestFavoriteModel[] =
+                    await this.favoriteService.getAllFavoritesByUserId(userId);
+                const postIds = QuestFavorites.map((favorite) => favorite.postId);
+                return postIds;
+            } else {
+                return 'DB에 저장은 성공 하지만, return User.FavoriteQuest 실패';
+            }
         }
+        throw new BadRequestException('이미 좋아요 한 post 입니다');
     }
 
     async decreaseQuestFavorite(userId: number, questId: number, qr: QueryRunner) {
         const isExist = await this.favoriteService.confirmQuestFavorite(userId, questId, qr);
         if (isExist === true) {
-            const result = await this.favoriteService.minusQuestFavorite(userId, questId, qr);
+            const decreaseFavorite = await this.favoriteService.minusQuestFavorite(
+                userId,
+                questId,
+                qr,
+            );
             const _ = await this.questService.decrementFavoriteCount(questId, qr);
 
-            return result;
+            if (decreaseFavorite instanceof DeleteResult) {
+                await qr.commitTransaction();
+                await qr.startTransaction();
+
+                let QuestFavorites: QuestFavoriteModel[] =
+                    await this.favoriteService.getAllFavoritesByUserId(userId);
+                const postIds = QuestFavorites.map((favorite) => favorite.postId);
+                return postIds;
+            } else {
+                return 'DB에 저장은 성공 하지만, return User.FavoriteQuest 실패';
+            }
         }
 
-        return isExist;
+        throw new BadRequestException('좋아요를 누른 적이 없는 post 입니다');
     }
 
     async increaseSbFavorite(userId: number, sbId: number, qr: QueryRunner) {
