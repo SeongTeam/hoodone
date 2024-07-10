@@ -6,32 +6,41 @@ import { Box, Button, Container, Flex, HStack, Input, Spacer } from '@chakra-ui/
 import { customColors } from '@/utils/chakra/customColors';
 import { leaveComment } from '@/server-actions/commentAction';
 import { useParams, usePathname } from 'next/navigation';
+import { POST_TYPE } from '@/type/postType';
 
 /*TODO
 - useOptimistic 사용하여 사용자의 코멘트 즉각적으로 페이지에 반영하기
     - ref: https://ko.react.dev/reference/react/useOptimistic#noun-labs-1201738-(2)
 */
-type InputCommentProps = {};
+type InputCommentProps = {
+    postType: POST_TYPE,
+    postID: number
+};
 
-const InputComment: React.FC<InputCommentProps> = ({}) => {
-    const buttonColor = customColors.link[100];
+const InputComment: React.FC<InputCommentProps> = ({
+    postType,
+    postID
+}) => {
     const [content, setContent] = useState('');
     const [userAccount] = useUserAccountWithSSR();
     const [isLoading, setIsLoading] = useState(false);
-    const [msg, setmsg] = useState('');
-    const params = useParams<{ postid: string }>();
     const path = usePathname();
     const fontColor = customColors.black[100];
 
     const handleLeaveInput = () => {
         console.log('handleLeaveInput is clicked', content);
         const formdata = new FormData();
+
+        if(content.length <= 0) {
+            alert('Comment is empty');
+            return;
+        }
+
         formdata.append('content', content);
         setIsLoading(true);
-        const postid = parseInt(params.postid);
-        leaveComment(formdata, postid, path).then((newComment) => {
+        leaveComment(formdata, postType ,postID, path).then((newComment) => {
             if (!newComment) {
-                setmsg('Comment failed');
+                alert('Comment failed!, please, retry later');
                 console.log('failed', newComment);
                 setIsLoading(false);
                 return;
@@ -44,6 +53,7 @@ const InputComment: React.FC<InputCommentProps> = ({}) => {
 
     return (
         <Flex w="100%" px="12px" py="8px" alignItems="center" h="84px">
+            
             <Input
                 type="text"
                 autoFocus

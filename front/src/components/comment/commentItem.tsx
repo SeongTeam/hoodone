@@ -83,6 +83,8 @@ const CommentItem: React.FC<CommentItemProps> = ({
                     handleReplyButtonClicked={handleWriteReply}
                     handleShowReplyIconClicked={handleShowReply}
                     isShowReply={isShowReply}
+                    postType={postType}
+                    postId={Number(params.postid)}
                 />
             )}
             {isWriteReply && (
@@ -90,6 +92,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                     handleAddReply={handleAddReply}
                     handleCancelReply={handleCancelReply}
                     parentComment={comment}
+                    postType={postType}
                 />
             )}
             {isShowReply && childrenReplyList}

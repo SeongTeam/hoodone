@@ -191,9 +191,8 @@ const ImageUploadArea : React.FC<ImageUploadProps> = ({
                     Upload
                 </Button>
                 <Button
-                    bg={ img ? customColors.red[100] : customColors.gray[200]}
-                    _hover={{ bg: img ? customColors.red[200] : customColors.gray[200] }}
-                    borderRadius="8px"
+                    variant = {img ? 'cancel' : 'disable'}
+                    color = { customColors.white[100] }
                     fontSize="20px"
                     py="20px"
                     px="15px"

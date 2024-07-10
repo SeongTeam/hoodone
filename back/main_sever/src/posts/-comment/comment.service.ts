@@ -36,12 +36,14 @@ export class CommentsService {
 
     async findCommentsByPostId(postId: PostId) {
         const { questId, sbId } = this.changeToTwoPostIds(postId);
+
+        const name = questId ? 'questPost' : 'sbPost';
+        const id = questId ? questId : sbId;
+
         return this.commentRepository.find({
             ...COMMON_COMMENT_FIND_OPTION,
             where: {
-                questPost: { id: questId },
-                sbtPost: { id: sbId },
-                // post: { id: postId },
+                [name]: { id },
             },
             order: {
                 responseToId: 'ASC',
@@ -53,17 +55,19 @@ export class CommentsService {
     }
     async findCommentsByPostIdWithDepth(postId: PostId, depthRange: number[]) {
         const { questId, sbId } = this.changeToTwoPostIds(postId);
-        if (depthRange.length !== 2) {
-            throw new BadRequestException('depthRange is wrong');
-        }
-        if (depthRange[0] > depthRange[1]) {
-            throw new BadRequestException('depthRange is wrong');
+
+        const name = questId ? 'questPost' : 'sbPost';
+        const id = questId ? questId : sbId;
+
+        if (depthRange.length !== 2 || depthRange[0] > depthRange[1]) {
+            Logger.error('depthRange is invalid', { message: { depthRange } });
+            throw new BadRequestException('depthRange is invalid');
         }
         return this.commentRepository.find({
             ...COMMON_COMMENT_FIND_OPTION,
             where: {
-                questPost: { id: questId },
-                sbtPost: { id: sbId },
+
+                [name]: { id },
                 depth: Between(depthRange[0], depthRange[1]),
             },
             order: {
@@ -103,7 +107,7 @@ export class CommentsService {
             questPost: {
                 id: questId,
             },
-            sbtPost: {
+            sbPost: {
                 id: sbId,
             },
             index: 0, // TODO): post의 댓글 리스트 갯수 만큼 index를 증가시켜야 한다.
@@ -143,7 +147,7 @@ export class CommentsService {
             questPost: {
                 id: questId,
             },
-            sbtPost: {
+            sbPost: {
                 id: sbId,
             },
             responseToId: commentInfo.responseToId,

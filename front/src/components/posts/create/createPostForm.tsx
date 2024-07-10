@@ -143,8 +143,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({
                         {existPost ? 'Edit' : 'Create'}
                     </Button>
                     <Button
-                        bg={customColors.red[100]}
-                        _hover={{ bg: customColors.red[200] }}
+                        variant='cancel'
                         borderRadius="8px"
                         fontSize="20px"
                         width="100px"

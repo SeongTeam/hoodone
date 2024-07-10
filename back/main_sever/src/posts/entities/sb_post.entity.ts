@@ -23,7 +23,7 @@ export class SbPostModel extends PostModel {
     @JoinColumn({ name: 'parent_post_id' })
     parentPost: QuestPostModel;
 
-    @OneToMany(() => CommentModel, (comment) => comment.sbtPost)
+    @OneToMany(() => CommentModel, (comment) => comment.sbPost)
     comments?: CommentModel[];
 
     @OneToMany(() => SbFavoriteModel, (sbFavorite) => sbFavorite.favoriteUsers)

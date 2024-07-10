@@ -3,7 +3,7 @@ import { CommentType } from '@/atoms/comment';
 import CommentItem from '../commentItem';
 import { Flex, Box } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
-import { isLeafCommentOfPage } from '@/lib/server-only/commentLib';
+import { CommentFetchService } from '@/lib/server-only/commentLib';
 import logger from '@/utils/log/logger';
 import { POST_TYPE } from '@/type/postType';
 
@@ -20,6 +20,7 @@ const CommentItemList : React.FC<CommentItemListProps> = ({ comments, postType ,
 
     const commentListDepth = comments[0].depth;
     const margin = componentDepth === 0 ? 0 : 8;
+    const commentService = new CommentFetchService(postType);
 
     return (
         <Box maxW="100%" pl={margin} overflow="hidden">
@@ -32,7 +33,7 @@ const CommentItemList : React.FC<CommentItemListProps> = ({ comments, postType ,
                     return <CommentItem 
                             key={comment.id} 
                             comment={comment}
-                            isWritingOnCurrentPage={ isLeafCommentOfPage(componentDepth,commentListDepth) }
+                            isWritingOnCurrentPage={ commentService.isLeafCommentOfPage(componentDepth,commentListDepth) }
                             childrenReplyList={<CommentItemList comments={comment.replyComments} componentDepth={componentDepth+1} postType={postType}/>} 
                             postType= {postType}
                             />
