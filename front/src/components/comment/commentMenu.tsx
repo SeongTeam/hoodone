@@ -5,6 +5,7 @@ import { SlOptions } from "react-icons/sl";
 import { deleteComment } from "@/server-actions/commentAction";
 import { usePathname , useParams } from "next/navigation";
 import { useIsOwner } from "@/hooks/userAccount";
+import { customColors } from "@/utils/chakra/customColors";
 
 type CommentMenuType = {
     commentInstance: CommentClass
@@ -42,23 +43,33 @@ const CommentMenu : React.FC<CommentMenuType> = ({commentInstance}) => {
                 as={IconButton} 
                 icon={<SlOptions/>}
                 variant={"link"}
-                border={"none"}
                 colorScheme="black"
                 aria-label="comment menu" 
+                color={customColors.black[300]}
             />
-            <MenuList>
-                
-                <MenuItem onClick={handleReport}>
+            <MenuList
+
+            >
+                <MenuItem
+                    textColor={customColors.black[300]} 
+                    onClick={handleReport}
+                    _hover = {{bg: customColors.white[200]}}    
+                >
                     Report
                 </MenuItem>
                 <MenuItem 
+                    textColor={customColors.black[300]}
                     hidden={!isOwner}
-                    onClick={handleEdit}>
+                    onClick={handleEdit}
+                    _hover = {{bg: customColors.white[200]}}
+                >
                     Edit
                 </MenuItem>
                 <MenuItem 
+                    textColor={customColors.red[100]}
                     hidden={!isOwner}
                     onClick={handleDelete}
+                    _hover = {{bg: customColors.white[200]}}
                 >
                     Delete
                 </MenuItem>

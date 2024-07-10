@@ -8,6 +8,8 @@ import CommentMenu from './commentMenu';
 import ReplyToggleButton from './replyToggleButton';
 import { useIsOwner } from '@/hooks/userAccount';
 import { SP } from 'next/dist/shared/lib/utils';
+import { ProfileImage } from '../common/ProfileImage';
+import { formatCreatedAt } from '@/lib/Date';
 
 type CommentProps = {
     commentInstance: CommentClass;
@@ -28,10 +30,7 @@ const Comment: React.FC<CommentProps> = ({
 }) => {
     const comment = commentInstance.getComment();
     const content = comment.content;
-    const author = comment.author.nickname;
-    const likeCount = comment.likeCount;
-    const timeAgo = comment.createdAt.toString();
-    const buttonColor = customColors.black[200];
+    const nickname = comment.author.nickname;
     const hasReplies = commentInstance.isHaveReply();
     const isCommentOwner = useIsOwner(comment.author.nickname);
     const fontColor = customColors.black[100];
@@ -48,71 +47,53 @@ const Comment: React.FC<CommentProps> = ({
             borderLeft="none"
             flexDir={'column'}
         >
-            <Flex w="100%" direction="row" px="15px">
-                <HStack align="center" spacing="6px">
-                    <Image
-                        borderRadius="full"
-                        boxSize="50px"
-                        src="https://bit.ly/dan-abramov"
-                        alt="Dan Abramov"
+            <Flex w="100%" direction="row" px="15px" justify="space-between">
+                <HStack align="center" spacing="6px"  >
+                    <ProfileImage
+                        publicId={comment.author.profileImagePublicId}
+                        radiusByPXunit={40}
                     />
                     <Text color={fontColor} fontSize="12px">
-                        UserName
+                        {nickname}
                     </Text>
                     <Text color={fontColor} fontSize="12px">
-                        {' ~1h'}
-                    </Text>
-                    <Text color={fontColor} fontSize="12px">
-                        {' ago'}
+                        {formatCreatedAt(comment.createdAt)}
                     </Text>
                 </HStack>
-                <Box h={8} w="full" />
-                <Box bg="blue" width="80px">
-                    <Text> Icon seat</Text>
-                    {/* TODO  Charkra Icon 동작 에러 확인하기 */}
-                    {/* <StarIcon />
-                            <DragHandleIcon /> */}
-                </Box>
+                <CommentMenu commentInstance={commentInstance}/>
             </Flex>
-            <Text color={fontColor} fontSize="24px">
+            <Text color={fontColor} fontSize="20px">
                 {content}
             </Text>
             <HStack spacing={8}>
-                {/* like 버튼 */}
+                <Box
+                    id="ReplyToggleButton"
+                    visibility= {hasReplies ? 'visible' : 'hidden'}
+                >
+                    <ReplyToggleButton
+                        isShowReply={isShowReply}
+                        handleShowReplyIconClicked={handleShowReplyIconClicked}
+                        />
+                </Box>
                 <Button
-                    bg={customColors.purple[100]}
-                    _hover={{ bg: customColors.white[300] }}
-                    borderRadius="8px"
-                    width="5em"
-                    fontSize="12px"
+                    id="UpVoteButton"
+                    variant="purple"
+                    fontSize="16px"
+                    w="80px"
                     py="20px"
                     px="15px"
                 >
-                    {/* <AddIcon /> */}
-                    1k
+                    {comment.likeCount}
                 </Button>
                 <Button
-                    bg={customColors.purple[100]}
-                    _hover={{ bg: customColors.white[300] }}
-                    borderRadius="8px"
-                    width="5em"
-                    fontSize="12px"
+                    id="replyButton"
+                    variant="purple"
+                    fontSize="16px"
+                    w="80px"
                     py="20px"
                     px="15px"
+                    onClick={handleReplyButtonClicked}
                 >
-                    {/* <AddIcon /> */}
-                    1k
-                </Button>
-                <Button
-                    bg={customColors.purple[100]}
-                    _hover={{ bg: customColors.white[300] }}
-                    borderRadius="8px"
-                    width="5em"
-                    fontSize="12px"
-                    py="20px"
-                    px="15px"
-                >
-                    {/* <AddIcon /> */}
                     reply
                 </Button>
             </HStack>

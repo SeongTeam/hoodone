@@ -82,7 +82,7 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
 
                         <Spacer h="26px" />
 
-                        <CommentArea postID={post.id}></CommentArea>
+                        <CommentArea postType={POST_TYPE.QUEST} postID={post.id}></CommentArea>
                     </VStack>
                     <RuleCard
                         title="Quest"

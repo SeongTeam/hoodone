@@ -6,22 +6,20 @@ import { IconButton } from "@chakra-ui/react";
 type ReplyToggleButtonProps = {
     isShowReply: boolean;
     handleShowReplyIconClicked: () => void;
-    fontSize: string;
 };
 
 const ReplyToggleButton: React.FC<ReplyToggleButtonProps> = ({
     isShowReply,
     handleShowReplyIconClicked,
-    fontSize
 }) => (
     <IconButton
         isRound={true}
         aria-label="Toggle Reply Comments"
-        icon={isShowReply ? <SlMinus size={fontSize} /> : <SlPlus size={fontSize} />}
+        icon={isShowReply ? <SlMinus size="20px" color="black"/> : <SlPlus size="20px" color="black" />}
         onClick={handleShowReplyIconClicked}
         size="sm"
         bg="none"
-        border="none"
+        _hover={{bg: "none"}}
     />
 );
 

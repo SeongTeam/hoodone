@@ -95,7 +95,7 @@ const SbPage: NextPage<SbPageProps> = async ({ params, searchParams }) => {
 
                             <Spacer h="26px" />
 
-                            <CommentArea postID={post.id}></CommentArea>
+                            <CommentArea postType={POST_TYPE.SB} postID={post.id}></CommentArea>
                         </VStack>
 
                         <RuleCard

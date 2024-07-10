@@ -20,27 +20,26 @@ const DeletedCommentItem: React.FC<DeletedCommentProps> = ({
 
     return (
         <Flex
-            color={customColors.white[300]}
-            gap="0.5rem"
             borderRadius="15px"
-            px={2}
-            pt={5}
-            pb={1}
-            bg={customColors.black[200]}
+            bg={customColors.gray[300]}
+            px="10px"
+            pt="10px"
+            pb="5px"
             flexDir="column"
+            mb="5px"
         >
-            <Flex gap="0.5rem" alignItems="center">
+            <Flex alignItems="center">
                 <Text fontSize={fontSize}>Deleted</Text>
                 <Spacer />
             </Flex>
-            <Box h="2rem">
-                {hasReplies && (
+            <Box h="30px">
+                <Box
+                    visibility={hasReplies ? 'visible' : 'hidden'}>
                     <ReplyToggleButton
                         isShowReply={isShowReply}
                         handleShowReplyIconClicked={handleShowReplyIconClicked}
-                        fontSize={fontSize}
                     />
-                )}
+                </Box>
             </Box>
         </Flex>
     );
