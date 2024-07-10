@@ -68,7 +68,9 @@ const QuestButtons: React.FC<QuestButtonsProps> = ({ post }) => {
     };
 
     useEffect(() => {
-        setIsUserFavorite(userState.favoriteQuests.includes(post.id));
+        if(userState.favoriteQuests && Array.isArray(userState.favoriteQuests)){
+            setIsUserFavorite(userState.favoriteQuests.includes(post.id));
+        }
     }, [userState]);
 
     return (

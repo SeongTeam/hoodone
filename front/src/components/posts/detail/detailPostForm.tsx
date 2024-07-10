@@ -61,7 +61,9 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) =>
     };
 
     useEffect(() => {
-        setIsUserFavorite(userState.favoriteQuests.includes(post.id));
+        if(userState.favoriteQuests && Array.isArray(userState.favoriteQuests)){
+            setIsUserFavorite(userState.favoriteQuests.includes(post.id));
+        }
     }, [userState]);
 
     return (
