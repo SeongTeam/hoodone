@@ -209,7 +209,7 @@ async function uploadImage(imageFile: File, type: POST_TYPE, newPost: NewPostFor
     }
 }
 
-export async function addFavorite(postType: POST_TYPE, questId: number) {
+export async function addFavorite(postType: POST_TYPE, questId: number, postOffset: number) {
     const ret: responseData = {
         ok: false,
         message: '',
@@ -234,6 +234,8 @@ export async function addFavorite(postType: POST_TYPE, questId: number) {
             logger.info('addFavorite Response', { message: responseData });
             ret.response = responseData;
             ret.ok = true;
+            const pageTag = PostCache.getPaginatedTag(postType, postOffset);
+            revalidateTag(pageTag);
         } else {
             const data = await res.json();
             logger.error('addFavorite Error', {
@@ -241,6 +243,7 @@ export async function addFavorite(postType: POST_TYPE, questId: number) {
             });
             ret.message = `favorite 취소 실패`;
         }
+
         return ret;
     } catch (error) {
         logger.info('addFavorite error', { message: error });
@@ -249,7 +252,7 @@ export async function addFavorite(postType: POST_TYPE, questId: number) {
     }
 }
 
-export async function deleteFavorite(postType: POST_TYPE, questId: number) {
+export async function deleteFavorite(postType: POST_TYPE, questId: number, postOffset: number) {
     const ret: responseData = {
         ok: false,
         message: '',
@@ -272,6 +275,8 @@ export async function deleteFavorite(postType: POST_TYPE, questId: number) {
             logger.info('Backend Response', { message: responseData });
             ret.response = responseData;
             ret.ok = true;
+            const pageTag = PostCache.getPaginatedTag(postType, postOffset);
+            revalidateTag(pageTag);
         } else {
             const data = await res.json();
             logger.error('Backend Error', {
@@ -279,6 +284,7 @@ export async function deleteFavorite(postType: POST_TYPE, questId: number) {
             });
             ret.message = `favorite 취소 실패`;
         }
+
         return ret;
     } catch (error) {
         logger.info('deleteFavorite error', { message: error });

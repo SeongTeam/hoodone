@@ -7,7 +7,6 @@ import { POST_TYPE, PostContainer,QuestPost, SubmissionPost } from '@/type/postT
 import { ChatIcon } from '@chakra-ui/icons';
 import { useUserAccountWithSSR } from '@/hooks/userAccount';
 import { responseData } from '@/type/server-action/responseType';
-import { addFavorite, deleteFavorite } from '@/server-actions/postsActions';
 import FavoriteButton from '../../common/FavoriteButton';
 
 type QuestButtonsProps = {

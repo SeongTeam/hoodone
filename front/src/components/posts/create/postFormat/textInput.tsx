@@ -3,7 +3,7 @@ import React from 'react';
 import { Box, Button, Container, Flex, Input, Stack, Textarea, VStack, Tag, TagRightIcon, TagLabel } from '@chakra-ui/react';
 import TextEditor from './subComponent/textEditor';
 import { customColors } from '@/utils/chakra/customColors';
-import { NewPostFormType } from '@/type/postType';
+import { NewPostForm } from '@/type/postType';
 import { CloseIcon } from '@chakra-ui/icons';
 
 /* TODO
@@ -14,8 +14,8 @@ type TextInputProps = {
     titlePlaceHolder: string;
     contentPlaceHolder: string;
     tagPlaceHolder: string;
-    post : NewPostFormType;
-    setPost : React.Dispatch<React.SetStateAction<NewPostFormType>>;
+    post : NewPostForm;
+    setPost : React.Dispatch<React.SetStateAction<NewPostForm>>;
 };
 
 const TextInput: React.FC<TextInputProps> = ({

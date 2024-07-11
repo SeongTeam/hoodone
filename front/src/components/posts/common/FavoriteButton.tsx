@@ -17,6 +17,7 @@ const FavoriteButton : React.FC<FavoriteButtonProps> = ({ type, post }) => {
     const [isUserFavorite, setIsUserFavorite] = React.useState(false);
     const [favoriteCount, setFavoriteCount] = React.useState(post.postData.favoriteCount);
     const id = post.postData.id;
+    const offset = post.paginatedOffset;
     const handleFavorite = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         if(!userAccount.isLogin)
@@ -41,11 +42,11 @@ const FavoriteButton : React.FC<FavoriteButtonProps> = ({ type, post }) => {
     const _callFavoriteAPI = async (isFavorite: boolean): Promise<responseData> => {
         if (!isFavorite) {
             setFavoriteCount(favoriteCount + 1);
-            return await addFavorite(POST_TYPE.QUEST, id);
+            return await addFavorite(POST_TYPE.QUEST, id,offset);
         }
         setFavoriteCount(favoriteCount - 1);
 
-        return await deleteFavorite(POST_TYPE.QUEST, id);
+        return await deleteFavorite(POST_TYPE.QUEST, id,offset);
     };
 
     useEffect(() => {
