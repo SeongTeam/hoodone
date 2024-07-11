@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { Box, Flex, Spacer } from '@chakra-ui/react';
-import { customColors } from '@/utils/chakra/customColors';
-import CenterCard from '@/components/common/server-component/centerCard';
+import { Box, Flex, Spacer, SimpleGrid } from '@chakra-ui/react';
+import { POST_TYPE } from '@/type/postType';
+import AdminPostSliderWidnow from '@/components/posts/card/AdminPostSliderWidnow';
+import PostSliderWindow from '@/components/posts/card/PostSliderWindow';
 
 /* TODO
 - style 적용 불가 원인 분석 및 해결
@@ -14,7 +15,34 @@ export default function Home() {
         <>
             <main>
                 <Box w="full" h="full" px="25px" bg="#F7F6F9">
-                    <CenterCard />
+                    <Flex
+                        width="100%"
+                        height="100%"
+                        justifyContent="center"
+                        alignItems="center"
+                        pt="1rem"
+                        flexDir={'column'}
+                    >
+                        <SimpleGrid
+                        columns={{ sm: 1, md: 1 }}
+                        justifyContent="center"
+                        alignContent="center"
+                        spacing="4px"
+                        >
+
+                            <AdminPostSliderWidnow />
+
+                            <PostSliderWindow
+                                windowName = "User Quest"
+                                type = {POST_TYPE.QUEST}
+                            />
+
+                            <PostSliderWindow
+                                windowName = "User Submissions"
+                                type = {POST_TYPE.SB}
+                            />
+                        </SimpleGrid>
+                    </Flex>
                 </Box>
             </main>
         </>

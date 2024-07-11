@@ -3,10 +3,10 @@ import { Box, Flex, Text, Image, Spacer } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { PostType } from '@/type/postType';
+import { PostContainer,QuestPost , SubmissionPost } from '@/type/postType';
 
 type MiniPostCardProps = {
-    post: PostType;
+    post: PostContainer<QuestPost | SubmissionPost>;
     index: number;
 };
 
@@ -22,7 +22,7 @@ const MiniPostCard: React.FC<MiniPostCardProps> = ({ post, index }) => {
     const fontColor = customColors.black[100];
     const bg = customColors.white[100];
     const borderColor = customColors.shadeLavender[100];
-    const timeAgo = post.createdAt;
+    const timeAgo = post.postData.createdAt;
     const router = useRouter();
 
     const editTitle = (title: string) => {
@@ -33,7 +33,7 @@ const MiniPostCard: React.FC<MiniPostCardProps> = ({ post, index }) => {
         return title;
     };
     const handleOnClickItem = (event: React.MouseEvent<HTMLDivElement>) => {
-        const id = post.id;
+        const id = post.postData.id;
         alert('id : ' + id);
         //router.push(`/post/${id}?index=${index}`);
     };
@@ -62,7 +62,7 @@ const MiniPostCard: React.FC<MiniPostCardProps> = ({ post, index }) => {
                         whiteSpace="nowrap"
                         // text-overflow="ellipsis"
                     >
-                        {editTitle(post.title)}
+                        {editTitle(post.postData.title)}
                     </Text>
                 </Flex>
                 {/* TODO  PostThumbnail 사용하기 */}

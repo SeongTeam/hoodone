@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { POST_TYPE, PostType } from '@/type/postType';
+import { POST_TYPE } from '@/type/postType';
 import { PostFetchService } from '@/lib/server-only/postLib';
 import { Box, Text, Spacer, Flex, Grid, VStack, SimpleGrid, Image } from '@chakra-ui/react';
 import logger from '@/utils/log/logger';
@@ -30,12 +30,12 @@ const SbPage: NextPage<SbPageProps> = async ({ params, searchParams }) => {
 
     const postService = new PostFetchService(POST_TYPE.SB);
 
-    const post: PostType | null = await postService.getPostByID(
+    const post = await postService.getPostByID(
         params.postid,
         parseInt(searchParams.index),
     );
 
-    const allPosts: PostType[] | null = await postService.getCachedPaginatedPosts(1);
+    const allPosts = await postService.getCachedPaginatedPosts(1);
 
     if (!post) {
         logger.error(`post${params.postid} not found`);
@@ -98,7 +98,7 @@ const SbPage: NextPage<SbPageProps> = async ({ params, searchParams }) => {
 
                             <Spacer h="26px" />
 
-                            <CommentArea postType={POST_TYPE.SB} postID={post.id}></CommentArea>
+                            <CommentArea postType={POST_TYPE.SB} postID={post.postData.id}></CommentArea>
                         </VStack>
 
                         <RuleCard

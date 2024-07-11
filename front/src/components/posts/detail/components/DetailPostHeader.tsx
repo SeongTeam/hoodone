@@ -1,6 +1,6 @@
 'use client';
 
-import { AuthorType, POST_TYPE, PostType } from '@/type/postType';
+import { AuthorType, POST_TYPE, QuestPost, SubmissionPost,PostContainer } from '@/type/postType';
 import { formatTimeFromNow } from '@/lib/Date';
 import { customColors } from '@/utils/chakra/customColors';
 import { ChevronDownIcon, DragHandleIcon, StarIcon } from '@chakra-ui/icons';
@@ -10,14 +10,14 @@ import { cloudinaryTempData } from '@/utils/cloudinary/mockUpData'
 import PostMenu from '../../view/postMenu';
 
 type DetailPostHeaderProps = {
-    post : PostType
+    post : PostContainer<QuestPost | SubmissionPost>,
     type : POST_TYPE
 };
 
 const DetailPostHeader: React.FC<DetailPostHeaderProps> = ({ post, type }) => {
-    const time = formatTimeFromNow(post.createdAt);
+    const time = formatTimeFromNow(post.postData.createdAt);
 
-    const author = post.author;
+    const author = post.postData.author;
 
     return (
         <Flex w="100%" direction="row" pl="15px" pr="3px">

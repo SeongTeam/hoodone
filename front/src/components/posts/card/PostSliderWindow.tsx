@@ -2,7 +2,7 @@ import { Box, Spacer, Text, VStack } from '@chakra-ui/react';
 import PostCard from './PostCard';
 import MotionDiv from '@/components/common/motionDiv';
 import PostSlider from '@/components/_global/slider/postSlider';
-import { POST_TYPE, PostType } from '@/type/postType';
+import { POST_TYPE, } from '@/type/postType';
 import { PostFetchService } from '@/lib/server-only/postLib';
 
 /*TODO
@@ -50,7 +50,7 @@ const PostSliderWindow: React.FC<PostSliderWindowProp> = async ({ windowName , t
                 && posts.map((post, index) => {
                     return (
                         <MotionDiv
-                            key={post.id}
+                            key={`easeInOut-${post.postData.id}`}
                             variants={variants}
                             initial="hidden"
                             animate="visible"
@@ -62,7 +62,7 @@ const PostSliderWindow: React.FC<PostSliderWindowProp> = async ({ windowName , t
                             }}
                             viewport={{ amount: 0 }}
                         >
-                            <PostCard post={post} key={post.id} index={index} type={type} />
+                            <PostCard post={post} key={post.postData.id} index={index} type={type} />
                         </MotionDiv>
                     );
                 })}

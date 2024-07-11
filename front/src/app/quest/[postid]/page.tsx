@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { POST_TYPE, PostType } from '@/type/postType';
+import { POST_TYPE } from '@/type/postType';
 import { Box, Text, Spacer, Flex, Grid, VStack, SimpleGrid, Image } from '@chakra-ui/react';
 import logger from '@/utils/log/logger';
 import { customColors } from '@/utils/chakra/customColors';
@@ -30,12 +30,12 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
     logger.info('#PostPage Rendered', { message: params.postid });
     console.log(params.postid, searchParams.index);
 
-    const post: PostType | null = await postFetchService.getPostByID(
+    const post = await postFetchService.getPostByID(
         params.postid,
         parseInt(searchParams.index),
     );
 
-    const allPosts: PostType[] | null = await postFetchService.getCachedPaginatedPosts(1);
+    const allPosts = await postFetchService.getCachedPaginatedPosts(1);
     if (!post) {
         logger.error(`post${params.postid} not found`);
         throw new ReferenceError(`post not found`);
@@ -85,7 +85,7 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
 
                         <Spacer h="26px" />
 
-                        <CommentArea postType={POST_TYPE.QUEST} postID={post.id}></CommentArea>
+                        <CommentArea postType={POST_TYPE.QUEST} postID={post.postData.id}></CommentArea>
                     </VStack>
                     <RuleCard
                         title="Quest"

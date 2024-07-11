@@ -2,7 +2,7 @@
 
 import { Box, Button, HStack, VStack, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import useSelectFile from '@/hooks/useSelectFile';
 import TextInput from './postFormat/textInput';
 import { customColors } from '@/utils/chakra/customColors';
@@ -11,7 +11,7 @@ import { createPosts } from '@/server-actions/postsActions';
 import { showErrorToast } from '@/components/modal/auth/components/toast/toast';
 import ImageUploadArea from '@/components/common/ImageUpload';
 import { useUserAccountWithoutSSR } from '@/hooks/userAccount';
-import { NEW_POST_FORMAT, POST_TYPE, NewPostFormType, tagDelimiter, PostType } from '@/type/postType';
+import { NEW_POST_FORMAT, POST_TYPE, NewPostForm, PostContainer, QuestPost, SubmissionPost } from '@/type/postType';
 import { contentTexts, titleTexts } from '../card/const/rule_card_texts';
 import { useRecoilState } from 'recoil';
 import { UserAccountState } from '@/atoms/userAccount';
@@ -19,7 +19,7 @@ import { getCldImageUrl } from 'next-cloudinary';
 
 type CreatePostFormProps = {
     type: POST_TYPE;
-    existPost? : PostType | null;
+    existPost? : PostContainer<QuestPost | SubmissionPost> | null;
 };
 
 const CreatePostForm: React.FC<CreatePostFormProps> = ({ 
@@ -29,10 +29,10 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({
     const userAccount = useUserAccountWithoutSSR(); 
     const router = useRouter();
     const useToastOption = useToast();
-    const defaultNewPost : NewPostFormType = existPost ? { 
-        title: existPost.title,
-        content: existPost.content,
-        tags: existPost.tags,
+    const defaultNewPost : NewPostForm = existPost ? { 
+        title: existPost.postData.title,
+        content: existPost.postData.content,
+        tags: existPost.postData.tags,
         type: type
     } : {
         title: '',
@@ -40,7 +40,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({
         tags: [],
         type: type,
     }
-    const [newPost, setNewPost] = useState<NewPostFormType>(defaultNewPost);
+    const [newPost, setNewPost] = useState<NewPostForm>(defaultNewPost);
     const { selectedFile, setSelectedFile, onSelectedFile, onDroppedFile } = useSelectFile();
     const bg = customColors.white[100];
     const inputBorderColor = customColors.shadeLavender[300];
@@ -67,21 +67,21 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({
             formData.append(NEW_POST_FORMAT.IMAGE, selectedFile);
         }
 
-        const result = existPost ? await createPosts(formData, existPost.id) : await createPosts(formData);
+        const result = existPost ? await createPosts(formData, existPost.postData.id) : await createPosts(formData);
         console.log(result);
     };
 
-    const convertUrlToFile = async (imgUrl : string) => {
+    const convertUrlToFile = useCallback( async (imgUrl : string) => {
         const fileName = 'questThumbnail'
         const res = await fetch(imgUrl);
         const blob = await res.blob();
         const file = new File([blob], fileName, { type: blob.type});
         setSelectedFile(file);
-    }
+    }, [setSelectedFile]);
 
     useEffect(() => {
         if(existPost){
-            const publicId = existPost.cloudinaryPublicId;
+            const publicId = existPost.postData.cloudinaryPublicId;
             if(publicId){
                 const url = getCldImageUrl({ 
 
@@ -90,7 +90,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({
             }
     
         }
-    },[])
+    },[existPost,convertUrlToFile])
 
     useEffect(() => {
         if(!userAccount.isLogin){

@@ -3,7 +3,13 @@ import logger from '@/utils/log/logger';
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { PostType, NEW_POST_FORMAT, POST_TYPE, NewPostFormType } from '@/type/postType';
+import {
+    NEW_POST_FORMAT,
+    POST_TYPE,
+    NewPostForm,
+    QuestPost,
+    SubmissionPost,
+} from '@/type/postType';
 import { revalidateTag } from 'next/cache';
 import { assert, log } from 'console';
 import { validateAuth } from '@/lib/server-only/authLib';
@@ -12,6 +18,7 @@ import { validateImage, uploadQuestImage, uploadSubmissionImage } from '@/utils/
 import { cloudinaryTempData } from '@/utils/cloudinary/mockUpData';
 import { responseData } from '@/type/server-action/responseType';
 import { PostApiResponseDto } from 'hoodone-shared';
+import { PostCache } from '@/lib/server-only/postLib';
 
 /*
 ref : https://www.youtube.com/watch?v=5L5YoFm1obk
@@ -45,25 +52,20 @@ export async function createPosts(formData: FormData, editPostId?: number) {
 
         logger.info('[createPosts] postDtoString: ', { postDtoString });
 
-        const postDto: NewPostFormType = JSON.parse(postDtoString);
+        const postDto: NewPostForm = JSON.parse(postDtoString);
 
-        const newPost = {
-            title: postDto.title,
-            content: postDto.content,
-            tags: postDto.tags,
-        } as PostType;
         const accessToken = await validateAuth();
         const type = postDto.type;
 
-        await uploadImage(imageFile, type, newPost);
+        await uploadImage(imageFile, type, postDto);
 
         if (editPostId) {
             switch (type) {
                 case POST_TYPE.QUEST:
-                    res = await editQuest(accessToken, editPostId, newPost);
+                    res = await editQuest(accessToken, editPostId, postDto);
                     break;
                 case POST_TYPE.SB:
-                    res = await editSubmission(accessToken, editPostId, newPost);
+                    res = await editSubmission(accessToken, editPostId, postDto);
                     break;
                 default:
                     logger.error('[createPosts] edit fail. POST_TYPE is invalid. type = ', type);
@@ -73,10 +75,10 @@ export async function createPosts(formData: FormData, editPostId?: number) {
         } else {
             switch (type) {
                 case POST_TYPE.QUEST:
-                    res = await formQuest(accessToken, newPost);
+                    res = await formQuest(accessToken, postDto);
                     break;
                 case POST_TYPE.SB:
-                    res = await formSubmissions(accessToken, newPost);
+                    res = await formSubmissions(accessToken, postDto);
                     break;
                 default:
                     logger.error('[createPosts] create fail. POST_TYPE is invalid. type = ', type);
@@ -90,10 +92,12 @@ export async function createPosts(formData: FormData, editPostId?: number) {
                 message: res.status,
             });
             logger.info('res: ', { message: res });
-            logger.info('newPost: ', { message: newPost });
+            logger.info('newPost: ', { message: postDto });
             throw new Error('createPosts error');
         }
-        revalidateTag(type === POST_TYPE.QUEST ? POST_TYPE.QUEST : POST_TYPE.SB);
+
+        const postTag = PostCache.getPostTag(type);
+        revalidateTag(postTag);
     } catch (error) {
         logger.error('createPosts error', { message: error });
         return null;
@@ -102,7 +106,7 @@ export async function createPosts(formData: FormData, editPostId?: number) {
     redirect('/');
 }
 
-async function formQuest(accessToken: string, newPost: PostType) {
+async function formQuest(accessToken: string, newPost: NewPostForm) {
     let res: Response | null = null;
     try {
         res = await fetch(`${backendURL}/quests`, {
@@ -120,7 +124,7 @@ async function formQuest(accessToken: string, newPost: PostType) {
     }
 }
 
-async function formSubmissions(accessToken: string, newPost: PostType) {
+async function formSubmissions(accessToken: string, newPost: NewPostForm) {
     let res: Response;
     try {
         res = await fetch(`${backendURL}/sbs`, {
@@ -139,7 +143,7 @@ async function formSubmissions(accessToken: string, newPost: PostType) {
     }
 }
 
-async function editQuest(accessToken: string, questId: number, newPost: PostType) {
+async function editQuest(accessToken: string, questId: number, newPost: NewPostForm) {
     let res: Response | null = null;
     try {
         res = await fetch(`${backendURL}/quests/${questId}`, {
@@ -157,7 +161,7 @@ async function editQuest(accessToken: string, questId: number, newPost: PostType
     }
 }
 
-async function editSubmission(accessToken: string, sbId: number, newPost: PostType) {
+async function editSubmission(accessToken: string, sbId: number, newPost: NewPostForm) {
     let res: Response | null = null;
     try {
         res = await fetch(`${backendURL}/sbs/${sbId}`, {
@@ -175,7 +179,7 @@ async function editSubmission(accessToken: string, sbId: number, newPost: PostTy
     }
 }
 
-async function uploadImage(imageFile: File, type: POST_TYPE, newPost: PostType) {
+async function uploadImage(imageFile: File, type: POST_TYPE, newPost: NewPostForm) {
     if (validateImage(imageFile)) {
         let publicId: string | null = null;
         const userInfo = await getUserBasicInfo();
@@ -205,7 +209,7 @@ async function uploadImage(imageFile: File, type: POST_TYPE, newPost: PostType) 
     }
 }
 
-export async function addFavorite(postType: POST_TYPE, questId: number) {
+export async function addFavorite(postType: POST_TYPE, questId: number, postOffset: number) {
     const ret: responseData = {
         ok: false,
         message: '',
@@ -230,6 +234,8 @@ export async function addFavorite(postType: POST_TYPE, questId: number) {
             logger.info('addFavorite Response', { message: responseData });
             ret.response = responseData;
             ret.ok = true;
+            const pageTag = PostCache.getPaginatedTag(postType, postOffset);
+            revalidateTag(pageTag);
         } else {
             const data = await res.json();
             logger.error('addFavorite Error', {
@@ -237,6 +243,7 @@ export async function addFavorite(postType: POST_TYPE, questId: number) {
             });
             ret.message = `favorite 취소 실패`;
         }
+
         return ret;
     } catch (error) {
         logger.info('addFavorite error', { message: error });
@@ -245,12 +252,13 @@ export async function addFavorite(postType: POST_TYPE, questId: number) {
     }
 }
 
-export async function deleteFavorite(postType: POST_TYPE, questId: number) {
+export async function deleteFavorite(postType: POST_TYPE, questId: number, postOffset: number) {
     const ret: responseData = {
         ok: false,
         message: '',
         response: { favoriteQuestIds: [] },
     };
+
     try {
         const accessToken = await validateAuth();
 
@@ -267,6 +275,8 @@ export async function deleteFavorite(postType: POST_TYPE, questId: number) {
             logger.info('Backend Response', { message: responseData });
             ret.response = responseData;
             ret.ok = true;
+            const pageTag = PostCache.getPaginatedTag(postType, postOffset);
+            revalidateTag(pageTag);
         } else {
             const data = await res.json();
             logger.error('Backend Error', {
@@ -274,6 +284,7 @@ export async function deleteFavorite(postType: POST_TYPE, questId: number) {
             });
             ret.message = `favorite 취소 실패`;
         }
+
         return ret;
     } catch (error) {
         logger.info('deleteFavorite error', { message: error });

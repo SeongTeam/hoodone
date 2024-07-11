@@ -1,5 +1,5 @@
 "use client"
-import { POST_TYPE, PostType } from '@/type/postType';
+import { POST_TYPE, PostContainer, QuestPost, SubmissionPost } from '@/type/postType';
 import { Menu, MenuList, MenuButton, MenuItem, IconButton } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import React from "react";
@@ -8,7 +8,7 @@ import { useUserAccountWithSSR } from "@/hooks/userAccount";
 import { useRouter, useSearchParams } from 'next/navigation';
 
 type PostMenuProps = {
-    post : PostType
+    post : PostContainer<QuestPost | SubmissionPost>,
     type : POST_TYPE
 }
 
@@ -21,6 +21,7 @@ const PostMenu: React.FC<PostMenuProps> = ({post, type}) => {
     const [userAccount ] = useUserAccountWithSSR();
     const router = useRouter();
     const index = useSearchParams().get('index');
+    const { author } = post.postData;
 
 
     const handleReport= () => {
@@ -29,7 +30,7 @@ const PostMenu: React.FC<PostMenuProps> = ({post, type}) => {
 
     const handleEdit = () => {
         const path = type === POST_TYPE.QUEST ? `quest` : `sb`;
-        const postId = post.id;
+        const postId = post.postData.id;
         router.push(`/${path}/${postId}/edit?index=${index}`);
     }
     const handleDelete = () => {
@@ -53,14 +54,14 @@ const PostMenu: React.FC<PostMenuProps> = ({post, type}) => {
                 >
                     Report
                 </MenuItem>
-                { userAccount.nickname === post.author.nickname 
+                { userAccount.nickname === author.nickname 
                 && <MenuItem
                     onClick={handleEdit}
                     >
                     Edit
                     </MenuItem> 
                 }
-                { userAccount.nickname === post.author.nickname 
+                { userAccount.nickname === author.nickname 
                 && <MenuItem 
                     onClick={handleDelete} 
                     color={customColors.error[100]}
