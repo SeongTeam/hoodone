@@ -21,15 +21,21 @@ interface PostSliderPops {
 const PostSlider: React.FC<PostSliderPops> = ({ sliderName, gap, children, width, hight }) => {
     const BTN_H = 70;
     const BTN_W = 40;
+    const elementName = `Slider-${sliderName}`
+    const sliderRef = useRef<HTMLDivElement>(null);
 
     const _slideLeft = () => {
-        let slider = document.getElementById('slider')!;
-        slider.scrollLeft = slider.scrollLeft - 235;
+        if(sliderRef.current) {
+            sliderRef.current.scrollLeft -= 235;
+            
+        }
     };
 
     const _slideRight = () => {
-        let slider = document.getElementById('slider')!;
-        slider.scrollLeft = slider.scrollLeft + 235;
+        if(sliderRef.current) {
+            sliderRef.current.scrollLeft += 235;
+            
+        }
     };
 
     return (
@@ -53,7 +59,8 @@ const PostSlider: React.FC<PostSliderPops> = ({ sliderName, gap, children, width
             <HStack w="100%" overflowY="hidden" overflowX="scroll">
                 <Flex
                     w="1400px"
-                    id="slider"
+                    id={elementName}
+                    ref={sliderRef}
                     overflowY="hidden"
                     overflowX="scroll"
                     scrollBehavior="smooth"
