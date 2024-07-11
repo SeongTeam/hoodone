@@ -16,7 +16,8 @@ const FavoriteButton : React.FC<FavoriteButtonProps> = ({ type, post }) => {
     const [ userAccount, setUserAccount ] = useUserAccountWithSSR();
     const [isUserFavorite, setIsUserFavorite] = React.useState(false);
     const [favoriteCount, setFavoriteCount] = React.useState(post.postData.favoriteCount);
-    const id = post.postData.id;
+    const NO_POST_ID = 0;
+    const id = post.postData.id | NO_POST_ID;
     const offset = post.paginatedOffset;
     const handleFavorite = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
