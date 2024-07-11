@@ -53,7 +53,7 @@ const FavoriteButton : React.FC<FavoriteButtonProps> = ({ type, post }) => {
         if(userAccount.favoriteQuests && Array.isArray(userAccount.favoriteQuests)){
             setIsUserFavorite(userAccount.favoriteQuests.includes(id));
         }
-    }, [userAccount]);
+    }, [userAccount,id]);
 
     return (
         <Button

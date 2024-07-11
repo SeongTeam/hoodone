@@ -2,7 +2,7 @@
 
 import { Box, Button, HStack, VStack, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import useSelectFile from '@/hooks/useSelectFile';
 import TextInput from './postFormat/textInput';
 import { customColors } from '@/utils/chakra/customColors';
@@ -71,13 +71,13 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({
         console.log(result);
     };
 
-    const convertUrlToFile = async (imgUrl : string) => {
+    const convertUrlToFile = useCallback( async (imgUrl : string) => {
         const fileName = 'questThumbnail'
         const res = await fetch(imgUrl);
         const blob = await res.blob();
         const file = new File([blob], fileName, { type: blob.type});
         setSelectedFile(file);
-    }
+    }, [setSelectedFile]);
 
     useEffect(() => {
         if(existPost){
@@ -90,7 +90,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({
             }
     
         }
-    },[])
+    },[existPost,convertUrlToFile])
 
     useEffect(() => {
         if(!userAccount.isLogin){
