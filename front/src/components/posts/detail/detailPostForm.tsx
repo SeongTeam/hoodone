@@ -12,6 +12,7 @@ import { useUserAccountWithSSR, useUserAccountWithoutSSR } from '@/hooks/userAcc
 import { responseData } from '@/type/server-action/responseType';
 import { Icon } from '@iconify-icon/react/dist/iconify.mjs';
 import { useEffect, useState } from 'react';
+import FavoriteButton from '../common/FavoriteButton';
 
 type DetailPostFormProps = {
     post: PostType;
@@ -19,52 +20,11 @@ type DetailPostFormProps = {
 };
 
 export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) => {
-    const bg = customColors.white[100];
-    const borderColor = customColors.shadeLavender[300];
-    // userState.favoriteQuests.includes(post.id),
-    const [favoriteCount, setFavoriteCount] = useState<number>(post.favoriteCount);
-    const [userState, setUserState] = useUserAccountWithSSR();
-
-    const [isFavorite, setIsUserFavorite] = useState<boolean>(false);
-
-    const handleFavorite = async () => {
-        const res = await _callFavoriteAPI(isFavorite);
-
-        if (res.ok) {
-            const favoriteQuests = res.response as number[];
-
-            setUserState((prev) => ({
-                ...prev,
-                favoriteQuests: favoriteQuests,
-            }));
-        }
-
-        setIsUserFavorite(!isFavorite);
-    };
-    const _callFavoriteAPI = async (isFavorite: boolean): Promise<responseData> => {
-        if (!isFavorite) {
-            setFavoriteCount(favoriteCount + 1);
-            return await addFavorite(POST_TYPE.QUEST, post.id);
-        }
-        setFavoriteCount(favoriteCount - 1);
-
-        return await deleteFavorite(POST_TYPE.QUEST, post.id);
-    };
 
     const handleDoIt = () => {
         alert('Do it is not implemented yet');
     };
 
-    const mockBtn = () => {
-        console.log(userState);
-        console.log(isFavorite, post.id);
-    };
-
-    useEffect(() => {
-        if(userState.favoriteQuests && Array.isArray(userState.favoriteQuests)){
-            setIsUserFavorite(userState.favoriteQuests.includes(post.id));
-        }
-    }, [userState]);
 
     return (
         <Box w="100%" minW="300px">
@@ -122,25 +82,9 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) =>
 
                 <HStack>
                     {/* favorite Button */}
-                    <Button
-                        w="100px"
-                        variant={'purple'}
-                        onClick={handleFavorite}
-                        leftIcon={
-                            isFavorite ? (
-                                <Icon icon="solar:heart-bold" width="20px" height="20px" />
-                            ) : (
-                                <Icon icon="solar:heart-linear" width="20px" height="20px" />
-                            )
-                        }
-                    >
-                        {favoriteCount}
-                    </Button>
+                    <FavoriteButton type={type} post={post} />
                     <Button w="100px" variant={'purple'} fontSize="24px" onClick={handleDoIt}>
                         Do it
-                    </Button>
-                    <Button w="100px" variant={'purple'} fontSize="24px" onClick={mockBtn}>
-                        mock
                     </Button>
                 </HStack>
             </Flex>

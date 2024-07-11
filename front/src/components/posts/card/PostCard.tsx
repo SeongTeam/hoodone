@@ -69,7 +69,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, index, type }) => {
                 <PostThumbnail publicID={post.cloudinaryPublicId} />
                 <Flex align={'center'}>
                     <UserProfileImage ImageSrc={post.author.profileImagePublicId} />
-                    <Text color={fontColor}>
+                    <Text ml="10px" color={fontColor}>
                         {`${post.author.nickname} ${formatCreatedAt(timeAgo)}`}
                     </Text>
                 </Flex>
