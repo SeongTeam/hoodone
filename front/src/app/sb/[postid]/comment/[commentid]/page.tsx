@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { PostFetchService } from "@/lib/server-only/postLib";
-import { POST_TYPE, PostType } from '@/type/postType';
+import { POST_TYPE } from '@/type/postType';
 import { Grid,SimpleGrid,Spacer,Text, VStack } from "@chakra-ui/react";
 import logger from "@/utils/log/logger";
 import RuleCard from "@/components/posts/card/RuleCard";
@@ -28,9 +28,9 @@ const PostPageWithReply : NextPage<PostPageWithReplyProps> = async (
     const inputBorderColor = customColors.shadeLavender[300];
 
     const postService = new PostFetchService(POST_TYPE.SB);
-    const post : PostType | null = await postService.getPostByID(params.postid, parseInt(searchParams.index));
+    const post = await postService.getPostByID(params.postid, parseInt(searchParams.index));
     
-    const allPosts: PostType[] | null = await postService.getCachedPaginatedPosts(1);
+    const allPosts = await postService.getCachedPaginatedPosts(1);
 
     logger.info('#PostPageWithReply Rendered', { message: JSON.stringify(params) });
     if(!post ) {
@@ -73,7 +73,7 @@ const PostPageWithReply : NextPage<PostPageWithReplyProps> = async (
 
                 <Spacer h="26px" />
 
-                <CommentArea postType={POST_TYPE.SB} postID={post.id} rootCommentID={parseInt(params.commentid)}></CommentArea>
+                <CommentArea postType={POST_TYPE.SB} postID={post.postData.id} rootCommentID={parseInt(params.commentid)}></CommentArea>
             </VStack>
             <RuleCard
                 title="Quest"

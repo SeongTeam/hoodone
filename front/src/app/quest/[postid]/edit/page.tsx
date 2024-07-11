@@ -2,7 +2,7 @@ import { Box, Grid, GridItem, HStack, Spacer, Stack, VStack, Text } from '@chakr
 import CreatePostForm from '@/components/posts/create/createPostForm';
 import { customColors } from '@/utils/chakra/customColors';
 import CreationRulesBox from '@/components/posts/create/postFormat/subComponent/creationRulesBox';
-import { POST_TYPE, PostType } from '@/type/postType';
+import { POST_TYPE } from '@/type/postType';
 import { PostFetchService } from '@/lib/server-only/postLib';
 import { useEffect } from 'react';
 import logger from '@/utils/log/logger';
@@ -18,7 +18,7 @@ export default async function EditQuestPage({ params ,searchParams }: EditQuestP
 
     const postId = params.postid;
     const pos = parseInt(searchParams.index);
-    const post : PostType | null = await new PostFetchService(POST_TYPE.QUEST).getPostByID(postId,pos);
+    const post = await new PostFetchService(POST_TYPE.QUEST).getPostByID(postId,pos);
 
     logger.info ('#EditQuestPage Rendered', { message: JSON.stringify(params) });
     logger.info('#EditQuestPage Rendered', { message: JSON.stringify(post) });

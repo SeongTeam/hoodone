@@ -6,7 +6,7 @@ import AdminPostCard from './AdminPostCard';
 import PostSlider from '@/components/_global/slider/postSlider';
 import Link from 'next/link';
 import { customColors } from '@/utils/chakra/customColors';
-import { POST_TYPE, PostType } from '@/type/postType';
+import { POST_TYPE, PostContainer, QuestPost } from '@/type/postType';
 import { PostFetchService } from '@/lib/server-only/postLib';
 
 /*TODO
@@ -72,12 +72,12 @@ const AdminPostSliderWidnow: React.FC<AdminPostSliderWidnowProps> = async () => 
                                         duration: 0.5,
                                     }}
                                     viewport={{ amount: 0 }}
-                                    key={post.id}
+                                    key={post.postData.id}
                                 >
                                     <AdminPostCard
-                                        pushedPath={`/quest/${post.id}?index=${index}`}
-                                        post={post}
-                                        key={post.id}
+                                        pushedPath={`/quest/${post.postData.id}?index=${index}`}
+                                        post={post as PostContainer<QuestPost>}
+                                        key={`AdminQuest-${post.postData.id}`}
                                         index={index}
                                         bg={postColor[index % postColor.length]}
                                     />

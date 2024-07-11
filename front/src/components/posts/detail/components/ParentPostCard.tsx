@@ -1,6 +1,6 @@
 'use client';
 
-import { PostType } from '@/type/postType';
+import { PostContainer, QuestPost, SubmissionPost } from '@/type/postType';
 import { customColors } from '@/utils/chakra/customColors';
 import { Box, Flex, Text, Image, Spacer, Stack, chakra, VStack } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
@@ -13,7 +13,7 @@ import { useState } from 'react';
 type PostVariety = 'quest' | 'sb';
 
 type ParentPostCardProps = {
-    post: PostType;
+    post: PostContainer<QuestPost | SubmissionPost>;
     type: PostVariety;
 };
 
@@ -23,9 +23,9 @@ const ParentPostCard: React.FC<ParentPostCardProps> = (
 ) => {
     const ImagRadious = variant === ImageUploadVariant.Profile ? 'full' : '15px';
     const ImageFit = variant === ImageUploadVariant.Profile ? 'cover' : 'contain';
-    const { title, content, author, createdAt, tags } = post;
+    const { id ,title, content, author, createdAt, tags } = post.postData;
 
-    const timeAgo = post.createdAt;
+    const timeAgo = createdAt;
     const router = useRouter();
     const [isImageHidden, setIsImageHidden] = useState(false);
     const updateAt: string = formatCreatedAt(timeAgo);
@@ -38,7 +38,6 @@ const ParentPostCard: React.FC<ParentPostCardProps> = (
         return title;
     };
     const handleOnClickItem = (event: React.MouseEvent<HTMLDivElement>) => {
-        const id = post.id;
         alert('id : ' + id);
         router.push(`/post/${id}`);
     };
@@ -75,12 +74,12 @@ const ParentPostCard: React.FC<ParentPostCardProps> = (
                             whiteSpace="nowrap"
                         >
                             {`Quest:\t`}
-                            {editTitle(post.title)}
+                            {editTitle(title)}
                         </Text>
                     </Flex>
                     <Box>
                         <Text noOfLines={2} fontSize="mb" fontWeight="500">
-                            {post.content}
+                            {content}
                         </Text>
                     </Box>
                 </Stack>

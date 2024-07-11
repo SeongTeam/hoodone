@@ -8,11 +8,11 @@ import PostThumbnail from './components/postThumbnail';
 import UserProfileImage from '@/components/common/server-component/UserProfileImage';
 import QuestButtons from './components/QuestButtons';
 import { formatCreatedAt } from '@/lib/Date';
-import { PostType, POST_TYPE } from '@/type/postType';
+import { PostContainer,QuestPost, SubmissionPost, POST_TYPE } from '@/type/postType';
 
 
 type PostCardProps = {
-    post: PostType;
+    post: PostContainer<QuestPost | SubmissionPost>;
     index: number;
     type: POST_TYPE;
 };
@@ -29,9 +29,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, index, type }) => {
     const fontColor = customColors.black[100];
     const bg = customColors.white[100];
     const borderColor = customColors.shadeLavender[100];
-    const timeAgo = post.createdAt;
+    const timeAgo = post.postData.createdAt;
     const router = useRouter();
-
+    const {author } = post.postData;
     const editTitle = (title: string) => {
         const maxTitleLength = 30;
         if (title.length > maxTitleLength) {
@@ -40,7 +40,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, index, type }) => {
         return title;
     };
     const handleOnClickItem = (event: React.MouseEvent<HTMLDivElement>) => {
-        const id = post.id;
+        const id = post.postData.id;
         const route = type === POST_TYPE.QUEST ? 'quest' : 'sb';
         alert('id : ' + id);
         router.push(`/${route}/${id}?index=${index}`);
@@ -63,14 +63,14 @@ const PostCard: React.FC<PostCardProps> = ({ post, index, type }) => {
             <Flex w="full" h="full" justify={'space-between'} direction={'column'}>
                 <Flex align={'center'}>
                     <Text fontSize="24px" color={fontColor}>
-                        {editTitle(post.title)}
+                        {editTitle(post.postData.title)}
                     </Text>
                 </Flex>
-                <PostThumbnail publicID={post.cloudinaryPublicId} />
+                <PostThumbnail publicID={post.postData.cloudinaryPublicId} />
                 <Flex align={'center'}>
-                    <UserProfileImage ImageSrc={post.author.profileImagePublicId} />
+                    <UserProfileImage ImageSrc={author.profileImagePublicId} />
                     <Text ml="10px" color={fontColor}>
-                        {`${post.author.nickname} ${formatCreatedAt(timeAgo)}`}
+                        {`${author.nickname} ${formatCreatedAt(timeAgo)}`}
                     </Text>
                 </Flex>
                 <QuestButtons post={post} />

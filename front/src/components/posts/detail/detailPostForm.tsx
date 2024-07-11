@@ -4,7 +4,7 @@ import { customColors } from '@/utils/chakra/customColors';
 import { Box, Button, Divider, Flex, HStack, Image, Spacer, Tag, Text } from '@chakra-ui/react';
 import DetailPostHeader from './components/DetailPostHeader';
 import ParentPostCard from './components/ParentPostCard';
-import { POST_TYPE, PostType } from '@/type/postType';
+import { POST_TYPE, QuestPost, SubmissionPost,PostContainer } from '@/type/postType';
 import { addFavorite, deleteFavorite } from '@/server-actions/postsActions';
 import { UserAccountState } from '@/atoms/userAccount';
 import { useRecoilState } from 'recoil';
@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import FavoriteButton from '../common/FavoriteButton';
 
 type DetailPostFormProps = {
-    post: PostType;
+    post: PostContainer<QuestPost | SubmissionPost>;
     type: POST_TYPE;
 };
 
@@ -24,6 +24,7 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) =>
     const handleDoIt = () => {
         alert('Do it is not implemented yet');
     };
+    const { title , content , tags } = post.postData;
 
 
     return (
@@ -45,7 +46,7 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) =>
                     align="left"
                 >
                     {'Sb:\t'}
-                    {post.title}
+                    {title}
                 </Text>
 
                 <Divider orientation="horizontal" borderColor={customColors.shadeLavender[100]} />
@@ -57,14 +58,14 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) =>
                 <Box height={35}></Box>
                 {/* content */}
                 <Text px={4} py={4} fontSize="1.3em" alignContent="left" align="left">
-                    {post.content}
+                    {content}
                 </Text>
                 <Spacer h="20px" />
 
                 <Box id="tags-list">
-                    {post.tags &&
-                        Array.isArray(post.tags) &&
-                        post.tags.map((value) => (
+                    {tags &&
+                        Array.isArray(tags) &&
+                        tags.map((value) => (
                             <Tag
                                 key={value}
                                 variant="postTag"

@@ -5,9 +5,9 @@ import React, { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { userAccountState } from '@/atoms/userAccount';
 import UserProfileImage from '@/components/common/server-component/UserProfileImage';
-import { PostType } from '@/type/postType';
+import { PostContainer , QuestPost } from '@/type/postType';
 type AdminPostCardProps = {
-    post: PostType;
+    post: PostContainer<QuestPost>;
     index: number;
     pushedPath: string;
     bg: string;
@@ -17,7 +17,7 @@ const AdminPostCard: React.FC<AdminPostCardProps> = ({ post, index, pushedPath, 
     const fontColor = customColors.black[100];
     // const bg = customColors.white[100];
     const borderColor = customColors.shadeLavender[100];
-    const timeAgo = post.createdAt;
+    const { title , author } = post.postData;
     const router = useRouter();
 
     const editTitle = (title: string) => {
@@ -28,7 +28,7 @@ const AdminPostCard: React.FC<AdminPostCardProps> = ({ post, index, pushedPath, 
         return title;
     };
     const handleOnClickItem = (event: React.MouseEvent<HTMLDivElement>) => {
-        const id = post.id;
+        const id = post.postData.id;
         alert('id : ' + id);
         router.push(pushedPath);
     };
@@ -51,8 +51,8 @@ const AdminPostCard: React.FC<AdminPostCardProps> = ({ post, index, pushedPath, 
         >
             <Flex w="100%" h="100%" direction={'column'} gap="8px">
                 <Flex direction={'row'}>
-                    <UserProfileImage boxSize="25px" ImageSrc={post.author.profileImagePublicId} />
-                    <Text ml="8px" color={fontColor}>{`${post.author.nickname}`}</Text>
+                    <UserProfileImage boxSize="25px" ImageSrc={author.profileImagePublicId} />
+                    <Text ml="8px" color={fontColor}>{`${author.nickname}`}</Text>
                 </Flex>
                 <Text
                     fontSize="18px"
@@ -61,7 +61,7 @@ const AdminPostCard: React.FC<AdminPostCardProps> = ({ post, index, pushedPath, 
                     textOverflow="ellipsis"
                     whiteSpace="nowrap"
                 >
-                    {editTitle(post.title)}
+                    {editTitle(title)}
                 </Text>
             </Flex>
         </Box>

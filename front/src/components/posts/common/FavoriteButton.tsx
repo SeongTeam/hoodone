@@ -4,19 +4,19 @@ import { Button } from "@chakra-ui/react";
 import { Icon } from "@iconify-icon/react";
 import { useUserAccountWithSSR } from "@/hooks/userAccount";
 import { addFavorite, deleteFavorite } from "@/server-actions/postsActions";
-import { POST_TYPE, PostType } from "@/type/postType";
+import { POST_TYPE, PostContainer, QuestPost, SubmissionPost } from "@/type/postType";
 import { responseData } from "@/type/server-action/responseType";
 
 interface FavoriteButtonProps {
     type: POST_TYPE;
-    post : PostType
+    post : PostContainer<QuestPost | SubmissionPost>;
 }
 
 const FavoriteButton : React.FC<FavoriteButtonProps> = ({ type, post }) => {
     const [ userAccount, setUserAccount ] = useUserAccountWithSSR();
     const [isUserFavorite, setIsUserFavorite] = React.useState(false);
-    const [favoriteCount, setFavoriteCount] = React.useState(post.favoriteCount);
-
+    const [favoriteCount, setFavoriteCount] = React.useState(post.postData.favoriteCount);
+    const id = post.postData.id;
     const handleFavorite = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         if(!userAccount.isLogin)
@@ -34,23 +34,23 @@ const FavoriteButton : React.FC<FavoriteButtonProps> = ({ type, post }) => {
             }));
         }
 
-        console.log(post.id);
+        console.log(id);
 
         setIsUserFavorite(prev => !prev);
     };
     const _callFavoriteAPI = async (isFavorite: boolean): Promise<responseData> => {
         if (!isFavorite) {
             setFavoriteCount(favoriteCount + 1);
-            return await addFavorite(POST_TYPE.QUEST, post.id);
+            return await addFavorite(POST_TYPE.QUEST, id);
         }
         setFavoriteCount(favoriteCount - 1);
 
-        return await deleteFavorite(POST_TYPE.QUEST, post.id);
+        return await deleteFavorite(POST_TYPE.QUEST, id);
     };
 
     useEffect(() => {
         if(userAccount.favoriteQuests && Array.isArray(userAccount.favoriteQuests)){
-            setIsUserFavorite(userAccount.favoriteQuests.includes(post.id));
+            setIsUserFavorite(userAccount.favoriteQuests.includes(id));
         }
     }, [userAccount]);
 

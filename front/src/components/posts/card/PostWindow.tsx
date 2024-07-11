@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Grid, GridItem, } from '@chakra-ui/react';
 import PostCard from './PostCard';
 import MotionDiv from '@/components/common/motionDiv';
-import { POST_TYPE, PostType } from '@/type/postType';
+import { POST_TYPE, PostContainer, QuestPost,SubmissionPost } from '@/type/postType';
 
 /*TODO
 - route handler GET METHOD cache 활용 여부 확인
@@ -27,7 +27,7 @@ const BatchSize = 1;
 const getPaginatedPostsFromAPI = async (offset: number, type : POST_TYPE) => {
     console.log('getPaginatedPostsFromAPI', {offset, type});
     const res = await fetch(`${apiUrl}/posts?offset=${offset}&type=${type}`);
-    const posts = res.json();
+    const posts : PostContainer<QuestPost | SubmissionPost>[] | null = await res.json();
     return posts;
 };
 
@@ -37,7 +37,7 @@ type PostWinowProps = {
 
 const PostWinow: React.FC<PostWinowProps> = ({ type }) => {
     const { ref, inView } = useInView();
-    const [posts, setPosts] = useState<PostType[]>([]);
+    const [posts, setPosts] = useState<PostContainer<QuestPost | SubmissionPost>[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [offset, setOffset] = useState<number>(INITIAL_OFFSET);
@@ -54,9 +54,12 @@ const PostWinow: React.FC<PostWinowProps> = ({ type }) => {
         setIsLoading(true);
         try {
             const newPosts = await getPaginatedPostsFromAPI(offset,type);
+            if ( !newPosts || newPosts.length <= 0){
+                 setHasMore(false);
+                return;
+            }
             setPosts((posts) => [...posts, ...newPosts]);
             setOffset((prev) => prev + BatchSize);
-            if (newPosts.length <= 0) setHasMore(false);
         } catch (error) {
             console.log(error);
             setHasMore(false);
@@ -90,7 +93,7 @@ const PostWinow: React.FC<PostWinowProps> = ({ type }) => {
                 {
                     posts.map((post, index) => {
                         return (
-                        <GridItem key = {post.id} maxW="340px">
+                        <GridItem key = {post.postData.id} maxW="340px">
                             <MotionDiv
                                 variants={variants}
                                 initial="hidden"
@@ -106,7 +109,7 @@ const PostWinow: React.FC<PostWinowProps> = ({ type }) => {
                                 <PostCard 
                                     type={type}
                                     post={post} 
-                                    key={post.id} 
+                                    key={post.postData.id} 
                                     index={index}/>
                             </MotionDiv>
                         </GridItem>

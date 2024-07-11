@@ -1,7 +1,7 @@
 import logger from '@/utils/log/logger';
 import { NextResponse } from 'next/server';
 import { type NextRequest } from 'next/server';
-import { PostType, POST_TYPE } from '@/type/postType';
+import { POST_TYPE } from '@/type/postType';
 import { PostFetchService } from '@/lib/server-only/postLib';
 
 export async function GET(req: NextRequest) {
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
             throw new Error('offset or limit not found');
         }
 
-        const posts: PostType[] | null = await service.getCachedPaginatedPosts(offset);
+        const posts = await service.getCachedPaginatedPosts(offset);
 
         return NextResponse.json(posts);
     } catch (error) {
