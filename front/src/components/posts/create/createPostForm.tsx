@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Button, HStack, VStack, useToast } from '@chakra-ui/react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import useSelectFile from '@/hooks/useSelectFile';
 import TextInput from './postFormat/textInput';
@@ -29,6 +29,8 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({
     const userAccount = useUserAccountWithoutSSR(); 
     const router = useRouter();
     const useToastOption = useToast();
+    const isQuestPost = type === POST_TYPE.QUEST;
+    const params = !isQuestPost ? useParams<{ questId: string}>() : null;
     const defaultNewPost : NewPostForm = existPost ? { 
         title: existPost.postData.title,
         content: existPost.postData.content,
@@ -39,12 +41,12 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({
         content: '',
         tags: [],
         type: type,
+        parentQuestId : !isQuestPost ? params?.questId : undefined,
     }
     const [newPost, setNewPost] = useState<NewPostForm>(defaultNewPost);
     const { selectedFile, setSelectedFile, onSelectedFile, onDroppedFile } = useSelectFile();
     const bg = customColors.white[100];
     const inputBorderColor = customColors.shadeLavender[300];
-    const isQuestPost = type === POST_TYPE.QUEST;
 
 
 

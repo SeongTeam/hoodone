@@ -41,6 +41,7 @@ export interface NewPostForm {
     tags: string[];
     type: POST_TYPE;
     cloudinaryPublicId?: string;
+    parentQuestId?: string;
 }
 
 export enum NEW_POST_FORMAT {

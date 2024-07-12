@@ -5,8 +5,15 @@ import CreatePostForm from '@/components/posts/create/createPostForm';
 import { customColors } from '@/utils/chakra/customColors';
 import CreationRulesBox from '@/components/posts/create/postFormat/subComponent/creationRulesBox';
 import { POST_TYPE } from '@/type/postType';
+import { NextPage } from 'next';
 
-export default function CreateSbPage() {
+interface CreateSbPageProps {
+    searchParams: {
+        targetPostId : number
+    }
+}
+
+ const CreateSbPage : NextPage<CreateSbPageProps> = () => {
 
     return (
         <Box width="100%" px="29px" pt="25px" pb="20px">
@@ -36,3 +43,5 @@ export default function CreateSbPage() {
         </Box>
     );
 }
+
+export default CreateSbPage;
