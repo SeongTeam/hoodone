@@ -291,4 +291,9 @@ export class PostsUseCases {
     getSbFromBoard(boardId: number, offset: number, limit: number) {
         return this.sbService.getPostFromBoard(boardId, offset, limit);
     }
+
+    getRelatedSbs(questId: number, offset: number, limit: number) {
+        Logger.log(`getRelatedSbs() => questId: ${questId}, offset: ${offset}, limit: ${limit}`);
+        return this.sbService.getRelatedSBsByQuestId(questId, offset, limit);
+    }
 }

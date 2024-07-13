@@ -238,6 +238,24 @@ export class SbPostsService {
         return data;
     }
 
+    async getRelatedSBsByQuestId(questId: number, offset: number, limit: number) {
+        const data = await this.postsRepository.find({
+            ...SB_POST_FIND_OPTION,
+            where: {
+                isPublished: true,
+                parentPost: { id: questId },
+            },
+            skip: limit * (offset - 1),
+            take: limit,
+            order: {
+                createdAt: 'DESC',
+            },
+        });
+        Logger.log('[getRelatedSBsByQuestId]', JSON.stringify(data));
+
+        return data;
+    }
+
     async getPostFromBoard(boardId: number, offset: number, limit: number) {
         const posts = this.postsRepository.find({
             ...SB_POST_FIND_OPTION,

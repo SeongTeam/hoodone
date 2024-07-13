@@ -19,6 +19,7 @@ import { QueryRunner as QR } from 'typeorm';
 import { AccessTokenGuard } from 'src/auth/guard/token/access-token.guard';
 import { TransactionInterceptor } from 'src/_common/interceptor/transaction.interceptor';
 import { PostApiResponseDto } from 'hoodone-shared/dist/response-dto/post-api-reponse.dto';
+import { QuestPostApiResponseDto } from 'hoodone-shared/dist/response-dto/quest-post-api-response.dto';
 import { GetPaginatedPostsQueryDTO } from '../dto/get-paginated-posts.dto';
 import { IsPublic } from 'src/_common/decorator/is-public.decorator';
 import { ParseBoolPipe, ParseIntPipe, ValidationPipe } from '@nestjs/common/pipes';
@@ -56,9 +57,10 @@ export class QuestPostsController {
     ) {
         // 로직 실행
         console.log(body);
-        const newPost = await this.postUseCase.createQuest(userId, body, qr);
+        const res = new PostApiResponseDto();
+        res.post = await this.postUseCase.createQuest(userId, body, qr);
 
-        return newPost;
+        return res;
     }
 
     @Get('/all')
@@ -96,6 +98,18 @@ export class QuestPostsController {
     async getById(@Param('id', ParseIntPipe) id: number) {
         let res = new PostApiResponseDto();
         res.getById = await this.postUseCase.getQuestById(id);
+
+        return res;
+    }
+    @Get('/:id/sbs')
+    async getRelatedSbs(
+        @Param('id', ParseIntPipe) id: number,
+        @Query(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
+        queryParams: GetPaginatedPostsQueryDTO,
+    ) {
+        const { offset, limit } = queryParams;
+        const res = new QuestPostApiResponseDto();
+        res.getPaginatedSbs = await this.postUseCase.getRelatedSbs(id, offset, limit);
 
         return res;
     }
