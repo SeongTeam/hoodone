@@ -9,6 +9,7 @@ import UserProfileImage from '@/components/common/server-component/UserProfileIm
 import { ImageUploadVariant } from '@/components/common/ImageUpload';
 import { formatCreatedAt } from '@/lib/Date';
 import { useState } from 'react';
+import { CldImage } from 'next-cloudinary';
 
 type PostVariety = 'quest' | 'sb';
 
@@ -27,36 +28,38 @@ const ParentPostCard: React.FC<ParentPostCardProps> = (
 
     const timeAgo = createdAt;
     const router = useRouter();
-    const [isImageHidden, setIsImageHidden] = useState(false);
+    const maxTitleLength = 30;
+    const maxContentLength = 200;
     const updateAt: string = formatCreatedAt(timeAgo);
+    const borderRadius = '15px';
 
-    const editTitle = (title: string) => {
-        const maxTitleLength = 30;
-        if (title.length > maxTitleLength) {
-            return title.substring(0, maxTitleLength) + '...';
+    const editString = (str: string, maxLength : number) => {
+        if (str.length > maxLength) {
+            return str.substring(0, maxLength) + '...';
         }
-        return title;
+        return str;
     };
     const handleOnClickItem = (event: React.MouseEvent<HTMLDivElement>) => {
-        alert('id : ' + id);
-        router.push(`/post/${id}`);
+        router.push(`/quest/${id}`);
     };
 
-    let mockText =
-        'qwofodofodjfdkfmdnfmsdnfmndmnfmsndfdpofpsdopfdopfopdofpsodpopdopsofpdoposdpfodpfopdospofpdopsfopodospodpofposdpofdpofpdsopfopd';
+
 
     return (
-        <VStack spacing={4}>
+        <Box>
             <Stack
                 spacing={{ base: 0, md: 4 }}
                 direction={'row'}
                 border="1px solid"
-                borderRadius="2px"
-                borderColor="gray.400"
-                w={{ base: '100%', md: '2xl' }}
+                borderRadius={borderRadius}
+                borderColor={customColors.shadeLavender[100]}
+                bg="white"
+                w="full"
                 overflow="hidden"
                 pos="relative"
-                pb="6px"
+                mb = "10px"
+                onClick={handleOnClickItem}
+
             >
                 <Stack
                     direction="column"
@@ -72,35 +75,38 @@ const ParentPostCard: React.FC<ParentPostCardProps> = (
                             overflow="hidden"
                             textOverflow="ellipsis"
                             whiteSpace="nowrap"
+                            fontFamily={'Roboto'}
                         >
                             {`Quest:\t`}
-                            {editTitle(title)}
+                            {editString(title, maxTitleLength)}
                         </Text>
                     </Flex>
                     <Box>
                         <Text noOfLines={2} fontSize="mb" fontWeight="500">
-                            {content}
+                            {editString(content, maxContentLength)}
                         </Text>
                     </Box>
                 </Stack>
 
                 <Flex
-                    h={{ md: '120px', sm: '90px' }}
-                    w={{ md: '300px', sm: '250px' }}
+                    py = "10px"
+                    px = "10px"
                     align="center"
+                    display = {{ base : "none" , md: 'flex' }}
                 >
                     {/* 
                         TODO PostThumbnail로 변경하기
                         <PostThumbnail publicID={post.cloudinaryPublicId} /> */}
-                    <Image
-                        rounded="md"
-                        objectFit="fill"
-                        src="https://res.cloudinary.com/dk5ug4mzv/image/upload/v1714549154/hoodone/h4tpikvcyqntfuqqhby6.jpg"
-                        alt="product image"
+                    <CldImage
+                        src={post.postData.cloudinaryPublicId}
+                        alt= "thumbnail"
+                        width="270"
+                        height="120"
+                        style={{ objectFit: ImageFit, borderRadius:  borderRadius  }}
                     />
                 </Flex>
             </Stack>
-        </VStack>
+        </Box>
     );
 };
 

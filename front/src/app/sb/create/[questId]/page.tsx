@@ -1,45 +1,38 @@
-'use client';
-
 import { Box, Grid, GridItem, HStack, Spacer, Stack, VStack, Text } from '@chakra-ui/react';
 import CreatePostForm from '@/components/posts/create/createPostForm';
 import { customColors } from '@/utils/chakra/customColors';
 import CreationRulesBox from '@/components/posts/create/postFormat/subComponent/creationRulesBox';
 import { POST_TYPE } from '@/type/postType';
 import { NextPage } from 'next';
+import { PostFetchService } from '@/lib/server-only/postLib';
+import ParentPostCard from '@/components/posts/detail/components/ParentPostCard';
+import { Logger } from 'winston';
+import logger from '@/utils/log/logger';
 
 interface CreateSbPageProps {
+    params: {
+        questId : string
+    }
     searchParams: {
-        targetPostId : number
+        index: string
     }
 }
 
- const CreateSbPage : NextPage<CreateSbPageProps> = () => {
-
+ const CreateSbPage : NextPage<CreateSbPageProps> =async  ({ params, searchParams }) => {
+    const noPos = 0;
+    const parentQuestId = params.questId;
+    const pos = parseInt(searchParams.index);
+    const questPost = await new PostFetchService(POST_TYPE.QUEST).getPostByID( parentQuestId, pos );
+    if (!questPost) {
+        logger.error(`Quest post not found ${parentQuestId}`, { questPost: JSON.stringify(params) });
+        throw new ReferenceError(`post not found`);
+    }
+    
     return (
-        <Box width="100%" px="29px" pt="25px" pb="20px">
-            <Text size="17px">User Quest</Text>
-            <Spacer height="11px" />
-            <Grid
-                templateAreas={`"main main space createRule"
-              "main  main space empty"
-              "main main space empty"`}
-                gridTemplateRows={'3.5rem, 30px 1rem'}
-                gridTemplateColumns={'200px,2rem,'}
-                w="100%"
-                h="100%"
-            >
-                <GridItem pl="2" width="100%" area={'main'}>
-                    {' '}
+        <Box width="100%" pb="20px">
+                    <ParentPostCard post={questPost} type={POST_TYPE.QUEST} />
                     <CreatePostForm type={POST_TYPE.SB} />
-                </GridItem>
-                <GridItem pl="2" area={'space'}>
-                    {' '}
-                    <Box width="10px"> </Box>
-                </GridItem>
-                <GridItem pl="2" area={'createRule'} alignContent="center">
-                    <CreationRulesBox isQuestPost={false}></CreationRulesBox>
-                </GridItem>
-            </Grid>
+
         </Box>
     );
 }
