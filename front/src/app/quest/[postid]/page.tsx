@@ -25,17 +25,22 @@ export type QuestPageProps = {
 
 const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => {
     const inputBorderColor = customColors.shadeLavender[300];
-    const postFetchService = new PostFetchService(POST_TYPE.QUEST);
+    const questFetchService = new PostFetchService(POST_TYPE.QUEST);
 
     logger.info('#PostPage Rendered', { message: params.postid });
     console.log(params.postid, searchParams.index);
 
-    const post = await postFetchService.getPostByID(
+    const postPromise = questFetchService.getPostByID(
         params.postid,
         parseInt(searchParams.index),
     );
 
-    const allPosts = await postFetchService.getCachedPaginatedPosts(1);
+    const relatedSblistPromise = questFetchService.getRelatedsbs(params.postid);
+
+    const [post, relatedSblist] = await Promise.all([postPromise, relatedSblistPromise]);
+
+    console.log(relatedSblist);
+
     if (!post) {
         logger.error(`post${params.postid} not found`);
         throw new ReferenceError(`post not found`);
@@ -78,8 +83,8 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
 
                         <Text fontSize="1.4em"> Submission</Text>
                         <PostSlider sliderName="sbsPostsOnDetail" hight="190px">
-                            {allPosts?.map((post, index) => (
-                                <MiniPostCard key={index} index={index} post={post} />
+                            {relatedSblist?.map((sb, index) => (
+                                <MiniPostCard key={index} index={index} post={sb} />
                             ))}
                         </PostSlider>
 

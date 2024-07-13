@@ -146,6 +146,8 @@ async function formSubmissions(accessToken: string, newPost: NewPostForm) {
             body: JSON.stringify(newPost),
         });
 
+        const cacheTag = PostCache.getRelatedPostlistTag(POST_TYPE.QUEST, parseInt(questId));
+        revalidateTag(cacheTag);
         return res;
     } catch (error) {
         logger.error('formSubmissions error', { message: error });
