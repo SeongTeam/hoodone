@@ -1,6 +1,6 @@
 export const titleTexts = {
     quest: 'Quest Title:Do Something',
-    sb: 'sb:Do Something',
+    sb: 'SB: I did something',
 };
 
 export const contentTexts = {

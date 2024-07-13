@@ -126,12 +126,22 @@ async function formQuest(accessToken: string, newPost: NewPostForm) {
 
 async function formSubmissions(accessToken: string, newPost: NewPostForm) {
     let res: Response;
+    const questId = newPost.parentQuestId;
+
+    if (questId === undefined || questId === null) {
+        logger.error('[formSubmissions] questId invalidation error', {
+            message: JSON.stringify(newPost),
+        });
+        throw new Error('questId is invalid.');
+    }
+
     try {
         res = await fetch(`${backendURL}/sbs`, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
                 authorization: `Bearer ${accessToken}`,
+                questId: questId,
             },
             body: JSON.stringify(newPost),
         });
@@ -163,6 +173,7 @@ async function editQuest(accessToken: string, questId: number, newPost: NewPostF
 
 async function editSubmission(accessToken: string, sbId: number, newPost: NewPostForm) {
     let res: Response | null = null;
+
     try {
         res = await fetch(`${backendURL}/sbs/${sbId}`, {
             method: 'PATCH',
