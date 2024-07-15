@@ -1,18 +1,19 @@
 'use client';
 
 import { customColors } from '@/utils/chakra/customColors';
-import { Box, Button, Divider, Flex, HStack, Image, Spacer, Tag, Text } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, HStack, Icon, Image, Spacer, Tag, Text } from '@chakra-ui/react';
 import DetailPostHeader from './components/DetailPostHeader';
 import ParentPostCard from './components/ParentPostCard';
 import { POST_TYPE, QuestPost, SubmissionPost,PostContainer } from '@/type/postType';
-import { addFavorite, deleteFavorite } from '@/server-actions/postsActions';
+import { addFavorite, deleteFavorite, evaluateSubmission } from '@/server-actions/postsActions';
 import { UserAccountState } from '@/atoms/userAccount';
 import { useRecoilState } from 'recoil';
 import { useUserAccountWithSSR, useUserAccountWithoutSSR } from '@/hooks/userAccount';
 import { responseData } from '@/type/server-action/responseType';
-import { Icon } from '@iconify-icon/react/dist/iconify.mjs';
 import { useEffect, useState } from 'react';
 import FavoriteButton from '../common/FavoriteButton';
+import { useRouter } from 'next/navigation';
+import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons'
 
 type DetailPostFormProps = {
     post: PostContainer<QuestPost | SubmissionPost>;
@@ -21,9 +22,6 @@ type DetailPostFormProps = {
 
 export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) => {
 
-    const handleDoIt = () => {
-        alert('Do it is not implemented yet');
-    };
     const { title , content , tags } = post.postData;
 
 
@@ -81,15 +79,64 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) =>
                 <Divider orientation="horizontal" borderColor={customColors.shadeLavender[100]} />
                 <Box height={15}></Box>
 
-                <HStack>
-                    {/* favorite Button */}
-                    <FavoriteButton type={type} post={post} />
-                    <Button w="100px" variant={'purple'} fontSize="24px" onClick={handleDoIt}>
-                        Do it
-                    </Button>
-                </HStack>
+                { type === POST_TYPE.QUEST ? <QuestPostButtons post={post} /> : <SubmissionPostButtons post={post} /> }
             </Flex>
         </Box>
     );
 };
 export default DetailPostForm;
+
+
+interface QuestPostButtonsProps {
+    post : PostContainer<QuestPost | SubmissionPost>;
+}
+
+const QuestPostButtons : React.FC<QuestPostButtonsProps> = ({ post }) => {
+    const router = useRouter();
+
+    const handleDoIt = () => {
+        router.push(`/sb/create/${post.postData.id}`);
+    };
+
+    return (
+        <Box>
+            <HStack>
+                <FavoriteButton type={POST_TYPE.QUEST} post={post} />
+                <Button w="100px" variant={'purple'} fontSize="24px" onClick={handleDoIt}>Do it</Button>
+            </HStack>
+        </Box>
+    )
+}
+
+interface SubmissionPostButtonsProps {
+    post : PostContainer<QuestPost | SubmissionPost>;
+}
+
+const SubmissionPostButtons : React.FC<SubmissionPostButtonsProps> = ({ post }) => {
+
+    const handleVote = async (isPositive : boolean) => {
+        const result = await evaluateSubmission(POST_TYPE.SB, post.postData.id, post.paginatedOffset, isPositive);
+    
+        if(!result) {
+            alert('please, retry later');
+            return;
+        }
+        console.log('result', result);
+
+        alert(result.message);
+
+    }
+
+    return (
+        <Box>
+            <HStack>
+                <Button w="100px" variant={'purple'} onClick={() => handleVote(true)} >
+                    <CheckIcon />
+                </Button>
+                <Button w="100px" variant={'purple'} onClick={() => handleVote(false)}>
+                    <NotAllowedIcon />
+                </Button>
+            </HStack>
+        </Box>
+    )
+}
