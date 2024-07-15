@@ -1,18 +1,27 @@
-import React from "react"
-import { CommentClass } from "@/atoms/comment";
-import { Flex, IconButton, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
-import { SlOptions } from "react-icons/sl";
-import { deleteComment } from "@/server-actions/commentAction";
-import { usePathname , useParams } from "next/navigation";
-import { useIsOwner } from "@/hooks/userAccount";
-import { customColors } from "@/utils/chakra/customColors";
-import { POST_TYPE } from "@/type/postType";
+import React from 'react';
+import { CommentClass } from '@/atoms/comment';
+import {
+    Flex,
+    IconButton,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    useDisclosure,
+} from '@chakra-ui/react';
+import { SlOptions } from 'react-icons/sl';
+import { deleteComment } from '@/server-actions/commentAction';
+import { usePathname, useParams } from 'next/navigation';
+import { useIsOwner } from '@/hooks/userAccount';
+import { customColors } from '@/utils/chakra/customColors';
+import { POST_TYPE } from '@/type/postType';
+import { ReportModal } from '../report/ReportModal';
 
 type CommentMenuType = {
-    commentInstance: CommentClass
-    postType : POST_TYPE
-    postId : number
-}
+    commentInstance: CommentClass;
+    postType: POST_TYPE;
+    postId: number;
+};
 
 /*TODO
 - Edit 기능 구현
@@ -23,66 +32,65 @@ type CommentMenuType = {
     - menu 디자인 설정
     - 삭제된 comment 디자인 설정
 */
-const CommentMenu : React.FC<CommentMenuType> = ({
-    commentInstance,
-    postType,
-    postId
-}) => {
+const CommentMenu: React.FC<CommentMenuType> = ({ commentInstance, postType, postId }) => {
     const path = usePathname();
     const isOwner = useIsOwner(commentInstance.getComment().author.nickname);
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const handleReport = () => {
-        alert('Report');
-    }
+        onOpen();
+    };
 
     const handleEdit = () => {
         alert('Edit');
-    }
+    };
     const handleDelete = () => {
         const commentId = commentInstance.getComment().id;
-        deleteComment(postType,postId, commentId , path);
-    }
-    return(
+        deleteComment(postType, postId, commentId, path);
+    };
+    return (
         <Menu isLazy>
-            <MenuButton 
-                as={IconButton} 
-                icon={<SlOptions/>}
-                variant={"link"}
+            <MenuButton
+                as={IconButton}
+                icon={<SlOptions />}
+                variant={'link'}
                 colorScheme="black"
-                aria-label="comment menu" 
+                aria-label="comment menu"
                 color={customColors.black[300]}
             />
-            <MenuList
-
-            >
+            <ReportModal
+                target="COMMENT"
+                id={commentInstance.comment.id}
+                isOpen={isOpen}
+                onClose={onClose}
+            ></ReportModal>
+            <MenuList>
                 <MenuItem
-                    textColor={customColors.black[300]} 
+                    textColor={customColors.black[300]}
                     onClick={handleReport}
-                    _hover = {{bg: customColors.white[200]}}    
+                    _hover={{ bg: customColors.white[200] }}
                 >
                     Report
                 </MenuItem>
-                <MenuItem 
+                <MenuItem
                     textColor={customColors.black[300]}
                     hidden={!isOwner}
                     onClick={handleEdit}
-                    _hover = {{bg: customColors.white[200]}}
+                    _hover={{ bg: customColors.white[200] }}
                 >
                     Edit
                 </MenuItem>
-                <MenuItem 
+                <MenuItem
                     textColor={customColors.red[100]}
                     hidden={!isOwner}
                     onClick={handleDelete}
-                    _hover = {{bg: customColors.white[200]}}
+                    _hover={{ bg: customColors.white[200] }}
                 >
                     Delete
                 </MenuItem>
-
             </MenuList>
-
         </Menu>
     );
-}
+};
 
 export default CommentMenu;

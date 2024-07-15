@@ -9,7 +9,7 @@ import { MailUseCase } from './usecase/mail.usecase';
 
 @Module({
     imports: [],
-    controllers: [MailController],
+    controllers: [],
     providers: [MailService, MailUseCase],
     // providers: [TempUserUseCase, UserUseCase, UsersService],
     exports: [MailUseCase],
