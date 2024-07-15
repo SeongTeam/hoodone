@@ -7,5 +7,5 @@
     "strict": true,
     "esModuleInterop": true
   },
-  "include": ["response-dto", "index.ts"]
+  "include": ["enums","response-dto", "index.ts"]
 }
