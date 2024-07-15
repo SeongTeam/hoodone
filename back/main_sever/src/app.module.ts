@@ -29,7 +29,7 @@ import { FavoriteModule } from './favorite/favorite.module';
 @Module({
     imports: [
         ConfigModule.forRoot({
-            envFilePath: '.env',
+            envFilePath: '.env.local',
             isGlobal: true,
         }),
         MailerModule.forRoot({
@@ -54,7 +54,6 @@ import { FavoriteModule } from './favorite/favorite.module';
                 },
             },
         }),
-        MailModule,
 
         TypeOrmModule.forRootAsync({
             useClass: LocalTypeormConfig, // TODO: typeorm 설정한 클래스
@@ -72,6 +71,7 @@ import { FavoriteModule } from './favorite/favorite.module';
         CommentModule,
         TicketModule,
         FavoriteModule,
+        MailModule,
     ],
     controllers: [AppController],
     providers: [
