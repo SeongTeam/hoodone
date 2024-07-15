@@ -9,6 +9,7 @@ import { UsersModule } from 'src/users/users.module';
 import { AuthUseCase } from './usecase/auth.use-case';
 import { MailModule } from 'src/mail/mail.module';
 import { TempUserModel } from 'src/users/entities/temp-user.entity';
+import { ReportController } from './report/_report_controller';
 
 @Module({
     imports: [
@@ -20,7 +21,7 @@ import { TempUserModel } from 'src/users/entities/temp-user.entity';
         TempUserModel,
     ],
     exports: [AuthUseCase],
-    controllers: [AuthController],
+    controllers: [AuthController, ReportController],
     // 인스턴스화 없이 IOC container에서 class를 사용가능
     providers: [AuthService, AuthUseCase],
 })
