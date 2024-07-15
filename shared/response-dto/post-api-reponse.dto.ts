@@ -11,4 +11,11 @@ export class PostApiResponseDto {
     getPaginatedPosts?: object;
 
     patchFavorite?: number[];
+    patchVote?: voteResponseDto;
+}
+
+export interface voteResponseDto {
+    ok: boolean;
+    message: string;
+    result: object;
 }

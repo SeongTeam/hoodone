@@ -5,16 +5,22 @@ import { UpdatePostDto } from '../dto/update-post.dto';
 import { BadRequestException, Logger, HttpException, NotFoundException } from '@nestjs/common';
 
 import { QuestPostModel } from '../entities/quest_post.entity';
-import { SbPostModel } from '../entities/sb_post.entity';
+import { SbPostModel, VoteResult } from '../entities/sb_post.entity';
 import { PostId as PostId } from '../pips/post-id.pip';
 import { QuestPostsService } from '../-quest/quest_post.service';
 import { SbPostsService } from '../-sb-post/sb_post.service';
 import { DtoUtils } from 'src/_common/dto/dtoUtils';
 import { FavoriteService } from 'src/favorite/favorite.service';
 import { PostType } from '../-comment/enum/post_type';
-import { DeleteResult } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { QuestFavoriteModel } from 'src/favorite/entities/quest_favorite.entity';
 
+export enum SbVoteMessage {
+    ALREADY_VOTED = 'already vote',
+    SELF_VOTE = 'self vote',
+    VOTE_SUCCESS = 'vote success',
+    VOTE_FAIL = 'vote fail',
+}
 @Injectable()
 export class PostsUseCases {
     constructor(
@@ -190,24 +196,45 @@ export class PostsUseCases {
         return isExist;
     }
 
-    async appendApproval(userId: number, postId: number, qr: QueryRunner) {
-        const isApprovalVoted = await this.sbService.hasApprovalVoted(userId, postId);
-        const isDisapprovalVoted = await this.sbService.hasDisapprovalVoted(userId, postId);
+    async appendApproval(email: string, postId: number, qr: QueryRunner) {
+        const ret = { ok: false, message: SbVoteMessage.VOTE_FAIL, result: null };
+        const { isOwner, isApprovalVoted, isDisapprovalVoted } =
+            await this.sbService.validateVoteQuery(email, postId);
 
-        if (isApprovalVoted || isDisapprovalVoted) {
-            return 'appendApproval() =>Users who have already voted';
+        if (isOwner) {
+            ret.message = SbVoteMessage.SELF_VOTE;
+            return ret;
         }
-        return this.sbService.appendApproval(userId, postId, qr);
+        if (isApprovalVoted || isDisapprovalVoted) {
+            ret.message = SbVoteMessage.ALREADY_VOTED;
+            return ret;
+        }
+
+        ret.result = await this.sbService.appendApproval(email, postId, qr);
+        ret.ok = true;
+        ret.message = SbVoteMessage.VOTE_SUCCESS;
+
+        return ret;
     }
 
-    async appendDisapproval(userId: number, postId: number, qr: QueryRunner) {
-        const isApprovalVoted = await this.sbService.hasApprovalVoted(userId, postId);
-        const isDisapprovalVoted = await this.sbService.hasDisapprovalVoted(userId, postId);
+    async appendDisapproval(email: string, postId: number, qr: QueryRunner) {
+        const ret = { ok: false, message: SbVoteMessage.VOTE_FAIL, result: null };
+        const { isOwner, isApprovalVoted, isDisapprovalVoted } =
+            await this.sbService.validateVoteQuery(email, postId);
 
-        if (isApprovalVoted || isDisapprovalVoted) {
-            return 'appendDisapproval() => Users who have already voted';
+        if (isOwner) {
+            ret.message = SbVoteMessage.SELF_VOTE;
+            return ret;
         }
-        return this.sbService.appendDisapproval(userId, postId, qr);
+        if (isApprovalVoted || isDisapprovalVoted) {
+            ret.message = SbVoteMessage.ALREADY_VOTED;
+            return ret;
+        }
+        ret.result = await this.sbService.appendDisapproval(email, postId, qr);
+        ret.ok = true;
+        ret.message = SbVoteMessage.VOTE_SUCCESS;
+
+        return ret;
     }
 
     async deleteQuest(postId: number, qr: QueryRunner): Promise<boolean> {
