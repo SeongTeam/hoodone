@@ -30,7 +30,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({
     const router = useRouter();
     const useToastOption = useToast();
     const isQuestPost = type === POST_TYPE.QUEST;
-    const params = !isQuestPost ? useParams<{ questId: string}>() : null;
+    const params = useParams<{ questId: string}>() || null;
     const defaultNewPost : NewPostForm = existPost ? { 
         title: existPost.postData.title,
         content: existPost.postData.content,
