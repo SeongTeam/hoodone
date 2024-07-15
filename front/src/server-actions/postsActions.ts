@@ -17,8 +17,9 @@ import { getUserBasicInfo } from '@/lib/server-only/authLib';
 import { validateImage, uploadQuestImage, uploadSubmissionImage } from '@/utils/cloudinary/lib';
 import { cloudinaryTempData } from '@/utils/cloudinary/mockUpData';
 import { responseData } from '@/type/server-action/responseType';
-import { PostApiResponseDto } from 'hoodone-shared';
+import { PostApiResponseDto, voteResponseDto } from 'hoodone-shared';
 import { PostCache } from '@/lib/server-only/postLib';
+import { LoggableResponse } from '@/utils/log/types';
 
 /*
 ref : https://www.youtube.com/watch?v=5L5YoFm1obk
@@ -146,6 +147,8 @@ async function formSubmissions(accessToken: string, newPost: NewPostForm) {
             body: JSON.stringify(newPost),
         });
 
+        const cacheTag = PostCache.getRelatedPostlistTag(POST_TYPE.QUEST, parseInt(questId));
+        revalidateTag(cacheTag);
         return res;
     } catch (error) {
         logger.error('formSubmissions error', { message: error });
@@ -300,5 +303,66 @@ export async function deleteFavorite(postType: POST_TYPE, questId: number, postO
     } catch (error) {
         logger.info('deleteFavorite error', { message: error });
         throw new Error('deleteFavorite error');
+    }
+}
+
+export async function evaluateSubmission(
+    type: POST_TYPE,
+    sbId: number,
+    postPos: number,
+    isPositive: boolean,
+) {
+    const ret: responseData = {
+        ok: false,
+        message: '',
+        response: {},
+    };
+    const pageTag = PostCache.getPaginatedTag(type, postPos);
+
+    try {
+        if (type !== POST_TYPE.SB) {
+            logger.info('[estimateSubmission] type is not SB', {
+                message: { type, sbId, isPositive },
+            });
+            throw new Error('[estimateSubmission] type invalid error');
+        }
+        const accessToken = await validateAuth();
+        const res = await fetch(`${backendURL}/sbs/${sbId}/${isPositive ? 'true' : 'false'}`, {
+            method: 'PATCH',
+            headers: {
+                'content-type': 'application/json',
+                authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!res.ok) {
+            const logableRes = new LoggableResponse(res);
+            logger.error('[estimateSubmission] res is not ok', {
+                response: logableRes,
+                message: { type, sbId, isPositive },
+            });
+            throw new Error('[estimateSubmission] res invalid error');
+        }
+
+        const data: PostApiResponseDto = await res.json();
+        logger.info('[estimateSubmission] data', { response: JSON.stringify(data) });
+        if (!data.patchVote) {
+            logger.error('[estimateSubmission] data.patchVote is null', {
+                response: JSON.stringify(data),
+                message: JSON.stringify({ type, sbId, isPositive }),
+            });
+            throw new Error('[estimateSubmission] data.patchVote is null');
+        }
+
+        ret.ok = data.patchVote.ok;
+        ret.message = data.patchVote.message;
+        ret.response = data.patchVote.result;
+
+        revalidateTag(pageTag);
+
+        return ret;
+    } catch (error) {
+        logger.info('estimateSubmission error', { message: error });
+        throw new Error('estimateSubmission error');
     }
 }

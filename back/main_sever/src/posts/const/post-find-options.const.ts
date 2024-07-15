@@ -25,7 +25,9 @@ export const SB_POST_FIND_OPTION: FindManyOptions<SbPostModel> = {
     relations: {
         author: true,
         comments: true,
-        parentPost: true,
+        parentPost: {
+            author: true,
+        },
         favoriteUsers: true,
     },
     select: {
