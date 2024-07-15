@@ -30,6 +30,7 @@ import { QuestPostOwnerGuard } from '../guard/quest-post-owner.guard';
 import { RoleGuard } from 'src/auth/guard/role.guard';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { SbPostOwnerGuard } from '../guard/sb-post-owner.guard';
+import { UserUseCase } from 'src/users/usecase/user.use-case';
 
 /*TODO
 - Comment list 미포함하여 반환하도록 수정
@@ -40,6 +41,7 @@ export class SbPostsController {
     constructor(
         private readonly postUseCase: PostsUseCases,
         private readonly boardUseCase: BoardUseCase,
+        private readonly userUseCase: UserUseCase,
     ) {}
 
     /*TODO
@@ -150,11 +152,15 @@ export class SbPostsController {
         @Param('isApproval', ParseBoolPipe) isApproval: boolean,
         @QueryRunner() qr: QR,
     ) {
+        const ret = new PostApiResponseDto();
+        const userEmail = (await this.userUseCase.getUserById(userId)).email;
         if (isApproval) {
-            return this.postUseCase.appendApproval(userId, id, qr);
+            ret.patchVote = await this.postUseCase.appendApproval(userEmail, id, qr);
+        } else {
+            ret.patchVote = await this.postUseCase.appendDisapproval(userEmail, id, qr);
         }
-        return this.postUseCase.appendDisapproval(userId, id, qr);
 
+        return ret;
         // return this.postUseCase.updateSb(id, body);
     }
 

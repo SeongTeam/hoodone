@@ -11,6 +11,7 @@ export enum VoteResult {
     APPROVAL,
     DISAPPROVAL,
 }
+
 @Entity('sb_post')
 export class SbPostModel extends PostModel {
     @ManyToOne(() => UserModel, (user) => user.sbPosts, {
@@ -30,19 +31,20 @@ export class SbPostModel extends PostModel {
     favoriteUsers: SbFavoriteModel[];
 
     @Column({
-        name: 'approval_user_ids',
+        name: 'approval_user_email',
         type: 'jsonb',
         default: [],
     })
-    approvalUserIds: number[];
+    approvalUserEmails: string[];
 
     @Column({
-        name: 'disapproval_user_ids',
+        name: 'disapproval_user_email',
         type: 'jsonb',
         default: [],
     })
-    disapprovalUserIds: number[];
+    disapprovalUserEmails: string[];
 
+    @Column({ name: 'vote_result', type: 'enum', enum: VoteResult, default: VoteResult.NOT_YET })
     @IsEnum(VoteResult)
     @IsString()
     voteResult: VoteResult;

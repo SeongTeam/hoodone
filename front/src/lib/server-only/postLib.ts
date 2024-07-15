@@ -12,6 +12,7 @@ import {
 } from '@/type/postType';
 import { setTimeout as setTimeoutPromise } from 'timers/promises';
 import { LoggableResponse } from '@/utils/log/types';
+import { QuestPostApiResponseDto } from 'hoodone-shared';
 
 type PostRoute = 'sbs' | 'quests';
 
@@ -45,6 +46,11 @@ export namespace PostCache {
     }
 
     export function getSinglePostTag(postType: POST_TYPE, postID: number) {
+        const postTypeTag = getPostTag(postType);
+        return `${postTypeTag}-${POST_CACHE_TAG.ID}:${postID}`;
+    }
+
+    export function getRelatedPostlistTag(postType: POST_TYPE, postID: number) {
         const postTypeTag = getPostTag(postType);
         return `${postTypeTag}-${POST_CACHE_TAG.ID}:${postID}`;
     }
@@ -144,6 +150,59 @@ export class PostFetchService<T extends POST_TYPE> {
             return post;
         } catch (error) {
             logger.error('getPostByID error', { message: error });
+            return null;
+        }
+    }
+
+    async getRelatedsbs(
+        questId: string,
+        offset: number = this.initialOffset,
+        limit: number = this.defaultLimit,
+    ) {
+        const cacheTag = PostCache.getRelatedPostlistTag(this.type, parseInt(questId));
+
+        try {
+            if (this.type !== POST_TYPE.QUEST) {
+                logger.error(
+                    '[getRelatedPosts] Invalid post type. Only quest fetchService support',
+                    {
+                        message: { type: this.type },
+                    },
+                );
+                throw new Error('[getRelatedPosts] Invalid post type');
+            }
+            if (offset <= 0 || limit <= 0) {
+                logger.error('[getRelatedPosts] offset <= 0 or limit <= 0', {
+                    message: { offset },
+                });
+                throw new Error('[getRelatedPosts] offset Or limit is invalid');
+            }
+
+            const res = await fetch(
+                `${this.backendURL}/${this.routeSegment}/${questId}/sbs?offset=${offset}&limit=${limit}`,
+                { next: { tags: [cacheTag] } },
+            );
+
+            if (!res.ok) {
+                const resLog = new LoggableResponse(res);
+                logger.error('getRelatedPosts response error', { response: resLog });
+                throw new Error('getRelatedPosts response error');
+            }
+
+            const data: QuestPostApiResponseDto = await res.json();
+            const relatedList = data.getPaginatedSbs as SubmissionPost[];
+            const relatedSblist: PostContainer<SubmissionPost>[] = relatedList.map((sb) => {
+                const post: PostContainer<SubmissionPost> = {
+                    postData: sb,
+                    paginatedOffset: offset,
+                    lastFetched: new Date(),
+                };
+                return post;
+            });
+
+            return relatedSblist;
+        } catch (error) {
+            logger.error('getRelatedPosts error', { message: error });
             return null;
         }
     }

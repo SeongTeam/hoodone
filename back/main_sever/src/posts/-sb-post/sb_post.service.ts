@@ -6,7 +6,7 @@ import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 import { QUEST_POST_FIND_OPTION, SB_POST_FIND_OPTION } from '../const/post-find-options.const';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { PostModel } from '../entities/post.entity';
-import { SbPostModel } from '../entities/sb_post.entity';
+import { SbPostModel, VoteResult } from '../entities/sb_post.entity';
 import { postCreateOption } from '../const/post-create-options.const';
 
 const APPROVAL_PASS_COUNT = 5;
@@ -238,6 +238,24 @@ export class SbPostsService {
         return data;
     }
 
+    async getRelatedSBsByQuestId(questId: number, offset: number, limit: number) {
+        const data = await this.postsRepository.find({
+            ...SB_POST_FIND_OPTION,
+            where: {
+                isPublished: true,
+                parentPost: { id: questId },
+            },
+            skip: limit * (offset - 1),
+            take: limit,
+            order: {
+                createdAt: 'DESC',
+            },
+        });
+        Logger.log('[getRelatedSBsByQuestId]', JSON.stringify(data));
+
+        return data;
+    }
+
     async getPostFromBoard(boardId: number, offset: number, limit: number) {
         const posts = this.postsRepository.find({
             ...SB_POST_FIND_OPTION,
@@ -254,38 +272,52 @@ export class SbPostsService {
         return posts;
     }
 
-    async appendApproval(userId: number, postId: number, qr: QueryRunner) {
-        const approvalUserIds = (await this.loadById(postId)).approvalUserIds;
+    async appendApproval(email: string, postId: number, qr: QueryRunner) {
+        const ret = { result: null, approvalUserEmails: null };
+        const _repository = this._getRepository(qr);
+        const voteResult = await this.calcVoteResult(postId, email, true);
+        const approvalUserEmails = (await this.loadById(postId)).approvalUserEmails;
+        approvalUserEmails.push(email);
 
-        approvalUserIds.push(userId);
-
-        const result = await this.postsRepository.update(postId, {
-            approvalUserIds,
+        const result = await _repository.update(postId, {
+            approvalUserEmails,
+            voteResult,
         });
-
-        return result;
+        Logger.log('[sb_post.service][appendApproval] result :', {
+            result: JSON.stringify(result),
+        });
+        ret.result = result;
+        ret.approvalUserEmails = approvalUserEmails;
+        return ret;
     }
 
-    async appendDisapproval(userId: number, postId: number, qr: QueryRunner) {
-        const disapprovalUserIds = (await this.loadById(postId)).disapprovalUserIds;
+    async appendDisapproval(email: string, postId: number, qr: QueryRunner) {
+        const ret = { result: null, disapprovalUserEmails: null };
+        const _repository = this._getRepository(qr);
+        const voteResult = await this.calcVoteResult(postId, email, false);
+        const disapprovalUserEmails = (await this.loadById(postId)).disapprovalUserEmails;
 
-        disapprovalUserIds.push(userId);
-        const result = await this.postsRepository.update(postId, {
-            disapprovalUserIds,
+        disapprovalUserEmails.push(email);
+        const result = await _repository.update(postId, {
+            disapprovalUserEmails,
+            voteResult,
         });
 
-        return result;
+        Logger.log('[sb_post.service][appendDisapproval] result :', JSON.stringify(result));
+        ret.result = result;
+        ret.disapprovalUserEmails = disapprovalUserEmails;
+        return ret;
     }
 
-    async hasApprovalVoted(userId: number, postId: number) {
+    async hasApprovalVoted(email: string, postId: number) {
         const post = await this.loadById(postId);
 
-        const approvalUserIds = post.approvalUserIds;
+        const approvalUserEmails = post.approvalUserEmails;
 
-        if (approvalUserIds.length < 1) return false;
+        if (approvalUserEmails.length < 1) return false;
 
-        const approvalResult = approvalUserIds.find((_userId: number) => {
-            return _userId == userId;
+        const approvalResult = approvalUserEmails.find((_email: string) => {
+            return _email === email;
         });
         if (approvalResult) {
             console.log(approvalResult);
@@ -297,15 +329,15 @@ export class SbPostsService {
         return false;
     }
 
-    async hasDisapprovalVoted(userId: number, postId: number) {
+    async hasDisapprovalVoted(email: string, postId: number) {
         const post = await this.loadById(postId);
 
-        const disapprovalUserIds = post.disapprovalUserIds;
+        const disapprovalUserEmails = post.disapprovalUserEmails;
 
-        if (disapprovalUserIds.length < 1) return false;
+        if (disapprovalUserEmails.length < 1) return false;
 
-        const disapprovalResult = disapprovalUserIds.find((_userId: number) => {
-            return _userId == userId;
+        const disapprovalResult = disapprovalUserEmails.find((_email: string) => {
+            return _email === email;
         });
         if (disapprovalResult) {
             console.log(disapprovalResult);
@@ -315,5 +347,76 @@ export class SbPostsService {
         }
 
         return false;
+    }
+
+    async validateVoteQuery(email: string, postId: number) {
+        const result = await this.postsRepository
+            .createQueryBuilder('sb')
+            .select(['sb.id', 'sb.approvalUserEmails', 'sb.approvalUserEmails', 'author.email'])
+            .leftJoin('sb.author', 'author')
+            .where('sb.id = :id', { id: postId })
+            .getOne();
+
+        if (!result) {
+            Logger.error('[sb_post.service][validateVoteQuery] post not found', {
+                message: {
+                    email,
+                    postId,
+                },
+            });
+            throw new NotFoundException(`post ${postId} is not found`);
+        }
+        Logger.log('[sb_post.service][validateVoteQuery] post found', {
+            message: JSON.stringify(result),
+            authorInfo: result.author ? JSON.stringify(result.author) : 'No author',
+            resultKeys: Object.keys(result),
+        });
+        return {
+            isApprovalVoted: result.approvalUserEmails && result.approvalUserEmails.includes(email),
+            isDisapprovalVoted:
+                result.disapprovalUserEmails && result.disapprovalUserEmails.includes(email),
+            isOwner: result.author && result.author.email === email,
+        };
+    }
+
+    private async calcVoteResult(sbId: number, email: string, isApproval: boolean) {
+        enum VoteScore {
+            MINIMUM_SCORE = 5,
+            AUTHOR_SCORE = Math.floor(MINIMUM_SCORE / 2) + 1,
+            USER_SCORE = 1,
+            FAIL_SCORE = -(MINIMUM_SCORE + USER_SCORE),
+        }
+        const sb = await this.findById(sbId);
+
+        const questOwnerEmail = sb.parentPost.author.email;
+        if (sb.voteResult !== VoteResult.NOT_YET) {
+            return sb.voteResult;
+        }
+
+        let voteScore = 0;
+
+        sb.approvalUserEmails.forEach((_email) => {
+            const score =
+                _email === questOwnerEmail ? VoteScore.AUTHOR_SCORE : VoteScore.USER_SCORE;
+            voteScore += score;
+        });
+        sb.disapprovalUserEmails.forEach((_email) => {
+            const score =
+                _email === questOwnerEmail ? VoteScore.AUTHOR_SCORE : VoteScore.USER_SCORE;
+            voteScore -= score;
+        });
+        const newScore = email === questOwnerEmail ? VoteScore.AUTHOR_SCORE : VoteScore.USER_SCORE;
+
+        voteScore += isApproval ? newScore : newScore * -1;
+        //Logger.log(`[sb_post.service][calcVoteResult] result : ${voteScore}`);
+        Logger.log(`[sb_post.service][calcVoteResult] result : ${voteScore}`);
+
+        if (voteScore >= VoteScore.MINIMUM_SCORE) {
+            return VoteResult.APPROVAL;
+        } else if (voteScore <= VoteScore.FAIL_SCORE) {
+            return VoteResult.DISAPPROVAL;
+        } else {
+            return VoteResult.NOT_YET;
+        }
     }
 }
