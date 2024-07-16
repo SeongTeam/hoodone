@@ -3,7 +3,7 @@ import { Box, Flex, Text, Image, Spacer } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { PostContainer,QuestPost , SubmissionPost } from '@/type/postType';
+import { PostContainer,QuestPost , SubmissionPost } from '@/components/posts/postType';
 
 type MiniPostCardProps = {
     post: PostContainer<QuestPost | SubmissionPost>;

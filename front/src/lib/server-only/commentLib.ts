@@ -1,9 +1,9 @@
 import 'server-only';
 import logger from '@/utils/log/logger';
 import { CommentApiResponseDto } from 'hoodone-shared';
-import { CommentType } from '@/atoms/comment';
+import { CommentType } from '@/type/commentType';
 import assert from 'assert';
-import { POST_TYPE } from '@/type/postType';
+import { POST_TYPE } from '@/components/posts/postType';
 import { LoggableResponse } from '@/utils/log/types';
 
 export class CommentFetchService {

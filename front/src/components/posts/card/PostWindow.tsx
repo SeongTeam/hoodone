@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Grid, GridItem, } from '@chakra-ui/react';
 import PostCard from './PostCard';
 import MotionDiv from '@/components/common/motionDiv';
-import { POST_TYPE, PostContainer, QuestPost,SubmissionPost } from '@/type/postType';
+import { POST_TYPE, PostContainer, QuestPost,SubmissionPost } from '@/components/posts/postType';
 
 /*TODO
 - route handler GET METHOD cache 활용 여부 확인

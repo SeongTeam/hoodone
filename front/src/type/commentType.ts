@@ -1,5 +1,5 @@
 import { init } from 'next/dist/compiled/webpack/webpack';
-import { AuthorType } from '@/type/postType';
+import { AuthorType } from '@/components/posts/postType';
 
 export type CommentType = {
     id: number;

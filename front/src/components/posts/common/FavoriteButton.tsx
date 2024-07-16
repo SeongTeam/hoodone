@@ -3,9 +3,9 @@ import React , {useEffect}from "react";
 import { Button } from "@chakra-ui/react";
 import { Icon } from "@iconify-icon/react";
 import { useUserAccountWithSSR } from "@/hooks/userAccount";
-import { addFavorite, deleteFavorite } from "@/server-actions/postsActions";
-import { POST_TYPE, PostContainer, QuestPost, SubmissionPost } from "@/type/postType";
-import { responseData } from "@/type/server-action/responseType";
+import { addFavorite, deleteFavorite } from "@/components/posts/postsActions";
+import { POST_TYPE, PostContainer, QuestPost, SubmissionPost } from "@/components/posts/postType";
+import { responseData } from "@/type/responseType";
 
 interface FavoriteButtonProps {
     type: POST_TYPE;

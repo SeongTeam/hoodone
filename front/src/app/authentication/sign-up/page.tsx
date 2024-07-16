@@ -1,9 +1,9 @@
 import { Box, Text, Flex } from "@chakra-ui/react";
 import Link from "next/link";
-import Login from "@/components/modal/auth/login";
+import Login from "@/components/authentication/login";
 import { customColors } from "@/utils/chakra/customColors";
 import Brand from "@/components/common/Brand";
-import SignUp from "@/components/modal/auth/signUp";
+import SignUp from "@/components/authentication/signUp";
 
 export default function SignInPage() {
 

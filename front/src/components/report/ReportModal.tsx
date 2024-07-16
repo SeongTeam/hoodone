@@ -20,7 +20,7 @@ import {
 import { useCallback, useState } from 'react';
 import { ExceptionDto, ReportEnum } from 'hoodone-shared';
 import { sendReport } from '@/server-actions/reportAction';
-import { showErrorToast, showSuccessToast } from '../modal/auth/components/toast/toast';
+import { showErrorToast, showSuccessToast } from '../authentication/components/toast';
 import { extractErrorMessage } from '@/lib/server-only/message';
 
 export const ReportTargetEnum = {

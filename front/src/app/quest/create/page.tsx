@@ -2,7 +2,7 @@ import { Box, Grid, GridItem, HStack, Spacer, Stack, VStack, Text } from '@chakr
 import CreatePostForm from '@/components/posts/create/createPostForm';
 import { customColors } from '@/utils/chakra/customColors';
 import CreationRulesBox from '@/components/posts/create/postFormat/subComponent/creationRulesBox';
-import { POST_TYPE } from '@/type/postType';
+import { POST_TYPE } from '@/components/posts/postType';
 
 export default function CreateQuestPage() {
 

@@ -2,14 +2,14 @@
 
 import logger from '@/utils/log/logger';
 import { CommentApiResponseDto } from 'hoodone-shared';
-import { CommentType } from '@/atoms/comment';
+import { CommentType } from '@/type/commentType';
 import { assert } from 'console';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { checkAccessToken } from '@/lib/server-only/authLib';
 import { validateAuth } from '@/lib/server-only/authLib';
 import { LoggableResponse } from '@/utils/log/types';
-import { POST_TYPE } from '@/type/postType';
+import { POST_TYPE } from '@/components/posts/postType';
 
 const backendURL = process.env.BACKEND_URL;
 

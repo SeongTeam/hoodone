@@ -1,12 +1,12 @@
 'use client';
 import { useUserAccountWithSSR } from '@/hooks/userAccount';
-import { CommentType } from '@/atoms/comment';
+import { CommentType } from '@/type/commentType';
 import React, { useState, useOptimistic } from 'react';
 import { Box, Button, Container, Flex, HStack, Input, Spacer } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import { leaveComment } from '@/server-actions/commentAction';
 import { useParams, usePathname } from 'next/navigation';
-import { POST_TYPE } from '@/type/postType';
+import { POST_TYPE } from '@/components/posts/postType';
 
 /*TODO
 - useOptimistic 사용하여 사용자의 코멘트 즉각적으로 페이지에 반영하기

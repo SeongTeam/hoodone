@@ -1,5 +1,5 @@
 import React from 'react';
-import { CommentClass } from '@/atoms/comment';
+import { CommentClass } from '@/type/commentType';
 import { Box, Flex, Text, Spacer } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import ReplyToggleButton from './replyToggleButton';

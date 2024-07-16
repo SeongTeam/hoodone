@@ -3,7 +3,7 @@ import React from 'react';
 import { Box, Button, Container, Flex, Input, Stack, Textarea, VStack, Tag, TagRightIcon, TagLabel } from '@chakra-ui/react';
 import TextEditor from './subComponent/textEditor';
 import { customColors } from '@/utils/chakra/customColors';
-import { NewPostForm } from '@/type/postType';
+import { NewPostForm } from '@/components/posts/postType';
 import { CloseIcon } from '@chakra-ui/icons';
 
 /* TODO

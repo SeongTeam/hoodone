@@ -9,9 +9,9 @@ import { extractErrorMessage } from '@/lib/server-only/message';
 import { ExceptionDto } from 'hoodone-shared';
 import { Timer } from './components/timer';
 import { useToast } from '@chakra-ui/react';
-import { CommonInput } from './components/input/common_input';
-import { ButtonAndInput } from './components/input/button_and_inputs';
-import { showErrorToast, showSuccessToast, showWarringToast } from './components/toast/toast';
+import { CommonInput } from './components/common_input';
+import { ButtonAndInput } from './components/button_and_inputs';
+import { showErrorToast, showSuccessToast, showWarringToast } from './components/toast';
 
 const SignUp: React.FC = () => {
     const TIMER_MINUTE = 3;

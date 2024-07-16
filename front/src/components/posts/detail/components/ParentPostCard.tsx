@@ -1,6 +1,6 @@
 'use client';
 
-import { PostContainer, QuestPost, SubmissionPost } from '@/type/postType';
+import { PostContainer, QuestPost, SubmissionPost } from '@/components/posts/postType';
 import { customColors } from '@/utils/chakra/customColors';
 import { Box, Flex, Text, Image, Spacer, Stack, chakra, VStack } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';

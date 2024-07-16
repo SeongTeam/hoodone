@@ -1,12 +1,12 @@
 import React from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 import CommentItem from '../commentItem';
-import { CommentType } from '@/atoms/comment';
+import { CommentType } from '@/type/commentType';
 import {
     CommentFetchService
 } from '@/lib/server-only/commentLib';
 import CommentItemList from './commentItemtList';
-import { POST_TYPE } from '@/type/postType';
+import { POST_TYPE } from '@/components/posts/postType';
 
 type RootCommentItemListProps = {
     postID: number;

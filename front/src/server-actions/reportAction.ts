@@ -1,7 +1,7 @@
 'use server';
 
 import { validateAuth } from '@/lib/server-only/authLib';
-import { responseData } from '@/type/server-action/responseType';
+import { responseData } from '@/type/responseType';
 import logger from '@/utils/log/logger';
 
 const backendURL = process.env.BACKEND_URL;

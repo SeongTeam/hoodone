@@ -1,5 +1,5 @@
 'use client';
-import { CommentType, CommentClass } from '@/atoms/comment';
+import { CommentType, CommentClass } from '@/type/commentType';
 import React, { useState } from 'react';
 import { Flex } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
@@ -7,7 +7,7 @@ import Comment from './comment';
 import InputReply from './InputReply';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import DeletedCommentItem from './deletedCommentItem';
-import { POST_TYPE } from '@/type/postType';
+import { POST_TYPE } from '@/components/posts/postType';
 
 type CommentItemProps = {
     comment: CommentType;

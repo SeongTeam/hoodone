@@ -1,11 +1,11 @@
 import React from 'react'
-import { CommentType } from '@/atoms/comment';
+import { CommentType } from '@/type/commentType';
 import CommentItem from '../commentItem';
 import { Flex, Box } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import { CommentFetchService } from '@/lib/server-only/commentLib';
 import logger from '@/utils/log/logger';
-import { POST_TYPE } from '@/type/postType';
+import { POST_TYPE } from '@/components/posts/postType';
 
 type CommentItemListProps = {
     comments: CommentType[] | null

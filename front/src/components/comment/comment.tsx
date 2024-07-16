@@ -1,6 +1,6 @@
 'use client';
 import { Flex, Text, Spacer, Button, HStack, Image, Box } from '@chakra-ui/react';
-import { CommentClass } from '@/atoms/comment';
+import { CommentClass } from '@/type/commentType';
 import React, { useState } from 'react';
 import { customColors } from '@/utils/chakra/customColors';
 import { mdFontSize } from '@/utils/chakra/foundations/fonts';
@@ -10,7 +10,7 @@ import { useIsOwner } from '@/hooks/userAccount';
 import { SP } from 'next/dist/shared/lib/utils';
 import { ProfileImage } from '../common/ProfileImage';
 import { formatCreatedAt } from '@/lib/Date';
-import { POST_TYPE } from '@/type/postType';
+import { POST_TYPE } from '@/components/posts/postType';
 
 type CommentProps = {
     commentInstance: CommentClass;

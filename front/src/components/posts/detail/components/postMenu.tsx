@@ -1,5 +1,5 @@
 'use client';
-import { POST_TYPE, PostContainer, QuestPost, SubmissionPost } from '@/type/postType';
+import { POST_TYPE, PostContainer, QuestPost, SubmissionPost } from '@/components/posts/postType';
 import { Menu, MenuList, MenuButton, MenuItem, IconButton, useDisclosure } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import React, { useState } from 'react';

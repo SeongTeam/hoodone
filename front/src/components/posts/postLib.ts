@@ -9,7 +9,7 @@ import {
     PostContainer,
     QuestPost,
     SubmissionPost,
-} from '@/type/postType';
+} from '@/components/posts/postType';
 import { setTimeout as setTimeoutPromise } from 'timers/promises';
 import { LoggableResponse } from '@/utils/log/types';
 import { QuestPostApiResponseDto } from 'hoodone-shared';

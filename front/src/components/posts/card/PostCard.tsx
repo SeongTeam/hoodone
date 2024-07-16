@@ -8,7 +8,7 @@ import PostThumbnail from './components/postThumbnail';
 import UserProfileImage from '@/components/common/server-component/UserProfileImage';
 import QuestButtons from './components/QuestButtons';
 import { formatCreatedAt } from '@/lib/Date';
-import { PostContainer,QuestPost, SubmissionPost, POST_TYPE } from '@/type/postType';
+import { PostContainer,QuestPost, SubmissionPost, POST_TYPE } from '@/components/posts/postType';
 
 
 type PostCardProps = {
