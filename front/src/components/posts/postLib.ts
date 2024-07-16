@@ -17,13 +17,13 @@ import { QuestPostApiResponseDto } from 'hoodone-shared';
 type PostRoute = 'sbs' | 'quests';
 
 export namespace PostCache {
-    enum POST_CACHE_TAG {
-        QUEST = 'Quest',
-        SB = 'Submission',
-        PAGINATED = 'Paginated',
-        OFFSET = 'Offset',
-        ID = 'ByID',
-    }
+    const POST_CACHE_TAG = {
+        QUEST: 'Quest',
+        SB: 'Submission',
+        PAGINATED: 'Paginated',
+        OFFSET: 'Offset',
+        ID: 'ByID',
+    } as const;
 
     export function getPostTag(postType: POST_TYPE) {
         switch (postType) {
