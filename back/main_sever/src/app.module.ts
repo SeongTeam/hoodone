@@ -25,11 +25,12 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { LocalTypeormConfig } from './_configs/local-typeorm.config';
 import { TicketModule } from './users/_tickets/ticket.module';
 import { FavoriteModule } from './favorite/favorite.module';
+import { TypeormConfig } from './_configs/typeorm.config';
 
 @Module({
     imports: [
         ConfigModule.forRoot({
-            envFilePath: '.env.local',
+            envFilePath: process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env',
             isGlobal: true,
         }),
         MailerModule.forRoot({
@@ -56,9 +57,9 @@ import { FavoriteModule } from './favorite/favorite.module';
         }),
 
         TypeOrmModule.forRootAsync({
-            useClass: LocalTypeormConfig, // TODO: typeorm 설정한 클래스
+            // useClass: LocalTypeormConfig, // TODO: typeorm 설정한 클래스
 
-            // useClass: TypeormConfig, // TODO: typeorm 설정한 클래스
+            useClass: TypeormConfig, // TODO: typeorm 설정한 클래스
             dataSourceFactory: async (options: DataSourceOptions) => {
                 return new DataSource(options).initialize();
             },
