@@ -18,7 +18,8 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { useCallback, useState } from 'react';
-import { ExceptionDto, ReportEnum } from 'hoodone-shared';
+import { ExceptionDto } from '@/sharedModule/response-dto/exception-dto';
+import { ReportEnum } from '@/sharedModule/index';
 import { sendReport } from '@/server-actions/reportAction';
 import { showErrorToast, showSuccessToast } from '../modal/auth/components/toast/toast';
 import { extractErrorMessage } from '@/lib/server-only/message';

@@ -1,6 +1,6 @@
 import 'server-only';
 import logger from '@/utils/log/logger';
-import { PostApiResponseDto } from 'hoodone-shared';
+import { PostApiResponseDto } from '@/sharedModule/response-dto/post-api-reponse.dto';
 import assert from 'assert';
 import { unstable_cache } from 'next/cache';
 import {
@@ -12,7 +12,7 @@ import {
 } from '@/type/postType';
 import { setTimeout as setTimeoutPromise } from 'timers/promises';
 import { LoggableResponse } from '@/utils/log/types';
-import { QuestPostApiResponseDto } from 'hoodone-shared';
+import { QuestPostApiResponseDto } from '@/sharedModule/response-dto/quest-post-api-response.dto';
 
 type PostRoute = 'sbs' | 'quests';
 
