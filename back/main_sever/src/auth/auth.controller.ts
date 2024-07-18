@@ -1,4 +1,4 @@
-import { AuthApiResponseDto } from 'hoodone-shared';
+import { AuthApiResponseDto } from '@/sharedModule/response-dto/auth-api-response.dto';
 
 import {
     Controller,

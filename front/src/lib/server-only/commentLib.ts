@@ -1,6 +1,6 @@
 import 'server-only';
 import logger from '@/utils/log/logger';
-import { CommentApiResponseDto } from 'hoodone-shared';
+import { CommentApiResponseDto } from '@/sharedModule/response-dto/comment-api-response.dto';
 import { CommentType } from '@/atoms/comment';
 import assert from 'assert';
 import { POST_TYPE } from '@/type/postType';

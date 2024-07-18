@@ -5,7 +5,11 @@
     "declaration": true,
     "outDir": "./dist",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "declarationMap": true,
+    "rootDir": ".",
+    "composite": true,
   },
+  "references": [],
   "include": ["enums","response-dto", "index.ts"]
 }

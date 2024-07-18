@@ -1,7 +1,7 @@
 import 'server-only';
 import { NextRequest, NextResponse } from 'next/server';
 import base64, { decode } from 'js-base64';
-import { AuthApiResponseDto } from 'hoodone-shared';
+import { AuthApiResponseDto } from '@/sharedModule/response-dto/auth-api-response.dto';
 import { Asset } from 'next/font/google';
 import assert from 'assert';
 import { cookies } from 'next/headers';

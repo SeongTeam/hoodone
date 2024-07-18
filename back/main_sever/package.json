@@ -12,7 +12,7 @@
     "start": "cross-env NODE_ENV=server node dist/main.js",
     "dev:local": "cross-env NODE_ENV=local nest build --webpack --webpackPath webpack-hmr.config.js --watch",
     "dev:server": "cross-env NODE_ENV=server nest build --webpack --webpackPath webpack-hmr.config.js --watch",
-    "dev:watch": "nest start --watch",
+    "dev:watch": "cross-env NODE_ENV=local nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
