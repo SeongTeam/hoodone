@@ -1,4 +1,4 @@
-import { PostApiResponseDto } from 'hoodone-shared';
+import { PostApiResponseDto } from '@/sharedModule/response-dto/post-api-reponse.dto';
 import { ParseIntPipe, ValidationPipe, ParseBoolPipe } from '@nestjs/common/pipes';
 import { Controller, UseGuards, UseInterceptors } from '@nestjs/common/decorators/core';
 import {
