@@ -6,6 +6,20 @@ import assert from 'assert';
 import { POST_TYPE } from '@/type/postType';
 import { LoggableResponse } from '@/utils/log/types';
 
+namespace CommentCache {
+    /*TODO
+    - Change Comment Tag logic from revalidate path to revalidate tag
+        - To implement this,Maybe comment fetch logic is need to change.  
+    */
+    enum COMMENT_CACHE_TAG {
+        QUEST = 'Quest',
+        SB = 'Submission',
+        RANGE = 'RANGE',
+        OFFSET = 'Offset',
+        ID = 'ByID',
+    }
+}
+
 export class CommentFetchService {
     type: POST_TYPE;
     rootComponentDepth = 0;
@@ -58,7 +72,6 @@ export class CommentFetchService {
                 `${this.BackendPath}${postID}/comments/range?depthBegin=${offset}&depthEnd=${
                     offset + limit - 1
                 }`,
-                { next: { tags: [`commentOnpost-${postID}`] } },
             );
             if (!res.ok) {
                 const resLog = new LoggableResponse(res);

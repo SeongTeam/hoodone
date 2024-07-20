@@ -1,8 +1,10 @@
 import InputComment from '../InputComment';
 import { Box, Flex, Spinner, Stack, VStack } from '@chakra-ui/react';
 import { Suspense } from 'react';
-import RootCommentItemList from './rootCommentItemList';
 import { POST_TYPE } from '@/type/postType';
+import { CommentType } from '@/atoms/comment';
+import { CommentFetchService } from '@/lib/server-only/commentLib';
+import CommentItem from '../commentItem';
 
 type CommentAreaProps = {
     postType: POST_TYPE;
@@ -38,3 +40,91 @@ export default CommentArea;
 const LoadingCommentList: React.FC = () => {
     return <Spinner />;
 };
+
+type RootCommentItemListProps = {
+    postID: number;
+    rootCommentID?: number;
+    postType : POST_TYPE;
+};
+
+const RootCommentItemList: React.FC<RootCommentItemListProps> = async ({
+    postID,
+    rootCommentID,
+    postType,
+}) => {
+    const isCommentsPage = rootCommentID === undefined;
+    const fetchService = new CommentFetchService(postType);
+
+    const comments: CommentType[] | null = isCommentsPage
+        ? await fetchService.getInitialComments(postType, postID)
+        : [await fetchService.getCommentsWithReply(postID, rootCommentID)];
+
+    if (!comments || comments.length === 0) return null;
+
+    const rootComponentDepth  = fetchService.rootComponentDepth;
+    const commentListDepth = comments[0].depth;
+
+    return (
+        <Box w="100%" px="12px" py="4px" overflow="hidden">
+            <Flex w="full" h="full" flexDirection={'column'}>
+                {comments.map((comment, index) => {
+                    return (
+                        <CommentItem
+                            key={comment.id}
+                            comment={comment}
+                            isWritingOnCurrentPage={fetchService.isLeafCommentOfPage(
+                                rootComponentDepth,
+                                commentListDepth,
+                            )}
+                            postType={postType}
+                            childrenReplyList={
+                                <CommentItemList
+                                    postType={postType}
+                                    comments={comment.replyComments}
+                                    componentDepth={rootComponentDepth + 1}
+                                />
+                            }
+                        />
+                    );
+                })}
+            </Flex>
+        </Box>
+    );
+};
+
+
+type CommentItemListProps = {
+    comments: CommentType[] | null
+    componentDepth: number
+    postType: POST_TYPE
+}
+
+const CommentItemList : React.FC<CommentItemListProps> = ({ comments, postType ,componentDepth}) => {
+
+    if(!comments || comments.length === 0) 
+        return null;
+
+    const commentListDepth = comments[0].depth;
+    const margin = componentDepth === 0 ? 0 : 8;
+    const commentService = new CommentFetchService(postType);
+
+    return (
+        <Box maxW="100%" pl={margin} overflow="hidden">
+        <Flex 
+            w="full"
+            h="full"
+            flexDirection={"column"}  
+        >
+            {comments.map((comment, index) => {
+                    return <CommentItem 
+                            key={comment.id} 
+                            comment={comment}
+                            isWritingOnCurrentPage={ commentService.isLeafCommentOfPage(componentDepth,commentListDepth) }
+                            childrenReplyList={<CommentItemList comments={comment.replyComments} componentDepth={componentDepth+1} postType={postType}/>} 
+                            postType= {postType}
+                            />
+            })}
+        </Flex>
+        </Box>
+    )
+}
