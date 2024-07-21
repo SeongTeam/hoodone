@@ -1,7 +1,7 @@
 'use server';
 
 import logger from '@/utils/log/logger';
-import { CommentApiResponseDto } from 'hoodone-shared';
+import { CommentApiResponseDto } from '@/sharedModule/response-dto/comment-api-response.dto';
 import { CommentType } from '@/type/commentType';
 import { assert } from 'console';
 import { revalidatePath, revalidateTag } from 'next/cache';

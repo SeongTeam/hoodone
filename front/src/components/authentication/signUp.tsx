@@ -6,7 +6,7 @@ import { AuthModalState } from '@/atoms/authModal';
 import { useForm } from 'react-hook-form';
 import { comparePinCode, requestCertifiedMail, signUp } from '@/server-actions/AuthAction';
 import { extractErrorMessage } from '@/lib/server-only/message';
-import { ExceptionDto } from 'hoodone-shared';
+import { ExceptionDto } from '@/sharedModule/response-dto/exception-dto';
 import { Timer } from './components/timer';
 import { useToast } from '@chakra-ui/react';
 import { CommonInput } from './components/common_input';

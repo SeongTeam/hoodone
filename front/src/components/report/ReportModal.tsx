@@ -18,7 +18,8 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { useCallback, useState } from 'react';
-import { ExceptionDto, ReportEnum } from 'hoodone-shared';
+import { ExceptionDto } from '@/sharedModule/response-dto/exception-dto';
+import { ReportEnum } from '@/sharedModule/index';
 import { sendReport } from '@/server-actions/reportAction';
 import { showErrorToast, showSuccessToast } from '../authentication/components/toast';
 import { extractErrorMessage } from '@/lib/server-only/message';
@@ -40,7 +41,7 @@ interface RePortModalProps {
 
 export const ReportModal: React.FC<RePortModalProps> = ({ id, target, isOpen, onClose }) => {
     const fontColor = customColors.black[300];
-    const bg = customColors.gray[100];
+    const bg = customColors.white[300];
     const inputBorderColor = customColors.black[100];
     const focusBorderColor = customColors.black[300];
     const useToastOption = useToast();
@@ -48,6 +49,7 @@ export const ReportModal: React.FC<RePortModalProps> = ({ id, target, isOpen, on
     const [reportEnum, setReportEnum] = useState(`${ReportEnum.OTHER}`);
     const [content, setContent] = useState('');
     const [modalState, setModalState] = useState(isOpen);
+
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
         setContent(event.target.value);
@@ -92,7 +94,6 @@ export const ReportModal: React.FC<RePortModalProps> = ({ id, target, isOpen, on
     };
 
     const ReportBtn: React.FC<{ btnTitle: string }> = ({ btnTitle }) => {
-        console.log(`${btnTitle}: ${btnTitle.length} `);
         return (
             <Button
                 key={`${btnTitle}-btn-key`}
@@ -115,7 +116,12 @@ export const ReportModal: React.FC<RePortModalProps> = ({ id, target, isOpen, on
 
     return (
         <>
-            <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} size="2xl">
+            <Modal 
+                isOpen={isOpen} 
+                onClose={onClose} 
+                closeOnOverlayClick={false} 
+                size="2xl"
+            >
                 <ModalOverlay />
                 <ModalContent px="10px" bg={bg} color={fontColor} borderRadius="15px" gap="10px">
                     <ModalHeader textAlign="left">
@@ -128,7 +134,7 @@ export const ReportModal: React.FC<RePortModalProps> = ({ id, target, isOpen, on
                             Submit a report
                         </Text>
                     </ModalHeader>
-                    <ModalCloseButton border="1px solid #FFFFFF" borderRadius={'50%'} />
+                    <ModalCloseButton borderRadius={'50%'} />
                     <ModalBody
                         display="flex"
                         flexDirection="column"
@@ -138,12 +144,9 @@ export const ReportModal: React.FC<RePortModalProps> = ({ id, target, isOpen, on
                         <Flex direction="column" align="left" justify="center" width="100%">
                             <Wrap align="center" spacingX="5px" spacingY="10px">
                                 {Object.values(ReportEnum).map((value) => (
-                                    <>
-                                        <WrapItem key={`${value}-WrapItem `}>
-                                            {ReportBtn({ btnTitle: value })}
-                                        </WrapItem>
-                                        <Flex w="10px"></Flex>
-                                    </>
+                                    <WrapItem ml="5px" key={`${value}-WrapItem `}>
+                                        {ReportBtn({ btnTitle: value })}
+                                    </WrapItem>
                                 ))}
                             </Wrap>
                             <Spacer h={'12px'} />
@@ -155,7 +158,7 @@ export const ReportModal: React.FC<RePortModalProps> = ({ id, target, isOpen, on
                                     <Text
                                         as="i"
                                         fontSize="18px"
-                                        color={customColors.pastelGreen[100]}
+                                        color={customColors.purple[100]}
                                     >
                                         {' '}
                                         {reportEnum}

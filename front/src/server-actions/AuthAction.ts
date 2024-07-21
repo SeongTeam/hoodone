@@ -2,7 +2,7 @@
 
 import logger from '@/utils/log/logger';
 import { NextResponse } from 'next/server';
-import { AuthApiResponseDto } from 'hoodone-shared';
+import { AuthApiResponseDto } from '@/sharedModule/response-dto/auth-api-response.dto';
 import { type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import { extractStatusMessage } from '@/lib/server-only/message';

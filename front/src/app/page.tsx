@@ -12,39 +12,27 @@ import PostSliderWindow from '@/components/posts/card/PostSliderWindow';
 */
 export default function Home() {
     return (
-        <>
             <main>
-                <Box w="full" h="full" px="25px" bg="#F7F6F9">
-                    <Flex
-                        width="100%"
-                        height="100%"
-                        justifyContent="center"
-                        alignItems="center"
-                        pt="1rem"
-                        flexDir={'column'}
-                    >
-                        <SimpleGrid
-                        columns={{ sm: 1, md: 1 }}
-                        justifyContent="center"
-                        alignContent="center"
-                        spacing="4px"
-                        >
+                <SimpleGrid
+                w={"100%"}
+                columns={1}
+                justifyContent="center"
+                alignContent="center"
+                spacing="4px"
+                >
 
-                            <AdminPostSliderWidnow />
+                    <AdminPostSliderWidnow />
 
-                            <PostSliderWindow
-                                windowName = "User Quest"
-                                type = {POST_TYPE.QUEST}
-                            />
+                    <PostSliderWindow
+                        windowName = "User Quest"
+                        type = {POST_TYPE.QUEST}
+                    />
 
-                            <PostSliderWindow
-                                windowName = "User Submissions"
-                                type = {POST_TYPE.SB}
-                            />
-                        </SimpleGrid>
-                    </Flex>
-                </Box>
+                    <PostSliderWindow
+                        windowName = "User Submissions"
+                        type = {POST_TYPE.SB}
+                    />
+                </SimpleGrid>
             </main>
-        </>
     );
 }

@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 4000",
-    "build": "next build",
+    "build": "tsc --build && next build",
     "start": "next start -p 4000",
     "lint": "next lint",
     "prod": "cross-env NODE_ENV=production next build",
+    "start-pm2": "npm run build && pm2 startOrReload ecosystem.config.js",
     "test:prod": "cross-env NODE_ENV=production node -e \"console.log(process.env.NODE_ENV)\"",
     "test:dev": "cross-env NODE_ENV=development node -e \"console.log(process.env.NODE_ENV)\""
   },
