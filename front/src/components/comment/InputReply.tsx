@@ -1,9 +1,9 @@
 import { useUserAccountWithSSR } from "@/hooks/userAccount";
-import { CommentType } from '@/atoms/comment';
+import { CommentType } from '@/type/commentType';
 import React , { useState, useOptimistic } from 'react';
 import { Button,Box, Flex, Input, Text, Textarea} from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
-import { AuthorType, POST_TYPE } from '@/type/postType';
+import { AuthorType, POST_TYPE } from '@/components/posts/postType';
 import { leaveComment } from '@/server-actions/commentAction';
 import { useParams , usePathname} from 'next/navigation';
 import { leaveReply } from '@/server-actions/commentAction';

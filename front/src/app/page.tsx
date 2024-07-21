@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Box, Flex, Spacer, SimpleGrid } from '@chakra-ui/react';
-import { POST_TYPE } from '@/type/postType';
+import { POST_TYPE } from '@/components/posts/postType';
 import AdminPostSliderWidnow from '@/components/posts/card/AdminPostSliderWidnow';
 import PostSliderWindow from '@/components/posts/card/PostSliderWindow';
 

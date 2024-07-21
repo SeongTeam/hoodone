@@ -1,8 +1,8 @@
 import logger from '@/utils/log/logger';
 import { NextResponse } from 'next/server';
 import { type NextRequest } from 'next/server';
-import { POST_TYPE } from '@/type/postType';
-import { PostFetchService } from '@/lib/server-only/postLib';
+import { POST_TYPE } from '@/components/posts/postType';
+import { PostFetchService } from '@/components/posts/postLib';
 
 export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.json(posts);
     } catch (error) {
-        logger.error('Error getPaginatedPosts', { message: error });
+        logger.error('Route hanlder error. path : /api/posts GET', { message: error });
         return NextResponse.json({ message: error });
     }
 }

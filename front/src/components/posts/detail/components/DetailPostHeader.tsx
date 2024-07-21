@@ -1,13 +1,13 @@
 'use client';
 
-import { AuthorType, POST_TYPE, QuestPost, SubmissionPost,PostContainer } from '@/type/postType';
+import { AuthorType, POST_TYPE, QuestPost, SubmissionPost,PostContainer } from '@/components/posts/postType';
 import { formatTimeFromNow } from '@/lib/Date';
 import { customColors } from '@/utils/chakra/customColors';
 import { ChevronDownIcon, DragHandleIcon, StarIcon } from '@chakra-ui/icons';
 import { Box, Flex, HStack, Text, Image, Spacer } from '@chakra-ui/react';
 import { CldImage } from 'next-cloudinary';
 import { cloudinaryTempData } from '@/utils/cloudinary/mockUpData'
-import PostMenu from '../../view/postMenu';
+import PostMenu from './postMenu';
 
 type DetailPostHeaderProps = {
     post : PostContainer<QuestPost | SubmissionPost>,

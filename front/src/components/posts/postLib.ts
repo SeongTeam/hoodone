@@ -9,7 +9,7 @@ import {
     PostContainer,
     QuestPost,
     SubmissionPost,
-} from '@/type/postType';
+} from '@/components/posts/postType';
 import { setTimeout as setTimeoutPromise } from 'timers/promises';
 import { LoggableResponse } from '@/utils/log/types';
 import { QuestPostApiResponseDto } from '@/sharedModule/response-dto/quest-post-api-response.dto';
@@ -17,13 +17,13 @@ import { QuestPostApiResponseDto } from '@/sharedModule/response-dto/quest-post-
 type PostRoute = 'sbs' | 'quests';
 
 export namespace PostCache {
-    enum POST_CACHE_TAG {
-        QUEST = 'Quest',
-        SB = 'Submission',
-        PAGINATED = 'Paginated',
-        OFFSET = 'Offset',
-        ID = 'ByID',
-    }
+    const POST_CACHE_TAG = {
+        QUEST: 'Quest',
+        SB: 'Submission',
+        PAGINATED: 'Paginated',
+        OFFSET: 'Offset',
+        ID: 'ByID',
+    } as const;
 
     export function getPostTag(postType: POST_TYPE) {
         switch (postType) {

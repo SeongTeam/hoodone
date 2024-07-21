@@ -1,5 +1,5 @@
 import React from 'react';
-import { CommentClass } from '@/atoms/comment';
+import { CommentClass } from '@/type/commentType';
 import {
     Flex,
     IconButton,
@@ -14,7 +14,7 @@ import { deleteComment } from '@/server-actions/commentAction';
 import { usePathname, useParams } from 'next/navigation';
 import { useIsOwner } from '@/hooks/userAccount';
 import { customColors } from '@/utils/chakra/customColors';
-import { POST_TYPE } from '@/type/postType';
+import { POST_TYPE } from '@/components/posts/postType';
 import { ReportModal } from '../report/ReportModal';
 
 type CommentMenuType = {

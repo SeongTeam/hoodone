@@ -2,7 +2,7 @@ import { Box, Text, Flex } from "@chakra-ui/react";
 import Link from "next/link";
 import { customColors } from "@/utils/chakra/customColors";
 import Brand from "@/components/common/Brand";
-import ResetPassword from "@/components/modal/auth/resetPassword";
+import ResetPassword from "@/components/authentication/resetPassword";
 
 export default function SignInPage() {
 

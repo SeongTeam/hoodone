@@ -3,10 +3,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Flex, Button } from '@chakra-ui/react';
 import { Icon } from '@iconify-icon/react';
 import { customColors } from '@/utils/chakra/customColors';
-import { POST_TYPE, PostContainer,QuestPost, SubmissionPost } from '@/type/postType';
+import { POST_TYPE, PostContainer,QuestPost, SubmissionPost } from '@/components/posts/postType';
 import { ChatIcon } from '@chakra-ui/icons';
 import { useUserAccountWithSSR } from '@/hooks/userAccount';
-import { responseData } from '@/type/server-action/responseType';
+import { responseData } from '@/type/responseType';
 import FavoriteButton from '../../common/FavoriteButton';
 
 type QuestButtonsProps = {

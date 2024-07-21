@@ -1,9 +1,9 @@
 import { Box, Spacer, Text, VStack } from '@chakra-ui/react';
 import PostCard from './PostCard';
 import MotionDiv from '@/components/common/motionDiv';
-import PostSlider from '@/components/_global/slider/postSlider';
-import { POST_TYPE, } from '@/type/postType';
-import { PostFetchService } from '@/lib/server-only/postLib';
+import PostSlider from '@/components/common/postSlider';
+import { POST_TYPE, } from '@/components/posts/postType';
+import { PostFetchService } from '@/components/posts/postLib';
 
 /*TODO
 - route handler GET METHOD cache 활용 여부 확인

@@ -3,11 +3,11 @@ import { Box, Grid, GridItem, Text } from '@chakra-ui/react';
 import PostCard from './PostCard';
 import MotionDiv from '@/components/common/motionDiv';
 import AdminPostCard from './AdminPostCard';
-import PostSlider from '@/components/_global/slider/postSlider';
+import PostSlider from '@/components/common/postSlider';
 import Link from 'next/link';
 import { customColors } from '@/utils/chakra/customColors';
-import { POST_TYPE, PostContainer, QuestPost } from '@/type/postType';
-import { PostFetchService } from '@/lib/server-only/postLib';
+import { POST_TYPE, PostContainer, QuestPost } from '@/components/posts/postType';
+import { PostFetchService } from '@/components/posts/postLib';
 
 /*TODO
 - route handler GET METHOD cache 활용 여부 확인

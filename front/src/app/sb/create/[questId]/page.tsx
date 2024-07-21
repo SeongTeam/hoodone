@@ -2,9 +2,9 @@ import { Box, Grid, GridItem, HStack, Spacer, Stack, VStack, Text } from '@chakr
 import CreatePostForm from '@/components/posts/create/createPostForm';
 import { customColors } from '@/utils/chakra/customColors';
 import CreationRulesBox from '@/components/posts/create/postFormat/subComponent/creationRulesBox';
-import { POST_TYPE } from '@/type/postType';
+import { POST_TYPE } from '@/components/posts/postType';
 import { NextPage } from 'next';
-import { PostFetchService } from '@/lib/server-only/postLib';
+import { PostFetchService } from '@/components/posts/postLib';
 import ParentPostCard from '@/components/posts/detail/components/ParentPostCard';
 import { Logger } from 'winston';
 import logger from '@/utils/log/logger';

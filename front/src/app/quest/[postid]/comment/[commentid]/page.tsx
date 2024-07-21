@@ -1,11 +1,11 @@
 import { NextPage } from "next";
-import { PostFetchService } from "@/lib/server-only/postLib";
-import { POST_TYPE } from '@/type/postType';
+import { PostFetchService } from "@/components/posts/postLib";
+import { POST_TYPE } from '@/components/posts/postType';
 import { Grid,SimpleGrid,Spacer,Text, VStack } from "@chakra-ui/react";
 import logger from "@/utils/log/logger";
 import RuleCard from "@/components/posts/card/RuleCard";
 import DetailPostForm from "@/components/posts/detail/detailPostForm";
-import PostSlider from "@/components/_global/slider/postSlider";
+import PostSlider from "@/components/common/postSlider";
 import MiniPostCard from "@/components/posts/card/MiniPostCard";
 import { questPostRuleText } from "@/components/posts/card/const/rule_card_texts";
 import { customColors } from "@/utils/chakra/customColors";

@@ -14,11 +14,13 @@ cloudinary.config({
     ...configCld,
 });
 
-enum UploadType {
-    QUEST = 'quests',
-    SB = 'submissions',
-    USER_PROFILE = 'profiles',
-}
+const UPLOAD_TARGET = {
+    QUEST: 'quests',
+    SB: 'submissions',
+    USER_PROFILE: 'profiles',
+} as const;
+
+type UploadTargetType = (typeof UPLOAD_TARGET)[keyof typeof UPLOAD_TARGET];
 
 // Public function
 export function validateImage(imageFile: File) {
@@ -31,20 +33,20 @@ export function validateImage(imageFile: File) {
 }
 
 export async function uploadQuestImage(file: File, authorEmail: string) {
-    return uploadImage(file, authorEmail, UploadType.QUEST);
+    return uploadImage(file, authorEmail, UPLOAD_TARGET.QUEST);
 }
 
 export async function uploadSubmissionImage(file: File, authorEmail: string) {
-    return uploadImage(file, authorEmail, UploadType.SB);
+    return uploadImage(file, authorEmail, UPLOAD_TARGET.SB);
 }
 
 export async function uploadUserProfileImage(file: File, authorEmail: string) {
-    return uploadImage(file, authorEmail, UploadType.USER_PROFILE);
+    return uploadImage(file, authorEmail, UPLOAD_TARGET.USER_PROFILE);
 }
 
 // Internal function
 
-async function uploadImage(ImageFile: File, authorEmail: string, type: UploadType) {
+async function uploadImage(ImageFile: File, authorEmail: string, type: UploadTargetType) {
     try {
         const arrayBuffer = await ImageFile.arrayBuffer();
         const buffer = new Uint8Array(arrayBuffer);
@@ -93,17 +95,17 @@ async function uploadImage(ImageFile: File, authorEmail: string, type: UploadTyp
     }
 }
 
-async function createSubFolder(type: UploadType) {
+async function createSubFolder(type: UploadTargetType) {
     const time = new Date();
     let parentFolder: string | null = null;
     switch (type) {
-        case UploadType.QUEST:
+        case UPLOAD_TARGET.QUEST:
             parentFolder = 'quests';
             break;
-        case UploadType.SB:
+        case UPLOAD_TARGET.SB:
             parentFolder = 'submissions';
             break;
-        case UploadType.USER_PROFILE:
+        case UPLOAD_TARGET.USER_PROFILE:
             parentFolder = 'profiles';
             break;
         default:

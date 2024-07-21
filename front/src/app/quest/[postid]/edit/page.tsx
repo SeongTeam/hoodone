@@ -2,8 +2,8 @@ import { Box, Grid, GridItem, HStack, Spacer, Stack, VStack, Text } from '@chakr
 import CreatePostForm from '@/components/posts/create/createPostForm';
 import { customColors } from '@/utils/chakra/customColors';
 import CreationRulesBox from '@/components/posts/create/postFormat/subComponent/creationRulesBox';
-import { POST_TYPE } from '@/type/postType';
-import { PostFetchService } from '@/lib/server-only/postLib';
+import { POST_TYPE } from '@/components/posts/postType';
+import { PostFetchService } from '@/components/posts/postLib';
 import { useEffect } from 'react';
 import logger from '@/utils/log/logger';
 interface EditQuestPageProps {

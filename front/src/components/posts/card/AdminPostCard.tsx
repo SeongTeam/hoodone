@@ -5,7 +5,7 @@ import React, { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { userAccountState } from '@/atoms/userAccount';
 import UserProfileImage from '@/components/common/server-component/UserProfileImage';
-import { PostContainer , QuestPost } from '@/type/postType';
+import { PostContainer , QuestPost } from '@/components/posts/postType';
 type AdminPostCardProps = {
     post: PostContainer<QuestPost>;
     index: number;

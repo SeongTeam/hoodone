@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { AuthModalState } from '@/atoms/authModal';
 import { useForm } from 'react-hook-form';
-import { CommonInput } from './components/input/common_input';
-import { ButtonAndInput } from './components/input/button_and_inputs';
-import { showErrorToast, showSuccessToast } from './components/toast/toast';
+import { CommonInput } from './components/common_input';
+import { ButtonAndInput } from './components/button_and_inputs';
+import { showErrorToast, showSuccessToast } from './components/toast';
 import { resetPassword, sendRegisterEmail } from '@/server-actions/AuthAction';
 
 const ResetPassword: React.FC = () => {

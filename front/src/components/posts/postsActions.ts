@@ -9,19 +9,16 @@ import {
     NewPostForm,
     QuestPost,
     SubmissionPost,
-} from '@/type/postType';
+} from '@/components/posts/postType';
 import { revalidateTag } from 'next/cache';
 import { assert, log } from 'console';
 import { validateAuth } from '@/lib/server-only/authLib';
 import { getUserBasicInfo } from '@/lib/server-only/authLib';
 import { validateImage, uploadQuestImage, uploadSubmissionImage } from '@/utils/cloudinary/lib';
 import { cloudinaryTempData } from '@/utils/cloudinary/mockUpData';
-import { responseData } from '@/type/server-action/responseType';
-import {
-    PostApiResponseDto,
-    voteResponseDto,
-} from '@/sharedModule/response-dto/post-api-reponse.dto';
-import { PostCache } from '@/lib/server-only/postLib';
+import { responseData } from '@/type/responseType';
+import { PostApiResponseDto, voteResponseDto } from 'hoodone-shared';
+import { PostCache } from '@/components/posts/postLib';
 import { LoggableResponse } from '@/utils/log/types';
 
 /*

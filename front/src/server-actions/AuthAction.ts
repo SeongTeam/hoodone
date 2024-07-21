@@ -7,8 +7,8 @@ import { type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import { extractStatusMessage } from '@/lib/server-only/message';
 import { setAccessTokenCookie, setRefreshTokenCookie } from '@/lib/server-only/authLib';
-import { type responseData } from '@/type/server-action/responseType';
-import { type SignInDTO } from '@/type/server-action/AuthType';
+import { type responseData } from '@/type/responseType';
+import { type SignInDTO } from '@/type/AuthType';
 const backURL = process.env.BACKEND_URL;
 
 /*TODO

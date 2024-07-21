@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
-import { POST_TYPE } from '@/type/postType';
-import { PostFetchService } from '@/lib/server-only/postLib';
+import { POST_TYPE } from '@/components/posts/postType';
+import { PostFetchService } from '@/components/posts/postLib';
 import { Box, Text, Spacer, Flex, Grid, VStack, SimpleGrid, Image } from '@chakra-ui/react';
 import logger from '@/utils/log/logger';
 import { customColors } from '@/utils/chakra/customColors';
@@ -11,7 +11,7 @@ import { questPostRuleText } from '@/components/posts/card/const/rule_card_texts
 import dynamic from 'next/dynamic';
 import MiniPostCard from '@/components/posts/card/MiniPostCard';
 import { ImageUploadVariant } from '@/components/common/ImageUpload';
-const PostSlider = dynamic(() => import('@/components/_global/slider/postSlider'), { ssr: false });
+const PostSlider = dynamic(() => import('@/components/common/postSlider'), { ssr: false });
 
 export type SbPageProps = {
     params: {

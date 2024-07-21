@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { POST_TYPE } from '@/type/postType';
+import { POST_TYPE } from '@/components/posts/postType';
 import { Box, Text, Spacer, Flex, Grid, VStack, SimpleGrid, Image } from '@chakra-ui/react';
 import logger from '@/utils/log/logger';
 import { customColors } from '@/utils/chakra/customColors';
@@ -10,8 +10,8 @@ import DetailPostForm from '@/components/posts/detail/detailPostForm';
 import { questPostRuleText } from '@/components/posts/card/const/rule_card_texts';
 import dynamic from 'next/dynamic';
 import MiniPostCard from '@/components/posts/card/MiniPostCard';
-import { PostFetchService } from '@/lib/server-only/postLib';
-const PostSlider = dynamic(() => import('@/components/_global/slider/postSlider'), { ssr: false });
+import { PostFetchService } from '@/components/posts/postLib';
+const PostSlider = dynamic(() => import('@/components/common/postSlider'), { ssr: false });
 
 export type QuestPageProps = {
     params: {
