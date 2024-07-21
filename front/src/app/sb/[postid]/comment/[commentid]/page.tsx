@@ -65,7 +65,7 @@ const PostPageWithReply : NextPage<PostPageWithReplyProps> = async (
                 <Spacer h="6px" />
 
                 <Text fontSize="1.4em"> Submission</Text>
-                <PostSlider sliderName="sbsPostsOnDetail" hight="190px">
+                <PostSlider sliderName="sbsPostsOnDetail" height="190px">
                     {allPosts?.map((post, index) => (
                         <MiniPostCard key={index} index={index} post={post} />
                     ))}

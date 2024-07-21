@@ -10,15 +10,19 @@ import { Icon } from '@iconify-icon/react';
 
 import React, { useEffect, useRef, useState } from 'react';
 
+/*TODO
+- 슬라이더 움직임을 좀더 정교하게 구현하기
+   - ref: https://codesandbox.io/s/chakra-carousel-dd8vn?file=/src/ChakraCarousel.js:3592-3596
+*/
+
 interface PostSliderPops {
     sliderName: string;
     gap?: string;
-    width?: string;
-    hight?: string;
+    height?: string;
     children: React.ReactNode;
 }
 
-const PostSlider: React.FC<PostSliderPops> = ({ sliderName, gap, children, width, hight }) => {
+const PostSlider: React.FC<PostSliderPops> = ({ sliderName, gap, children, height }) => {
     const BTN_H = 70;
     const BTN_W = 40;
     const elementName = `Slider-${sliderName}`
@@ -39,7 +43,12 @@ const PostSlider: React.FC<PostSliderPops> = ({ sliderName, gap, children, width
     };
 
     return (
-        <Box position="relative" px="15px" w={width} h={hight}>
+        <Box position="relative" px={`${BTN_W/2}px`}
+            mx="10px"
+            minH="80px"
+            h={height}
+            w={`calc(100%"-${BTN_W}px)`}
+        >
             <Button
                 style={{
                     position: 'absolute',
@@ -56,19 +65,16 @@ const PostSlider: React.FC<PostSliderPops> = ({ sliderName, gap, children, width
             >
                 <ArrowLeftIcon />
             </Button>
-            <HStack w="100%" overflowY="hidden" overflowX="scroll">
-                <Flex
-                    w="1400px"
-                    id={elementName}
-                    ref={sliderRef}
-                    overflowY="hidden"
-                    overflowX="scroll"
-                    scrollBehavior="smooth"
-                    gap={gap ?? '2.2rem'}
-                >
-                    {children}
-                </Flex>
-            </HStack>
+            <Flex
+                w="100%"
+                id={elementName}
+                ref={sliderRef}
+                overflowX="scroll"
+                scrollBehavior={"smooth"}
+                gap={gap ?? '2.2rem'}
+            >
+                {children}
+            </Flex>
             <Button
                 style={{
                     position: 'absolute',
@@ -80,7 +86,7 @@ const PostSlider: React.FC<PostSliderPops> = ({ sliderName, gap, children, width
                     backgroundColor: customColors.purple[100],
                     display: 'flex', // Ensure UpBtn has available space for centering
                 }}
-                title="scroll left"
+                title="scroll right"
                 bg={customColors.purple[100]}
                 onClick={_slideRight}
             >

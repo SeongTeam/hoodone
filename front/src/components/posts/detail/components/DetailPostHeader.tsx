@@ -20,7 +20,12 @@ const DetailPostHeader: React.FC<DetailPostHeaderProps> = ({ post, type }) => {
     const author = post.postData.author;
 
     return (
-        <Flex w="100%" direction="row" pl="15px" pr="3px">
+        <Flex 
+            w="100%" 
+            direction="row"
+            pl="15px" 
+            pr="3px" 
+            >
             <HStack w="100%" align="center">
                 <Box borderRadius={'full'} w="60px" h="60px" overflow={'hidden'} position= { 'relative'}>
                     <CldImage
@@ -30,15 +35,14 @@ const DetailPostHeader: React.FC<DetailPostHeaderProps> = ({ post, type }) => {
                     />
                 </Box>
                 <Spacer w="2px" />
-                <Text w="180px" fontSize="16px">
-                    {author.nickname}
-                </Text>
+                <Flex mr="10px">
+                    <Text fontSize="16px">
+                        {author.nickname}
+                    </Text>
+                </Flex>
                 {/* TODO  write 시간 기록하기 동작 에러 확인하기 */}
                 {/* <Spacer width="100px" /> */}
-            </HStack>
-            <Box h={8} w="full" />
-            <HStack width="200px">
-                <Text w="90px" noOfLines={1} fontSize="12px">
+                <Text w="80px" noOfLines={1} fontSize="12px">
                     {time}
                 </Text>
                 <Spacer> </Spacer>

@@ -41,11 +41,11 @@ const PostSliderWindow: React.FC<PostSliderWindowProp> = async ({ windowName , t
     };
 
     return (
-        <Box>
+        <Box w="100%">
             <Text mx="5px" mt="10px">
                 {windowName}
             </Text>
-            <PostSlider sliderName="User Quests" gap="20px" hight="440px">
+            <PostSlider sliderName="User Quests" gap="20px">
                 {posts && Array.isArray(posts) 
                 && posts.map((post, index) => {
                     return (
