@@ -1,9 +1,8 @@
 import InputComment from '../InputComment';
 import { Box, Flex, Spinner, Stack, VStack } from '@chakra-ui/react';
 import { Suspense } from 'react';
-import RootCommentItemList from './rootCommentItemList';
-import { POST_TYPE } from '@/type/postType';
-import { CommentType } from '@/atoms/comment';
+import { POST_TYPE } from '@/components/posts/postType';
+import { CommentType } from '@/type/commentType';
 import { CommentFetchService } from '@/lib/server-only/commentLib';
 import CommentItem from '../commentItem';
 
