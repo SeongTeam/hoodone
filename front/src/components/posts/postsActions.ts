@@ -366,3 +366,53 @@ export async function evaluateSubmission(
         throw new Error('estimateSubmission error');
     }
 }
+
+export async function deletePost(type: POST_TYPE, postId: number, postPos: number) {
+    let path = backendURL;
+
+    switch (type) {
+        case POST_TYPE.QUEST:
+            path = `${backendURL}/quests/${postId}`;
+            break;
+        case POST_TYPE.SB:
+            path = `${backendURL}/sbs/${postId}`;
+            break;
+    }
+
+    try {
+        const accessToken = await validateAuth();
+        const res = await fetch(path, {
+            method: 'DELETE',
+            headers: {
+                'content-type': 'application/json',
+                authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!res.ok) {
+            const logableRes = new LoggableResponse(res);
+            logger.error('[deletePost] res is not ok', {
+                response: logableRes,
+                message: { type, postId },
+            });
+            throw new Error('[deletePost] res invalid error');
+        }
+
+        const data: PostApiResponseDto = await res.json();
+        logger.info('[deletePost] data', { response: JSON.stringify(data) });
+        if (!data.delete) {
+            logger.error('[deletePost] data.deletePost is falsy', {
+                response: JSON.stringify(data),
+                message: JSON.stringify({ type, postId }),
+            });
+            throw new Error('[deletePost] data.deletePost is falsy');
+        }
+
+        const postTag = PostCache.getPostTag(type);
+        revalidateTag(postTag);
+        return data.delete;
+    } catch (error) {
+        logger.info('[deletePost] delete error', { message: error });
+        throw new Error('deletePost error');
+    }
+}
