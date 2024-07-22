@@ -11,6 +11,7 @@ import { questPostRuleText } from '@/components/posts/card/const/rule_card_texts
 import dynamic from 'next/dynamic';
 import MiniPostCard from '@/components/posts/card/MiniPostCard';
 import { PostFetchService } from '@/components/posts/postLib';
+import { notFound } from 'next/navigation';
 const PostSlider = dynamic(() => import('@/components/common/postSlider'), { ssr: false });
 
 export type QuestPageProps = {
@@ -39,12 +40,11 @@ const QuestPage: NextPage<QuestPageProps> = async ({ params, searchParams }) => 
 
     const [post, relatedSblist] = await Promise.all([postPromise, relatedSblistPromise]);
 
-    console.log(relatedSblist);
-
     if (!post) {
         logger.error(`post${params.postid} not found`);
-        throw new ReferenceError(`post not found`);
+        notFound();
     }
+
     return (
         <Flex
             flexDirection="column"

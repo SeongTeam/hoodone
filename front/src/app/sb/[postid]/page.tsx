@@ -11,6 +11,7 @@ import { questPostRuleText } from '@/components/posts/card/const/rule_card_texts
 import dynamic from 'next/dynamic';
 import MiniPostCard from '@/components/posts/card/MiniPostCard';
 import { ImageUploadVariant } from '@/components/common/ImageUpload';
+import { notFound } from 'next/navigation';
 const PostSlider = dynamic(() => import('@/components/common/postSlider'), { ssr: false });
 
 export type SbPageProps = {
@@ -39,7 +40,7 @@ const SbPage: NextPage<SbPageProps> = async ({ params, searchParams }) => {
 
     if (!post) {
         logger.error(`post${params.postid} not found`);
-        throw new ReferenceError(`post not found`);
+        notFound();
     }
 
     return (

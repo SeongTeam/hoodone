@@ -407,12 +407,13 @@ export async function deletePost(type: POST_TYPE, postId: number, postPos: numbe
             });
             throw new Error('[deletePost] data.deletePost is falsy');
         }
-
-        const postTag = PostCache.getPostTag(type);
-        revalidateTag(postTag);
-        return data.delete;
     } catch (error) {
         logger.info('[deletePost] delete error', { message: error });
         throw new Error('deletePost error');
     }
+
+    const postTag = PostCache.getPostTag(type);
+    revalidateTag(postTag);
+
+    redirect(`/`);
 }

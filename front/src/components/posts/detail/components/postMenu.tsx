@@ -36,13 +36,8 @@ const PostMenu: React.FC<PostMenuProps> = ({ post, type }) => {
         router.push(`/${path}/${postId}/edit?index=${index}`);
     };
     const handleDelete = async () => {
-        const isDeleted = await deletePost(type, post.postData.id, post.paginatedOffset);
-        if(!isDeleted) {
-            alert('failed to delete, please, retry later');
-            return;
-        }
-        alert('Post is deleted. Navigate to main page.');
-        router.push('/');
+        await deletePost(type, post.postData.id, post.paginatedOffset);
+        
     };
 
     return (
