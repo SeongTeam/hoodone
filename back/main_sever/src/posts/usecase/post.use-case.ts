@@ -242,18 +242,11 @@ export class PostsUseCases {
 
         // TODO Post 전용 Exception 구현
         if (!post) {
-            console.log(`PostUseCase.delete 실행x , postId:${postId}를 찾을 수 없음`);
-            throw new NotFoundException(
-                `PostUseCase.delete 실행x , postId:${postId}를 찾을 수 없음`,
-            );
+            Logger.log(`[deleteQuest] run fail. postId:${postId} is not found.`);
+            throw new NotFoundException(`[deleteQuest] postId:${postId} is not found.`);
         }
 
-        //TODO 삭제할 게시물에 댓글이 있다면 어떻게 할 것인가?
-        if (post.commentCount > 0) {
-            return false;
-        }
-
-        return await this.questService.delete(post.id, qr);
+        return await this.questService.softRemove(post, qr);
     }
 
     async deleteSb(postId: number, qr: QueryRunner): Promise<boolean> {
@@ -261,18 +254,11 @@ export class PostsUseCases {
 
         // TODO Post 전용 Exception 구현
         if (!post) {
-            console.log(`PostUseCase.delete 실행x , postId:${postId}를 찾을 수 없음`);
-            throw new NotFoundException(
-                `PostUseCase.delete 실행x , postId:${postId}를 찾을 수 없음`,
-            );
+            console.log(`[deleteSb] run fail. postId:${postId} is not found.`);
+            throw new NotFoundException(`[deleteSb] postId:${postId} is not found.`);
         }
 
-        //TODO 삭제할 게시물에 댓글이 있다면 어떻게 할 것인가?
-        if (post.commentCount > 0) {
-            return false;
-        }
-
-        return await this.sbService.delete(post.id, qr);
+        return await this.sbService.softRemove(post, qr);
     }
 
     async isPostOwner(userId: number, postId: PostId) {

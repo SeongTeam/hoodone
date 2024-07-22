@@ -125,13 +125,13 @@ export class SbPostsService {
         return updatedPost;
     }
 
-    async delete(postId: number, qr: QueryRunner): Promise<boolean> {
+    async softRemove(postEntity: SbPostModel, qr: QueryRunner): Promise<boolean> {
         try {
             const repository = this._getRepository(qr);
-            repository.delete(postId);
-
+            await repository.softRemove(postEntity);
             return true;
         } catch (e) {
+            Logger.error(`[softDelete] exception occurred. postId : ${postEntity}`, { e });
             return false;
         }
     }
