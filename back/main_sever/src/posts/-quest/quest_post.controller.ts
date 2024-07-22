@@ -83,6 +83,19 @@ export class QuestPostsController {
         return res;
     }
 
+    @Get('/admin-paginated')
+    async getAdminQuests(
+        @Query(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
+        queryParams: GetPaginatedPostsQueryDTO,
+    ) {
+        const { offset, limit } = queryParams;
+        const res = new PostApiResponseDto();
+
+        res.getPaginatedPosts = await this.postUseCase.getPaginateAdminQuests(offset, limit);
+
+        return res;
+    }
+
     // TODO 복수와 단수를 반환하는 API를 만들고
     // 복수를 반환할때 Query string을 사용하는 로직 추가
     @Get()
