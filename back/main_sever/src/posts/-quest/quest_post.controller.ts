@@ -159,12 +159,14 @@ export class QuestPostsController {
         return result;
     }
 
-    @Delete('/quest:id')
+    @Delete('/:id')
     @Roles(RoleType.USER, RoleType.ADMIN)
     @UseGuards(AccessTokenGuard, QuestPostOwnerGuard, RoleGuard)
     @UseInterceptors(TransactionInterceptor)
-    deleteQuest(@Param('id', ParseIntPipe) id: number, @QueryRunner() qr: QR) {
-        return this.postUseCase.deleteQuest(id, qr);
+    async deleteQuest(@Param('id', ParseIntPipe) id: number, @QueryRunner() qr: QR) {
+        const res = new PostApiResponseDto();
+        res.delete = await this.postUseCase.deleteQuest(id, qr);
+        return res;
     }
 
     /*TODO

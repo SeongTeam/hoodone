@@ -144,6 +144,17 @@ export class QuestPostsService {
         }
     }
 
+    async softRemove(postEntity: QuestPostModel, qr: QueryRunner): Promise<boolean> {
+        try {
+            const repository = this._getRepository(qr);
+            await repository.softRemove(postEntity);
+            return true;
+        } catch (e) {
+            Logger.error(`[softRemove] exception occurred. postId : ${postEntity}`, { e });
+            return false;
+        }
+    }
+
     /** 수정 삭제 시에는 loadById()를 사용 */
     async loadById(postId: number) {
         const post = this.postsRepository.findOneBy({

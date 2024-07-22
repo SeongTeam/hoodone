@@ -12,6 +12,7 @@ export class PostApiResponseDto {
 
     patchFavorite?: number[];
     patchVote?: voteResponseDto;
+    delete?: boolean;
 }
 
 export interface voteResponseDto {

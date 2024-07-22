@@ -7,6 +7,7 @@ import { customColors } from '@/utils/chakra/customColors';
 import { useUserAccountWithSSR } from '@/hooks/userAccount';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ReportModal } from '@/components/report/ReportModal';
+import { deletePost } from '../../postsActions';
 
 type PostMenuProps = {
     post: PostContainer<QuestPost | SubmissionPost>;
@@ -21,7 +22,6 @@ const PostMenu: React.FC<PostMenuProps> = ({ post, type }) => {
     const normalColor = customColors.black[100];
     const [userAccount] = useUserAccountWithSSR();
     const router = useRouter();
-    const index = useSearchParams().get('index');
     const { author } = post.postData;
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -32,10 +32,12 @@ const PostMenu: React.FC<PostMenuProps> = ({ post, type }) => {
     const handleEdit = () => {
         const path = type === POST_TYPE.QUEST ? `quest` : `sb`;
         const postId = post.postData.id;
+        const index = post.paginatedOffset;
         router.push(`/${path}/${postId}/edit?index=${index}`);
     };
-    const handleDelete = () => {
-        alert('Delete function is not implemented yet');
+    const handleDelete = async () => {
+        await deletePost(type, post.postData.id, post.paginatedOffset);
+        
     };
 
     return (

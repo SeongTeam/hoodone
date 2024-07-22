@@ -168,8 +168,11 @@ export class SbPostsController {
     @Roles(RoleType.USER, RoleType.ADMIN)
     @UseGuards(AccessTokenGuard, SbPostOwnerGuard, RoleGuard)
     @UseInterceptors(TransactionInterceptor)
-    deleteSb(@Param('id', ParseIntPipe) id: number, @QueryRunner() qr: QR) {
-        return this.postUseCase.deleteSb(id, qr);
+    async deleteSb(@Param('id', ParseIntPipe) id: number, @QueryRunner() qr: QR) {
+        const res = new PostApiResponseDto();
+        res.delete = await this.postUseCase.deleteSb(id, qr);
+
+        return res;
     }
 
     /*TODO
