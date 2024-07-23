@@ -288,8 +288,12 @@ export class PostsUseCases {
     }
 
     // TODO PaginatedPost 사용 논의
+    getPaginateAdminQuests(offset: number, limit: number) {
+        return this.questService.getPaginatedPosts(offset, limit, true);
+    }
+    // TODO PaginatedPost 사용 논의
     getPaginatedQuests(offset: number, limit: number) {
-        return this.questService.getPaginatedPosts(offset, limit);
+        return this.questService.getPaginatedPosts(offset, limit, false);
     }
 
     getQuestFromBoard(boardId: number, offset: number, limit: number) {

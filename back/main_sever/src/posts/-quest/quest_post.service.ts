@@ -9,6 +9,8 @@ import { UpdatePostDto } from '../dto/update-post.dto';
 import { PostModel } from '../entities/post.entity';
 import { postCreateOption } from '../const/post-create-options.const';
 import { UserModel } from 'src/users/entities/user.entity';
+import { Not } from 'typeorm';
+import { ENV_ADMIN_EMAIL } from '@/_common/const/env-keys.const';
 @Injectable()
 export class QuestPostsService {
     constructor(
@@ -242,12 +244,17 @@ export class QuestPostsService {
         return qr ? qr.manager.getRepository<QuestPostModel>(QuestPostModel) : this.postsRepository;
     }
 
-    async getPaginatedPosts(offset: number, limit: number) {
+    async getPaginatedPosts(offset: number, limit: number, isOnlyAdminPost?: boolean) {
+        const adminEmail: string = process.env[ENV_ADMIN_EMAIL];
         const data = this.postsRepository.find({
             ...QUEST_POST_FIND_OPTION,
             where: {
                 isPublished: true,
+                author: {
+                    email: isOnlyAdminPost ? adminEmail : Not(adminEmail),
+                },
             },
+
             skip: limit * (offset - 1),
             take: limit,
             order: {
