@@ -77,8 +77,6 @@ export class UsersController {
     }
     @Get('/email/:email')
     getByEmail(@Param('email') email: string) {
-        console.log('calling /email:email ');
-
         return this.userUseCase.getUserByEmail(email);
     }
     @Get('/nickname/:nickname')
@@ -89,7 +87,6 @@ export class UsersController {
     @UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
     incrementTicket(@User('ticket') ticket: TicketModel, @QueryRunner() qr: QR) {
-        console.log(ticket.id);
         return this.ticketUserUseCase.incrementCount(ticket.id, qr);
     }
     @Patch('/tickets/decrease')

@@ -29,8 +29,6 @@ export class UserUseCase {
 
         try {
             if (!(isEmailExisted || isNicknameExisted)) {
-                console.log('createNewUser 실행');
-
                 let ticket = await this.ticketUseCase.create(qr);
                 let newUser = await this.userService.createUser(userInfo, ticket, qr);
                 await this.ticketUseCase.addUser(ticket, newUser, qr);

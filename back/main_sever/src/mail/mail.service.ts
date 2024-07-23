@@ -21,16 +21,14 @@ export class MailService {
                     template: './email',
                 })
                 .then((response) => {
-                    console.log(response);
                     return response;
                 })
                 .catch((err) => {
-                    console.log(err);
                     throw new BadRequestException(`${to} this.mailerService.sendMail`);
                 });
             return result;
         } catch (e) {
-            console.log(e);
+            Logger.error(`[sendCertificationPinCode] error`, JSON.stringify(e), 'MailService');
 
             throw new BadRequestException(' this.mailerService.sendMail');
         }
@@ -51,16 +49,15 @@ export class MailService {
                     template: './report',
                 })
                 .then((response) => {
-                    console.log(response);
                     return response;
                 })
                 .catch((err) => {
-                    console.log(err);
+                    Logger.error(`[MailService][sendReport] error`, JSON.stringify(err));
                     throw new BadRequestException(`${to} this.mailerService.sendMail`);
                 });
             return result;
         } catch (e) {
-            console.log(e);
+            Logger.error(`[MailService][sendReport] error`, JSON.stringify(e));
 
             throw new BadRequestException(' this.mailerService.sendMail');
         }

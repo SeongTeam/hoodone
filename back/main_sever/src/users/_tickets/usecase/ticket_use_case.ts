@@ -18,7 +18,6 @@ export class TicketUseCase {
 
     async incrementCount(ticketId: number, qr: QueryRunner) {
         const result = this.ticketService.incrementCount(ticketId, qr);
-        console.log(result);
         return result;
     }
 

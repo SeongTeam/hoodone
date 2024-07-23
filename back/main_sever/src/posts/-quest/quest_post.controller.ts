@@ -55,8 +55,6 @@ export class QuestPostsController {
         @Body(ValidationPipe) body: CreatePostDto,
         @QueryRunner() qr: QR,
     ) {
-        // 로직 실행
-        console.log(body);
         const res = new PostApiResponseDto();
         res.post = await this.postUseCase.createQuest(userId, body, qr);
 
@@ -150,7 +148,6 @@ export class QuestPostsController {
         @User('id') userId: number,
         @QueryRunner() qr: QR,
     ) {
-        console.log(userId);
         const result = await this.postUseCase.increaseQuestFavorite(userId, postId, qr);
 
         return result;
@@ -166,8 +163,6 @@ export class QuestPostsController {
         @User('id') userId: number,
         @QueryRunner() qr: QR,
     ) {
-        console.log(userId);
-
         const result = await this.postUseCase.decreaseQuestFavorite(userId, postId, qr);
         return result;
     }

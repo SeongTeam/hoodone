@@ -78,8 +78,7 @@ export class QuestPostsService {
             });
             return createdPost;
         } catch (e) {
-            console.log('create post error');
-            console.log(e);
+            Logger.error('[QuestPostsService][create] error', JSON.stringify(e));
         }
     }
 
@@ -91,8 +90,7 @@ export class QuestPostsService {
 
             return newPost;
         } catch (e) {
-            console.log(e);
-            console.log('post save');
+            Logger.error('[QuestPostsService][save] error', JSON.stringify(e));
         }
     }
     async updatePost(postId: number, postDto: UpdatePostDto) {
@@ -128,7 +126,6 @@ export class QuestPostsService {
         const repository = this._getRepository(qr);
 
         let post = await this.loadById(postId);
-        console.log(post.favoriteUsers);
 
         const result = await repository.save(post);
 
@@ -246,7 +243,7 @@ export class QuestPostsService {
 
     async getPaginatedPosts(offset: number, limit: number, isOnlyAdminPost?: boolean) {
         const adminEmail: string = process.env[ENV_ADMIN_EMAIL];
-        const data = this.postsRepository.find({
+        const data = await this.postsRepository.find({
             ...QUEST_POST_FIND_OPTION,
             where: {
                 isPublished: true,
@@ -262,7 +259,6 @@ export class QuestPostsService {
             },
         });
 
-        console.log(data);
         return data;
     }
 

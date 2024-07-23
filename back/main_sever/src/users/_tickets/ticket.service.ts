@@ -27,7 +27,6 @@ export class TicketService {
             usageHistory: usageText,
         });
         const result = await repository.save(newTicket);
-        console.log(result);
         return result;
     }
     async addUser(ticketId: number, user: UserModel, qr: QueryRunner) {
