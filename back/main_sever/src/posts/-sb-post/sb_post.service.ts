@@ -3,9 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm/dist/common';
 import { Repository } from 'typeorm/repository/Repository';
 import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
-import { QUEST_POST_FIND_OPTION, SB_POST_FIND_OPTION } from '../const/post-find-options.const';
+import { SB_POST_FIND_OPTION } from '../const/post-find-options.const';
 import { UpdatePostDto } from '../dto/update-post.dto';
-import { PostModel } from '../entities/post.entity';
 import { SbPostModel, VoteResult } from '../entities/sb_post.entity';
 import { postCreateOption } from '../const/post-create-options.const';
 
@@ -273,7 +272,7 @@ export class SbPostsService {
     }
 
     async appendApproval(email: string, postId: number, qr: QueryRunner) {
-        const ret = { result: null, approvalUserEmails: null };
+        const ret = { voteResult: VoteResult.NOT_YET, approvalUserEmails: null };
         const _repository = this._getRepository(qr);
         const voteResult = await this.calcVoteResult(postId, email, true);
         const approvalUserEmails = (await this.loadById(postId)).approvalUserEmails;
@@ -286,7 +285,7 @@ export class SbPostsService {
         Logger.log('[sb_post.service][appendApproval] result :', {
             result: JSON.stringify(result),
         });
-        ret.result = result;
+        ret.voteResult = voteResult;
         ret.approvalUserEmails = approvalUserEmails;
         return ret;
     }
