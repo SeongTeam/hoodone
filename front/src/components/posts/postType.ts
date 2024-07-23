@@ -26,6 +26,7 @@ export interface QuestPost extends BasePost {
 
 export interface SubmissionPost extends BasePost {
     parentPost: QuestPost;
+    voteResult: VoteResult;
     type: POST_TYPE.SB;
 }
 
@@ -59,3 +60,9 @@ export enum POST_TYPE {
     SB = 'submission',
 }
 export const tagDelimiter = ' ';
+
+export enum VoteResult {
+    NOT_YET,
+    APPROVAL,
+    DISAPPROVAL,
+}

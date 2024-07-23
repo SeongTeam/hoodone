@@ -8,7 +8,7 @@ import PostThumbnail from './components/postThumbnail';
 import UserProfileImage from '@/components/common/server-component/UserProfileImage';
 import QuestButtons from './components/QuestButtons';
 import { formatCreatedAt } from '@/lib/Date';
-import { PostContainer,QuestPost, SubmissionPost, POST_TYPE } from '@/components/posts/postType';
+import { PostContainer,QuestPost, SubmissionPost, POST_TYPE, VoteResult } from '@/components/posts/postType';
 import { RouteTable } from '@/components/sidebar/SideBarRoute';
 
 
@@ -28,7 +28,7 @@ type PostCardProps = {
 
 const PostCard: React.FC<PostCardProps> = ({ post, index, type }) => {
     const fontColor = customColors.black[100];
-    const bg = customColors.white[100];
+    let bg = customColors.white[100];
     const borderColor = customColors.shadeLavender[100];
     const timeAgo = post.postData.createdAt;
     const router = useRouter();
@@ -54,6 +54,23 @@ const PostCard: React.FC<PostCardProps> = ({ post, index, type }) => {
         alert('id : ' + id);
         router.push(`${route}?index=${index}`);
     };
+
+    if( type === POST_TYPE.SB) {
+        const sbData = post.postData as SubmissionPost;
+        switch(sbData.voteResult) {
+            case VoteResult.APPROVAL:
+                bg = customColors.pastelGreen[200];
+                break;
+            case VoteResult.DISAPPROVAL:
+                bg = customColors.red[300];
+                break;
+            case VoteResult.NOT_YET:
+                bg = customColors.white[300];
+                break;
+            default:
+                break; 
+        }
+    }
 
     return (
         <Box
