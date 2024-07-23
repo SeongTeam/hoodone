@@ -12,7 +12,7 @@ export const COMMENT_USE_CASES = Symbol('COMMENT_USE_CASES');
 @Module({
     imports: [TypeOrmModule.forFeature([TicketModel])],
     controllers: [],
-    exports: [TicketUseCase],
-    providers: [TicketUseCase, TicketService],
+    exports: [TicketService],
+    providers: [TicketService],
 })
 export class TicketModule {}
