@@ -114,7 +114,16 @@ interface SubmissionPostButtonsProps {
 
 const SubmissionPostButtons : React.FC<SubmissionPostButtonsProps> = ({ post }) => {
 
+    const [UserAccountState] = useUserAccountWithSSR();
+    const isLogin = UserAccountState.isLogin;
+
     const handleVote = async (isPositive : boolean) => {
+
+        if(!isLogin) {
+            alert('please, login first. After login, you can vote. Thank you!');
+            return;
+        }
+
         const result = await evaluateSubmission(POST_TYPE.SB, post.postData.id, post.paginatedOffset, isPositive);
     
         if(!result) {
@@ -130,10 +139,16 @@ const SubmissionPostButtons : React.FC<SubmissionPostButtonsProps> = ({ post }) 
     return (
         <Box>
             <HStack>
-                <Button w="100px" variant={'purple'} onClick={() => handleVote(true)} >
+                <Button
+                    w="100px"
+                    variant="purple"
+                    onClick={() => handleVote(true)} >
                     <CheckIcon />
                 </Button>
-                <Button w="100px" variant={'purple'} onClick={() => handleVote(false)}>
+                <Button 
+                    w="100px"
+                    variant="purple"
+                    onClick={() => handleVote(false)}>
                     <NotAllowedIcon />
                 </Button>
             </HStack>
