@@ -12,6 +12,7 @@ import { useToast } from '@chakra-ui/react';
 import { CommonInput } from './components/common_input';
 import { ButtonAndInput } from './components/button_and_inputs';
 import { showErrorToast, showSuccessToast, showWarringToast } from './components/toast';
+import { useRouter } from 'next/navigation';
 
 const SignUp: React.FC = () => {
     const TIMER_MINUTE = 3;
@@ -59,6 +60,7 @@ const SignUp: React.FC = () => {
     const [isEmail, setIsEmail] = useState<boolean>(false);
     const [isPassword, setIsPassword] = useState<boolean>(false);
     const [isPasswordConfirm, setIsPasswordConfirm] = useState<boolean>(false);
+    const router = useRouter();
 
     const setMinute: Function = (minute: number | null) => {
         if (typeof minute == 'number') {
@@ -84,10 +86,11 @@ const SignUp: React.FC = () => {
             const res = await signUp(formData);
 
             if (res.ok) {
-                console.log(`sign up success response-----`);
-                console.log(res);
                 // TODO 유저에게 회원가입 성공했다고 알려주기/ tost 메세지 이용?
-                showSuccessToast(useToastOption, { title: 'Sign Up Success' });
+                showSuccessToast(useToastOption, { title: 'Sign Up Success, go to login' });
+                setTimeout(() => {
+                    router.push('/authentication/sign-in');
+                }, 2000);
 
             } else {
                 console.log(`else response-----`);
@@ -259,7 +262,7 @@ const SignUp: React.FC = () => {
     }
 
     return (
-        <>
+        <Box>
             {certification.state === false ? (
                 <form onSubmit={onCertification} className="form-modalPage">
                     <Text textAlign="center" color="red" fontSize="16px">
@@ -358,7 +361,7 @@ const SignUp: React.FC = () => {
                     </Button>
                 </form>
             )}
-        </>
+        </Box>
     );
 };
 export default SignUp;

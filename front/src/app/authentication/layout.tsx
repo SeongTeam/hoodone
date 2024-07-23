@@ -10,8 +10,8 @@ export default function AuthenticationLayout({ children }: { children: React.Rea
     
     return (
         <Box 
-            w={{base : "80%" , md : "720px"}} 
-            h="830px"
+            w={{base : "100%" , md : "720px"}} 
+            minH="830px"
             borderRadius={"15px"}
             mt = "40px"
             ms = {{ base : "0px" , md : "20px" }}
