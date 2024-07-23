@@ -58,7 +58,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, index, type }) => {
     return (
         <Box
             h="440px"
-            maxW="340px"
+            w="240px"
             border={'1px solid'}
             borderColor={borderColor}
             borderRadius={'15px'}
