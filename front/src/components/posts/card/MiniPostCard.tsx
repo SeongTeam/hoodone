@@ -3,8 +3,9 @@ import { Box, Flex, Text, Image, Spacer } from '@chakra-ui/react';
 import { customColors } from '@/utils/chakra/customColors';
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { PostContainer,QuestPost , SubmissionPost } from '@/components/posts/postType';
+import { POST_TYPE, PostContainer,QuestPost , SubmissionPost } from '@/components/posts/postType';
 import PostThumbnail from './components/postThumbnail';
+import { RouteTable } from '@/components/sidebar/SideBarRoute';
 
 type MiniPostCardProps = {
     post: PostContainer<QuestPost | SubmissionPost>;
@@ -34,9 +35,22 @@ const MiniPostCard: React.FC<MiniPostCardProps> = ({ post, index }) => {
         return title;
     };
     const handleOnClickItem = (event: React.MouseEvent<HTMLDivElement>) => {
-        const id = post.postData.id;
-        alert('id : ' + id);
-        //router.push(`/post/${id}?index=${index}`);
+        let path = '';
+
+        switch (post.postData.type) {
+            case POST_TYPE.QUEST:
+                path = RouteTable.QuestRoute.getDetail(post.postData.id.toString());
+                break;
+            case POST_TYPE.SB:
+                path = RouteTable.SubmissionRoute.getDetail(post.postData.id.toString());
+                break;
+
+            default:
+                path = '/';
+
+        }
+
+        router.push(`${path}`);
     };
 
     return (
