@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import FavoriteButton from '../common/FavoriteButton';
 import { useRouter } from 'next/navigation';
 import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons'
+import { RouteTable } from '@/components/sidebar/SideBarRoute';
 
 type DetailPostFormProps = {
     post: PostContainer<QuestPost | SubmissionPost>;
@@ -95,7 +96,7 @@ const QuestPostButtons : React.FC<QuestPostButtonsProps> = ({ post }) => {
     const router = useRouter();
 
     const handleDoIt = () => {
-        router.push(`/sb/create/${post.postData.id}`);
+        router.push(RouteTable.SubmissionRoute.getCreate(post.postData.id.toString()));
     };
 
     return (

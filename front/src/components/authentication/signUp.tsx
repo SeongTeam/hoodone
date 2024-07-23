@@ -13,6 +13,7 @@ import { CommonInput } from './components/common_input';
 import { ButtonAndInput } from './components/button_and_inputs';
 import { showErrorToast, showSuccessToast, showWarringToast } from './components/toast';
 import { useRouter } from 'next/navigation';
+import { RouteTable } from '../sidebar/SideBarRoute';
 
 const SignUp: React.FC = () => {
     const TIMER_MINUTE = 3;
@@ -89,7 +90,7 @@ const SignUp: React.FC = () => {
                 // TODO 유저에게 회원가입 성공했다고 알려주기/ tost 메세지 이용?
                 showSuccessToast(useToastOption, { title: 'Sign Up Success, go to login' });
                 setTimeout(() => {
-                    router.push('/authentication/sign-in');
+                    router.push(RouteTable.authRoute.signIn);
                 }, 2000);
 
             } else {

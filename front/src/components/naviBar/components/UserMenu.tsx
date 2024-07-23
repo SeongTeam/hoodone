@@ -20,6 +20,7 @@ import { defaultUserAccount } from '@/atoms/userAccount';
 import { customColors } from '@/utils/chakra/customColors';
 import { signOut } from '@/server-actions/AuthAction';
 import UserMenuIcons from './UseMenuIcons'
+import { RouteTable } from '@/components/sidebar/SideBarRoute';
 
 const UserMenu: React.FC = () => {
     const [user, setUser] = useUserAccountWithSSR();
@@ -39,7 +40,7 @@ const UserMenu: React.FC = () => {
     const logout = async () => {
         await signOut();
         setUser(defaultUserAccount);
-        router.push('/');
+        router.push(RouteTable.defaultRoute.home);
     };
 
     /*TODO

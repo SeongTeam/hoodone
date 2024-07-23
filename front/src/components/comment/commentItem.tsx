@@ -8,6 +8,7 @@ import InputReply from './InputReply';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import DeletedCommentItem from './deletedCommentItem';
 import { POST_TYPE } from '@/components/posts/postType';
+import { RouteTable } from '../sidebar/SideBarRoute';
 
 type CommentItemProps = {
     comment: CommentType;
@@ -32,8 +33,16 @@ const CommentItem: React.FC<CommentItemProps> = ({
         const commentid = comment.id;
         const index = searchParams.get('index');
         const postId = params.postid;
-        const rootPath = postType === POST_TYPE.QUEST ? 'quest' : 'sb';
-        const path = `/${rootPath}/${postId}/comment/${commentid}?index=${index}`;
+        let route = '';
+        switch (postType) {
+            case POST_TYPE.QUEST:
+                route = RouteTable.QuestRoute.getDetailComment(postId, commentid.toString());
+                break;
+            case POST_TYPE.SB:
+                route = RouteTable.SubmissionRoute.getDetailComment(postId, commentid.toString());
+                break;
+        }
+        const path = `${route}?index=${index}`;
         router.push(path);
     };
 

@@ -9,6 +9,7 @@ import UserProfileImage from '@/components/common/server-component/UserProfileIm
 import QuestButtons from './components/QuestButtons';
 import { formatCreatedAt } from '@/lib/Date';
 import { PostContainer,QuestPost, SubmissionPost, POST_TYPE } from '@/components/posts/postType';
+import { RouteTable } from '@/components/sidebar/SideBarRoute';
 
 
 type PostCardProps = {
@@ -41,9 +42,17 @@ const PostCard: React.FC<PostCardProps> = ({ post, index, type }) => {
     };
     const handleOnClickItem = (event: React.MouseEvent<HTMLDivElement>) => {
         const id = post.postData.id;
-        const route = type === POST_TYPE.QUEST ? 'quest' : 'sb';
+        let route = '';
+        switch (type) {
+            case POST_TYPE.QUEST:
+                route = RouteTable.QuestRoute.getDetail(id.toString());
+                break;
+            case POST_TYPE.SB:
+                route = RouteTable.SubmissionRoute.getDetail(id.toString());
+                break;
+        }
         alert('id : ' + id);
-        router.push(`/${route}/${id}?index=${index}`);
+        router.push(`${route}?index=${index}`);
     };
 
     return (

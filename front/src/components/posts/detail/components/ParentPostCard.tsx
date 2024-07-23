@@ -10,6 +10,7 @@ import { ImageUploadVariant } from '@/components/common/ImageUpload';
 import { formatCreatedAt } from '@/lib/Date';
 import { useState } from 'react';
 import { CldImage } from 'next-cloudinary';
+import { RouteTable } from '@/components/sidebar/SideBarRoute';
 
 type PostVariety = 'quest' | 'sb';
 
@@ -40,7 +41,7 @@ const ParentPostCard: React.FC<ParentPostCardProps> = (
         return str;
     };
     const handleOnClickItem = (event: React.MouseEvent<HTMLDivElement>) => {
-        router.push(`/quest/${id}`);
+        router.push(RouteTable.QuestRoute.getDetail(id.toString()));
     };
 
 
