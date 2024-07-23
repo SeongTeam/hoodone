@@ -85,7 +85,7 @@ export class UsersService {
 
             return await userRepository.save(user);
         } catch (e) {
-            console.log(e);
+            Logger.error(`[UsersService][createUser] error`, JSON.stringify(e));
             throw new AuthException('ACCOUNT_CREATION_FAILED', {
                 describe: 'UserService.createUser()에서 error',
             });

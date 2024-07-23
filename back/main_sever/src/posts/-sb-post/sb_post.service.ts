@@ -64,7 +64,6 @@ export class SbPostsService {
         contentInfo: Pick<SbPostModel, 'title' | 'content' | 'cloudinaryPublicId'>,
         qr?: QueryRunner,
     ) {
-        console.log(`questId : ${questId}`);
         try {
             const _repository = this._getRepository(qr);
 
@@ -79,8 +78,7 @@ export class SbPostsService {
             });
             return createdPost;
         } catch (e) {
-            console.log('create post error');
-            console.log(e);
+            Logger.error('[SbPostsService][create] error', JSON.stringify(e));
         }
     }
 
@@ -92,8 +90,7 @@ export class SbPostsService {
 
             return newPost;
         } catch (e) {
-            console.log(e);
-            console.log('post save');
+            Logger.error('[SbPostsService][save] error', JSON.stringify(e));
         }
     }
     async updatePost(postId: number, postDto: UpdatePostDto) {
@@ -234,7 +231,6 @@ export class SbPostsService {
             },
         });
 
-        console.log(data);
         return data;
     }
 
@@ -320,9 +316,6 @@ export class SbPostsService {
             return _email === email;
         });
         if (approvalResult) {
-            console.log(approvalResult);
-            console.log('isAlready vote user');
-
             return true;
         }
 
@@ -340,9 +333,6 @@ export class SbPostsService {
             return _email === email;
         });
         if (disapprovalResult) {
-            console.log(disapprovalResult);
-            console.log('isAlready vote user');
-
             return true;
         }
 

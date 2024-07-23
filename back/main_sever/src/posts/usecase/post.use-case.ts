@@ -97,7 +97,7 @@ export class PostsUseCases {
     async updateQuest(postId: number, updateData: UpdatePostDto) {
         const post: QuestPostModel = await this.questService.loadById(postId);
         if (!post) {
-            console.log(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
+            Logger.error(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
             throw new NotFoundException(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
         }
 
@@ -111,7 +111,7 @@ export class PostsUseCases {
     async updateSb(postId: number, updateData: UpdatePostDto) {
         const post: SbPostModel = await this.sbService.loadById(postId);
         if (!post) {
-            console.log(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
+            Logger.error(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
             throw new NotFoundException(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
         }
 
@@ -254,7 +254,7 @@ export class PostsUseCases {
 
         // TODO Post 전용 Exception 구현
         if (!post) {
-            console.log(`[deleteSb] run fail. postId:${postId} is not found.`);
+            Logger.error(`[deleteSb] run fail. postId:${postId} is not found.`);
             throw new NotFoundException(`[deleteSb] postId:${postId} is not found.`);
         }
 

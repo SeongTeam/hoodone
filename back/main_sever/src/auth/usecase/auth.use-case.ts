@@ -139,7 +139,7 @@ export class AuthUseCase {
 
             return this.mailUseCase.sendCertificationPinCode(toEmail, pinCode);
         } catch (e) {
-            console.log(e);
+            Logger.log(`sendSingUpPinCode() =>>> ${JSON.stringify(e)}`);
             return e;
         }
     }
@@ -178,7 +178,7 @@ export class AuthUseCase {
         try {
             this.userUseCase.updateUserPassword(id, { password: hashedPassword }, qr);
         } catch (e) {
-            console.log(e);
+            Logger.error(`resetPassword() =>>> ${JSON.stringify(e)}`);
             throw new BadRequestException('비밀번호 초기화 실패');
         }
     }

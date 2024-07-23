@@ -60,7 +60,7 @@ export class CommentsController {
             res.post = await this.commentUseCases.createComment(user, postId, createDto, qr);
             return res;
         } catch (e) {
-            console.log(e);
+            Logger.error('[CommentsController][postComment] error: ', JSON.stringify(e));
         }
     }
 
