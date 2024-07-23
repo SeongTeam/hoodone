@@ -25,7 +25,7 @@ export interface QuestPost extends BasePost {
 }
 
 export interface SubmissionPost extends BasePost {
-    parentPost: string;
+    parentPost: QuestPost;
     type: POST_TYPE.SB;
 }
 

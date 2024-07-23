@@ -19,13 +19,12 @@ import { RouteTable } from '@/components/sidebar/SideBarRoute';
 type DetailPostFormProps = {
     post: PostContainer<QuestPost | SubmissionPost>;
     type: POST_TYPE;
+    parentPost?: PostContainer<QuestPost | SubmissionPost> | null;
 };
 
-export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) => {
+export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type, parentPost}) => {
 
     const { title , content , tags } = post.postData;
-
-
     return (
         <Box w="100%" minW="300px">
             <DetailPostHeader post={post} type={type} />
@@ -52,7 +51,7 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) =>
 
                 <Box height={5}></Box>
 
-                {type === POST_TYPE.SB && <ParentPostCard post={post} type="quest" />}
+                {parentPost && <ParentPostCard post={parentPost} type={parentPost.postData.type} />}
 
                 <Box height={35}></Box>
                 {/* content */}

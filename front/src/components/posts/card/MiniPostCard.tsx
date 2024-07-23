@@ -4,6 +4,7 @@ import { customColors } from '@/utils/chakra/customColors';
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { PostContainer,QuestPost , SubmissionPost } from '@/components/posts/postType';
+import PostThumbnail from './components/postThumbnail';
 
 type MiniPostCardProps = {
     post: PostContainer<QuestPost | SubmissionPost>;
@@ -65,13 +66,8 @@ const MiniPostCard: React.FC<MiniPostCardProps> = ({ post, index }) => {
                         {editTitle(post.postData.title)}
                     </Text>
                 </Flex>
-                {/* TODO  PostThumbnail 사용하기 */}
-                {/* <PostThumbnail publicID={post.cloudinaryPublicId} /> */}
-                <Image
-                    borderRadius={15}
-                    src="https://res.cloudinary.com/dlrsuoog6/image/upload/v1719488420/samples/cup-on-a-table.jpg"
-                    alt="miniPost mock url"
-                />
+
+                <PostThumbnail publicID={post.postData.cloudinaryPublicId} />
             </Flex>
         </Box>
     );
