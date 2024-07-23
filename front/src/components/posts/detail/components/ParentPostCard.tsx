@@ -57,7 +57,8 @@ const ParentPostCard: React.FC<ParentPostCardProps> = (
                 pos="relative"
                 mb = "10px"
                 onClick={handleOnClickItem}
-
+                _hover = {{ bg: customColors.shadeLavender[300] }}
+                cursor={'pointer'}
             >
                 <Stack
                     direction="column"
