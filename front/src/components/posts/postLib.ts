@@ -193,7 +193,7 @@ export class PostFetchService<T extends POST_TYPE> {
             const relatedList = data.getPaginatedSbs as SubmissionPost[];
             const relatedSblist: PostContainer<SubmissionPost>[] = relatedList.map((sb) => {
                 const post: PostContainer<SubmissionPost> = {
-                    postData: sb,
+                    postData: { ...sb, type: POST_TYPE.SB },
                     paginatedOffset: offset,
                     lastFetched: new Date(),
                 };
@@ -245,7 +245,7 @@ export class PostFetchService<T extends POST_TYPE> {
 
             const posts: PostContainer<POST_TYPE_MAP[T]>[] = datalist.map((data) => {
                 const post: PostContainer<POST_TYPE_MAP[T]> = {
-                    postData: data,
+                    postData: { ...data, type: this.type },
                     paginatedOffset: offset,
                     lastFetched: new Date(),
                 };
@@ -303,7 +303,7 @@ export class PostFetchService<T extends POST_TYPE> {
             const data = dto.getById as POST_TYPE_MAP[T];
 
             const post: PostContainer<POST_TYPE_MAP[T]> = {
-                postData: data,
+                postData: { ...data, type: this.type },
                 paginatedOffset: NO_OFFSET,
                 lastFetched: new Date(),
             };

@@ -7,6 +7,7 @@ import LoginButton from './components/LoginButton';
 import UserMenu from './components/UserMenu';
 import SidebarResponsive from '../sidebar/SideBarDrawer';
 import { useRouter } from 'next/navigation';
+import { RouteTable } from '../sidebar/SideBarRoute';
 
 export default function NaviBar() {
     const router = useRouter();
@@ -25,7 +26,7 @@ export default function NaviBar() {
                 <Box  
                     alignContent={'center'} 
                     me= {{base : "0px" , lg: "150px"}}
-                    onClick={() => router.push("/")}
+                    onClick={() => router.push(RouteTable.defaultRoute.home)}
                     cursor="pointer"
                     >
                     <Text 

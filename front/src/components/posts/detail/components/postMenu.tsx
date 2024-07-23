@@ -8,6 +8,7 @@ import { useUserAccountWithSSR } from '@/hooks/userAccount';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ReportModal } from '@/components/report/ReportModal';
 import { deletePost } from '../../postsActions';
+import { RouteTable } from '@/components/sidebar/SideBarRoute';
 
 type PostMenuProps = {
     post: PostContainer<QuestPost | SubmissionPost>;
@@ -30,10 +31,18 @@ const PostMenu: React.FC<PostMenuProps> = ({ post, type }) => {
     };
 
     const handleEdit = () => {
-        const path = type === POST_TYPE.QUEST ? `quest` : `sb`;
         const postId = post.postData.id;
         const index = post.paginatedOffset;
-        router.push(`/${path}/${postId}/edit?index=${index}`);
+        let path = '';
+        switch (type) {
+            case POST_TYPE.QUEST:
+                path = RouteTable.QuestRoute.getEdit(postId.toString());
+                break;
+            case POST_TYPE.SB:
+                path = RouteTable.SubmissionRoute.getEdit(postId.toString());
+                break;
+        }
+        router.push(`${path}?index=${index}`);
     };
     const handleDelete = async () => {
         await deletePost(type, post.postData.id, post.paginatedOffset);

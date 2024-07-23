@@ -1,6 +1,6 @@
 'use client';
 
-import { PostContainer, QuestPost, SubmissionPost } from '@/components/posts/postType';
+import { POST_TYPE, PostContainer, QuestPost, SubmissionPost } from '@/components/posts/postType';
 import { customColors } from '@/utils/chakra/customColors';
 import { Box, Flex, Text, Image, Spacer, Stack, chakra, VStack } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
@@ -10,20 +10,18 @@ import { ImageUploadVariant } from '@/components/common/ImageUpload';
 import { formatCreatedAt } from '@/lib/Date';
 import { useState } from 'react';
 import { CldImage } from 'next-cloudinary';
+import { RouteTable } from '@/components/sidebar/SideBarRoute';
 
-type PostVariety = 'quest' | 'sb';
 
 type ParentPostCardProps = {
     post: PostContainer<QuestPost | SubmissionPost>;
-    type: PostVariety;
+    type: POST_TYPE;
 };
 
 const ParentPostCard: React.FC<ParentPostCardProps> = (
-    { post },
-    variant = ImageUploadVariant.Post,
+    { post, type },
 ) => {
-    const ImagRadious = variant === ImageUploadVariant.Profile ? 'full' : '15px';
-    const ImageFit = variant === ImageUploadVariant.Profile ? 'cover' : 'contain';
+    
     const { id ,title, content, author, createdAt, tags } = post.postData;
 
     const timeAgo = createdAt;
@@ -40,7 +38,7 @@ const ParentPostCard: React.FC<ParentPostCardProps> = (
         return str;
     };
     const handleOnClickItem = (event: React.MouseEvent<HTMLDivElement>) => {
-        router.push(`/quest/${id}`);
+        router.push(RouteTable.QuestRoute.getDetail(id.toString()));
     };
 
 
@@ -59,7 +57,8 @@ const ParentPostCard: React.FC<ParentPostCardProps> = (
                 pos="relative"
                 mb = "10px"
                 onClick={handleOnClickItem}
-
+                _hover = {{ bg: customColors.shadeLavender[300] }}
+                cursor={'pointer'}
             >
                 <Stack
                     direction="column"
@@ -88,23 +87,17 @@ const ParentPostCard: React.FC<ParentPostCardProps> = (
                     </Box>
                 </Stack>
 
-                <Flex
+                <Box
                     py = "10px"
                     px = "10px"
-                    align="center"
-                    display = {{ base : "none" , md: 'flex' }}
+                    display = {{ base : "none" , md: 'block' }}
+                    w="200px"
                 >
-                    {/* 
-                        TODO PostThumbnail로 변경하기
-                        <PostThumbnail publicID={post.cloudinaryPublicId} /> */}
-                    <CldImage
-                        src={post.postData.cloudinaryPublicId}
-                        alt= "thumbnail"
-                        width="270"
-                        height="120"
-                        style={{ objectFit: ImageFit, borderRadius:  borderRadius  }}
+                    <PostThumbnail 
+                        heightPX = {100} 
+                        publicID={post.postData.cloudinaryPublicId} 
                     />
-                </Flex>
+                </Box>
             </Stack>
         </Box>
     );

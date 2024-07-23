@@ -8,6 +8,8 @@ import { ChatIcon } from '@chakra-ui/icons';
 import { useUserAccountWithSSR } from '@/hooks/userAccount';
 import { responseData } from '@/type/responseType';
 import FavoriteButton from '../../common/FavoriteButton';
+import { RouteTable } from '@/components/sidebar/SideBarRoute';
+import { useRouter } from 'next/navigation';
 
 type QuestButtonsProps = {
     post: PostContainer<QuestPost | SubmissionPost>;
@@ -21,32 +23,37 @@ function useStopPropagtion() {
 
 const QuestButtons: React.FC<QuestButtonsProps> = ({ post }) => {
 
-    /*TODO
-    - UserAccount atom에서 isFavorite 정보 가져오기.
-    */
-    // const isUserFavorite = false;
-
     const stopPropagation = useStopPropagtion();
+    const router = useRouter();
 
 
 
-
-    const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const hanldePlayClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         stopPropagation(event);
-        alert('handleButtonClick');
+        const path = RouteTable.SubmissionRoute.getCreate(post.postData.id.toString());
+
+        router.push(path);
     };
 
 
 
     return (
         <Flex justify={'space-between'} gap ="5px">
-            <Button
-                variant='purple'
-                onClick={stopPropagation}
-            >
-                Play it!
-            </Button>
 
+            { post.postData.type === POST_TYPE.QUEST ?
+                <Button
+                    variant='purple'
+                    onClick={hanldePlayClick}
+                >
+                    Play it!
+                </Button>
+                :
+                <Button
+                    variant='purple'
+                >
+                    Vote it
+                </Button>
+            }
             <FavoriteButton post={post} type={POST_TYPE.QUEST} />
             <Button
                 leftIcon={<ChatIcon />}
