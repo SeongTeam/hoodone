@@ -135,16 +135,17 @@ export class UsersService {
         const findOption = option ?? COMMON_FIND_USER_OPTIONS;
         const existingUser = await this.usersRepository.findOne({
             where: where,
-            ...findOption,
+            ...COMMON_FIND_USER_OPTIONS,
         });
         return existingUser;
     }
 
-    async getUserUsingAccessToken(email: string) {
+    async getUserUsingAccessToken(email: string, option?: FindManyOptions<UserModel>) {
         const existingUser = await this.usersRepository.findOne({
             where: {
                 email,
             },
+            ...option,
         });
         return existingUser;
     }

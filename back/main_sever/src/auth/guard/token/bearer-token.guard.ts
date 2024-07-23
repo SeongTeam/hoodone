@@ -3,6 +3,7 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { UserUseCase } from 'src/users/usecase/user.use-case';
 
 import { AuthUseCase } from '../../usecase/auth.use-case';
+import { TOKEN_GUARD_FIND_USER_OPTIONS } from '@/users/const/user-find-options';
 
 /**AccessTokenGuard & refreshTokenGuard의 부모 class 직접적으로 사용되지 않습니다*/
 @Injectable()
@@ -24,7 +25,6 @@ export class BearerTokenGuard implements CanActivate {
         const token = this.authUseCase.extractTokenFromHeader(rawToken, true);
 
         const result = await this.authUseCase.verifyToken(token);
-
         /**
          * request에 넣을 정보
          *
@@ -32,7 +32,10 @@ export class BearerTokenGuard implements CanActivate {
          * 2) token - token
          * 3) tokenType - access | refresh
          */
-        const user = await this.userUseCase.getUserUsingAccessToken(result.email);
+        const user = await this.userUseCase.getUserUsingAccessToken(
+            result.email,
+            TOKEN_GUARD_FIND_USER_OPTIONS,
+        );
 
         req.user = user;
         //TODO req.token이 필요할지 의논하자
