@@ -30,12 +30,10 @@ const BatchSize = 1;
 - posts===null 인 예외상황 처리 로직 추가
 */
 
-interface AdminPostSliderWidnowProps {
-}
+interface AdminPostSliderWidnowProps {}
 
 const AdminPostSliderWidnow: React.FC<AdminPostSliderWidnowProps> = async () => {
-    const posts = await new PostFetchService(POST_TYPE.QUEST).getCachedPaginatedPosts(INITIAL_OFFSET);
-
+    const posts = await new PostFetchService(POST_TYPE.QUEST).getPaginatedAdminQuests(1, 5);
 
     const postColor = [
         customColors.pastelGreen[300],
@@ -48,18 +46,14 @@ const AdminPostSliderWidnow: React.FC<AdminPostSliderWidnowProps> = async () => 
         visible: { opacity: 1 },
     };
 
-
-
     return (
         <Box>
-            <Text>
-                Admin Quest
-            </Text> 
+            <Text>Admin Quest</Text>
             <Box h={110 + 20 + 'px'} bg="white" alignContent="center">
-
                 <PostSlider sliderName="AdminQuests" gap="10px">
-                    { posts && Array.isArray(posts) 
-                    && posts.map((post, index) => {
+                    {posts &&
+                        Array.isArray(posts) &&
+                        posts.map((post, index) => {
                             return (
                                 <MotionDiv
                                     variants={variants}
@@ -83,7 +77,7 @@ const AdminPostSliderWidnow: React.FC<AdminPostSliderWidnowProps> = async () => 
                                     />
                                 </MotionDiv>
                             );
-                    })}
+                        })}
                 </PostSlider>
             </Box>
         </Box>
