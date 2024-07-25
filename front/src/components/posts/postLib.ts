@@ -206,6 +206,56 @@ export class PostFetchService<T extends POST_TYPE> {
             return null;
         }
     }
+    async getPaginatedAdminQuests(offset: number, limit: number) {
+        // const postTag = PostCache.getPostTag(this.type);
+        // const pageTag = PostCache.getPaginatedTag(this.type, offset);
+        try {
+            if (offset <= 0) {
+                logger.error('offset <= 0', { message: { offset } });
+                throw new Error('offset is invalid');
+            }
+            if (limit <= 0) {
+                logger.error('limit <= 0', { message: { limit } });
+                throw new Error('limit is invalid');
+            }
+
+            const res = await fetch(
+                `${this.backendURL}/quests/admin-paginated?offset=${offset}&limit=${limit}`,
+            );
+
+            if (!res.ok) {
+                const resLog = new LoggableResponse(res);
+                logger.error('getPaginatedPosts error', {
+                    message: `(offset: ${offset}, limit: ${limit})`,
+                    response: resLog,
+                });
+                throw new Error('getPaginatedPosts error');
+            }
+
+            const dto: PostApiResponseDto = await res.json();
+            const datalist = dto.getPaginatedPosts as POST_TYPE_MAP[T][];
+
+            assert(Array.isArray(datalist));
+
+            if (datalist.length === 0) {
+                return null;
+            }
+
+            const posts: PostContainer<POST_TYPE_MAP[T]>[] = datalist.map((data) => {
+                const post: PostContainer<POST_TYPE_MAP[T]> = {
+                    postData: data,
+                    paginatedOffset: offset,
+                    lastFetched: new Date(),
+                };
+                return post;
+            });
+
+            return posts;
+        } catch (error) {
+            logger.error('Error getPaginatedPosts', { message: error });
+            return null;
+        }
+    }
 
     private async getPaginatedPosts(offset: number, limit: number) {
         const postTag = PostCache.getPostTag(this.type);
