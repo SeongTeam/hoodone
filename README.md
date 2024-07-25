@@ -1,6 +1,73 @@
-# Hood-one
+## Project : Small Quest
 
-- 사이트 핵심 주제 : AI와 관련된 썰을 푸는 사이트
-- 메인 게시글에서 작성한 모든 게시글에는 항상 첫번째로 AI가 쓴 댓글과 AI 프로필 ⇒ 스카이넷 or hood-one
+A CRUD communiuty where uses can
+- enjoy other user's Quest post, 
+- evaluate other user's result of Quest
+- Create Quest.
 
-- hoodone 뜻 : 후드에 사는 누군가 (who done ⇒ 누가 끝냈어?)
+Quest is a post which creator request for other user to do small something .
+
+Community is managed based on Quest ticket which user consumes when create Quest and gets when user's result is evaluated to success
+
+
+## Getting Started
+### Requirments
+- Node.js
+- cloudinary accounts 
+- postgres DB
+
+### Installation
+
+1. git clone 
+
+2. Navigate to both the frontend and backend directories: 
+
+3. install npm package
+
+4. rename .env,example to .env and fill in the environment variables in both directories. 
+- Backend: Use `.env.local` or `.env.server`. The app uses "cross-env NODE_ENV=..." to reference the appropriate file.
+- You can modify the .env file selection in `back/main-server/package.json`.
+
+5. Build the applications:
+Backend:
+
+```
+back/main-server $ npm run build
+```
+
+Frontend:
+```
+front $ npm run build
+```
+
+6. Build the applications:
+Backend:
+```
+back/main-server $ npm run start
+```
+
+Frontend:
+```
+front $ npm run start
+```
+    
+## Technical Stack
+
+### Common
+- TypeScript 
+- git
+
+### FrontEnd
+- Next.js 
+- Chakra-UI
+- Cloudinary
+
+### Backend 
+- Nest.js
+- TypeORM, 
+
+### DataBase
+- postgresSQL,
+
+## Deployment
+- Hostend on AWS EC2 
