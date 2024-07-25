@@ -14,6 +14,7 @@ import { FavoriteService } from 'src/favorite/favorite.service';
 import { PostType } from '../-comment/enum/post_type';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { QuestFavoriteModel } from 'src/favorite/entities/quest_favorite.entity';
+import { UserUseCase } from '@/users/usecase/user.use-case';
 
 export enum SbVoteMessage {
     ALREADY_VOTED = 'already vote',
@@ -27,17 +28,21 @@ export class PostsUseCases {
         private readonly questService: QuestPostsService,
         private readonly sbService: SbPostsService,
         private readonly favoriteService: FavoriteService,
+        private readonly userUseCase: UserUseCase,
     ) {}
 
     async createQuest(
         authorId: number,
         postInfo: Pick<PostModel, 'title' | 'content' | 'cloudinaryPublicId' | 'tags'>,
+        ticketId: number,
         qr: QueryRunner,
     ) {
         // TODO 게시물 에러코드 생성하기
         try {
             const createdPost: QuestPostModel = await this.questService.create(authorId, postInfo);
             const newPost: QuestPostModel = await this.questService.save(createdPost, qr);
+            const decrementResult = await this.userUseCase.decrementTicketCount(ticketId, qr);
+
             return newPost;
         } catch (e) {
             throw new NotFoundException('QuestPost create 에러');
@@ -196,7 +201,7 @@ export class PostsUseCases {
         return isExist;
     }
 
-    async appendApproval(email: string, postId: number, qr: QueryRunner) {
+    async appendApproval(email: string, postId: number, ticketId: number, qr: QueryRunner) {
         const ret = { ok: false, message: SbVoteMessage.VOTE_FAIL, result: null };
         const { isOwner, isApprovalVoted, isDisapprovalVoted } =
             await this.sbService.validateVoteQuery(email, postId);
@@ -210,7 +215,12 @@ export class PostsUseCases {
             return ret;
         }
 
-        ret.result = await this.sbService.appendApproval(email, postId, qr);
+        const appendResult = await this.sbService.appendApproval(email, postId, qr);
+        const incrementResult = await this.userUseCase.incrementTicketCount(ticketId, qr);
+
+        if (appendResult.voteResult == VoteResult.APPROVAL) {
+        }
+        ret.result = appendResult;
         ret.ok = true;
         ret.message = SbVoteMessage.VOTE_SUCCESS;
 
