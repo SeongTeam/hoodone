@@ -33,7 +33,6 @@ export class UsersController {
     constructor(
         private readonly userUseCase: UserUseCase,
         private readonly tempUserUseCase: TempUserUseCase,
-        private readonly ticketUserUseCase: TicketUseCase,
     ) {}
 
     @Post('/tempUser')
@@ -87,12 +86,12 @@ export class UsersController {
     @UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
     incrementTicket(@User('ticket') ticket: TicketModel, @QueryRunner() qr: QR) {
-        return this.ticketUserUseCase.incrementCount(ticket.id, qr);
+        return this.userUseCase.incrementTicketCount(ticket.id, qr);
     }
     @Patch('/tickets/decrease')
     @UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
     decrementTicket(@User('ticket') ticket: TicketModel, @QueryRunner() qr: QR) {
-        return this.ticketUserUseCase.decrementCount(ticket.id, qr);
+        return this.userUseCase.decrementTicketCount(ticket.id, qr);
     }
 }

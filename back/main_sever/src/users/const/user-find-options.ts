@@ -8,5 +8,14 @@ export const COMMON_FIND_USER_OPTIONS: FindManyOptions<UserModel> = {
         sbPosts: true,
         favoriteQuests: true,
         favoriteSbs: true,
+        ticket: true,
+    },
+};
+
+export const TOKEN_GUARD_FIND_USER_OPTIONS: FindManyOptions<UserModel> = {
+    relations: {
+        favoriteQuests: true,
+        favoriteSbs: true,
+        ticket: true,
     },
 };

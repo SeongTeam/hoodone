@@ -32,6 +32,7 @@ import { Logger } from '@nestjs/common';
 import { UserModel } from 'src/users/entities/user.entity';
 import { UserUseCase } from 'src/users/usecase/user.use-case';
 import { FavoriteService } from 'src/favorite/favorite.service';
+import { TicketModel } from '@/users/_tickets/entities/ticket.entity';
 
 /*TODO
 - Comment list 미포함하여 반환하도록 수정
@@ -52,11 +53,12 @@ export class QuestPostsController {
     @UseInterceptors(TransactionInterceptor)
     async post(
         @User('id') userId: number,
+        @User('ticket') ticket: TicketModel,
         @Body(ValidationPipe) body: CreatePostDto,
         @QueryRunner() qr: QR,
     ) {
         const res = new PostApiResponseDto();
-        res.post = await this.postUseCase.createQuest(userId, body, qr);
+        res.post = await this.postUseCase.createQuest(userId, body, ticket.id, qr);
 
         return res;
     }

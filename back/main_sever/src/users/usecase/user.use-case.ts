@@ -8,12 +8,13 @@ import { UserModel } from '../entities/user.entity';
 import { BadRequestException, Logger } from '@nestjs/common';
 import { TicketUseCase } from 'src/users/_tickets/usecase/ticket_use_case';
 import { FindManyOptions } from 'typeorm';
+import { TicketService } from '../_tickets/ticket.service';
 
 @Injectable()
 export class UserUseCase {
     constructor(
         private readonly userService: UsersService,
-        private readonly ticketUseCase: TicketUseCase,
+        private readonly ticketService: TicketService,
     ) {}
 
     /**내부에 Exception logic이 없습니다. 반환 받는 값을 확인하는 로직을 추가하세요
@@ -29,9 +30,10 @@ export class UserUseCase {
 
         try {
             if (!(isEmailExisted || isNicknameExisted)) {
-                let ticket = await this.ticketUseCase.create(qr);
+                let ticket = await this.ticketService.create(qr);
                 let newUser = await this.userService.createUser(userInfo, ticket, qr);
-                await this.ticketUseCase.addUser(ticket, newUser, qr);
+
+              await this.ticketService.addUser(ticket.id, newUser, qr);
 
                 return newUser;
             }
@@ -58,8 +60,10 @@ export class UserUseCase {
         return existingUser;
     }
 
-    async getUserUsingAccessToken(email: string) {
-        const existingUser = await this.userService.getUserUsingAccessToken(email);
+    async getUserUsingAccessToken(email: string, option?: FindManyOptions<UserModel>) {
+        const existingUser = await this.userService.getUserUsingAccessToken(email, option);
+
+        console.log(existingUser.ticket);
         if (!existingUser) {
             throw new AuthException('EMAIL_NOT_FOUND');
         }
@@ -139,5 +143,16 @@ export class UserUseCase {
         } catch (e) {
             throw new BadRequestException('UserUseCase  updateUserPassword 에러');
         }
+    }
+
+    async incrementTicketCount(ticketId: number, qr: QueryRunner) {
+        const result = this.ticketService.incrementCount(ticketId, qr);
+        // console.log(result);
+        return result;
+    }
+
+    async decrementTicketCount(ticketId: number, qr: QueryRunner) {
+        const result = this.ticketService.decrementCount(ticketId, qr);
+        return result;
     }
 }
