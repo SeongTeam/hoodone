@@ -9,6 +9,9 @@ import { extractStatusMessage } from '@/lib/server-only/message';
 import { setAccessTokenCookie, setRefreshTokenCookie } from '@/lib/server-only/authLib';
 import { type responseData } from '@/type/responseType';
 import { type SignInDTO } from '@/type/AuthType';
+import { redirect } from 'next/navigation';
+import { m } from 'framer-motion';
+import { LoggableResponse } from '@/utils/log/types';
 const backURL = process.env.BACKEND_URL;
 
 /*TODO
@@ -36,30 +39,21 @@ export async function signUp(formData: FormData) {
                 password,
             }),
         });
-        console.log(res);
+
         if (res.ok) {
             ret.ok = true;
             ret.response = await res.json();
-
-            return ret;
         } else {
             ret.ok = false;
-            ret.message = 'signUp fail ';
-            const data = await res.json();
-            const { detail, statusCode, timestamp } = data;
-            console.log('ddddd');
-
-            console.log(data);
-            ret.response = { detail, statusCode, timestamp };
-
-            return ret;
+            ret.message = 'signUp fail';
+            const logRes = new LoggableResponse(res);
+            logger.error(`[signUp] response error `, { response: JSON.stringify(logRes) });
         }
     } catch (e) {
-        ret.message = `Authenication failed Because of Internal Server error.`;
-        ret.response = { e };
-        console.log('signUp error');
-        return ret;
+        logger.error('[signUp] error', { message: e });
+        throw new Error('Authenication failed Because of Internal Server error.');
     }
+    return ret;
 }
 
 export async function signIn(formData: FormData) {

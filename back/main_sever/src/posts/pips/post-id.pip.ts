@@ -1,4 +1,4 @@
-import { ArgumentMetadata, PipeTransform } from '@nestjs/common';
+import { ArgumentMetadata, BadRequestException, PipeTransform } from '@nestjs/common';
 import { PostType } from '../-comment/enum/post_type';
 
 export interface PostId {
@@ -16,10 +16,12 @@ export class PostIdPip implements PipeTransform {
 
             return postId;
         } else if (split[0] == 'sb') {
-            const postId = { postType: PostType.QUEST, id: +split[1] };
+            const postId = { postType: PostType.SB, id: +split[1] };
 
             return postId;
         }
-        return;
+        throw new BadRequestException(
+            'PostIdPip err) post.id formate is not valid { ex) quest:1 or sb:1 }',
+        );
     }
 }

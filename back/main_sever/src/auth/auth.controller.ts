@@ -134,11 +134,9 @@ export class AuthController {
     @Post('compare/tempuser-pin-code')
     async compareTempUserPinCode(@Body(ValidationPipe) body) {
         const { email, pinCode } = body;
-        console.log(body);
         const result = await this.tempUserUseCase.comparePinCodes({ email, pinCode });
         let res = new AuthApiResponseDto();
 
-        console.log(`result ===> ${result}`);
         if (res) {
             res.getCompareTempUserPinCode = {
                 statusCode: 200,

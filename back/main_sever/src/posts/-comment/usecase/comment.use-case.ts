@@ -37,7 +37,7 @@ export class CommentUseCase {
 
             return newComment;
         } catch (e) {
-            console.log(e);
+            Logger.error(`[CommentUseCase][createComment] error`, JSON.stringify(e));
             throw new InternalServerErrorException(`CommentUseCases.createComment() error \n${e}`);
         }
     }

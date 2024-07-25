@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { QueryRunner, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -124,7 +124,7 @@ export class FavoriteService {
     }
 
     getAllFavoritesByUserId(userId: number) {
-        console.log('getAllFavoritesByUserId() work !!');
+        Logger.debug('getAllFavoritesByUserId() work !!');
         return this.questFavoriteRepository.find({
             where: {
                 favoriteUsers: { id: userId },

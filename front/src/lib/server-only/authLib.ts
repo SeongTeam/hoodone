@@ -21,12 +21,16 @@ export async function renewAccessToken(refreshToken: string) {
         },
     });
 
-    if (res.ok) {
-        const data: AuthApiResponseDto = await res.json();
-        return data.postTokenAccess!;
+    if (!res.ok) {
+        const resLog = new LoggableResponse(res);
+        logger.error('renewAccessToken response error', {
+            Response: resLog,
+            message: `refreshToken: ${refreshToken}`,
+        });
+        throw new Error('renewAccessToken response error');
     }
-    console.log('refresh token is not invalid token or not exist');
-    return '';
+    const data: AuthApiResponseDto = await res.json();
+    return data.postTokenAccess!;
 }
 
 export function checkAccessToken(accessToken: string, refreshToken: string) {
@@ -100,8 +104,9 @@ export async function getUserBasicInfo() {
         });
 
         if (!response.ok) {
+            const resLog = new LoggableResponse(response);
             logger.error('[getUserBasicInfo] response is not ok', {
-                response: new LoggableResponse(response),
+                response: JSON.stringify(response),
             });
             throw new Error('getUserBasicInfo response error');
         }

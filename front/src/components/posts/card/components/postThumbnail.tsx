@@ -1,8 +1,10 @@
 import { CldImage } from "next-cloudinary";
 import { Box,Image } from '@chakra-ui/react';
+import { cloudinaryTempData } from "@/utils/cloudinary/mockUpData";
 
 type props = {
-    publicID: string | undefined;
+    publicID: string ;
+    heightPX? : number ;
 };
 
 /*TODO
@@ -17,30 +19,23 @@ ref : https://next.cloudinary.dev/guides/responsive-images
 */
 
 //CldImage ref : https://next.cloudinary.dev/cldimage/basic-usage
-const PostThumbnail: React.FC<props> = ({ publicID }) => {
-    const minLength = 1;
+const PostThumbnail: React.FC<props> = ({ publicID, heightPX }) => {
+    
     return(
     <Box 
         position = "relative" // essential for <CldImage/> fill props
-        width="auto" 
-        h="200" bg ="black" 
-        borderRadius="15px"
+        width="100%" 
+        h={heightPX ? `${heightPX}px` : "200px"}
         _hover={{ border : "1px solid white" }}
         >
-            {publicID&&publicID.length > minLength ? 
             <CldImage 
                 fill
                 src={publicID}
                 alt="thumbnail"
                 sizes= "10vw"
+                style={{ objectFit: "cover", borderRadius: "15px" }}
                 priority
                 /> 
-            : 
-            <Image
-                w="full"
-                h="full" 
-                src="https://res.cloudinary.com/dk5ug4mzv/image/upload/v1714549154/hoodone/h4tpikvcyqntfuqqhby6.jpg" alt="default thumbnail" />
-            }
      </Box>
     );
 };

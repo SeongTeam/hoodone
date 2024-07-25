@@ -32,7 +32,7 @@ export namespace PostCache {
             case POST_TYPE.SB:
                 return POST_CACHE_TAG.SB;
             default:
-                logger.error('Construct PostInfo error. Invalid post type', {
+                logger.error('[getPostTag] error. Invalid post type', {
                     message: { postType },
                 });
                 throw new Error('Invalid post type');
@@ -113,6 +113,7 @@ export class PostFetchService<T extends POST_TYPE> {
         const abortController = new AbortController();
         const { signal } = abortController;
         const timeoutMs = 5000;
+
         try {
             const backendPromise = this.getPostByIDFromServer(id);
             const cachePromise = this.getPostByIDFromCache(id, PostsPos).then(async (post) => {
@@ -140,11 +141,13 @@ export class PostFetchService<T extends POST_TYPE> {
 
             abortController.abort();
 
-            assert(post !== undefined, 'post shoulde be defined or null');
+            assert(post !== undefined, 'post should be defined or null');
 
             if (post === null) {
-                logger.error('getPostByID error', { message: { id, PostsPos } });
-                throw new Error(`[getPostByID]] postId ${id} not found in cache and server`);
+                logger.error('[getPostByID] post is null ', {
+                    message: JSON.stringify({ id, PostsPos }),
+                });
+                throw new Error(`[getPostByID] postId:${id} not found in cache and server`);
             }
 
             return post;
@@ -163,19 +166,16 @@ export class PostFetchService<T extends POST_TYPE> {
 
         try {
             if (this.type !== POST_TYPE.QUEST) {
-                logger.error(
-                    '[getRelatedPosts] Invalid post type. Only quest fetchService support',
-                    {
-                        message: { type: this.type },
-                    },
-                );
-                throw new Error('[getRelatedPosts] Invalid post type');
+                logger.error('[getRelatedsbs] Invalid post type. Only quest fetchService support', {
+                    message: { type: this.type },
+                });
+                throw new Error('[getRelatedsbs] Invalid post type');
             }
             if (offset <= 0 || limit <= 0) {
-                logger.error('[getRelatedPosts] offset <= 0 or limit <= 0', {
+                logger.error('[getRelatedsbs] offset <= 0 or limit <= 0', {
                     message: { offset },
                 });
-                throw new Error('[getRelatedPosts] offset Or limit is invalid');
+                throw new Error('[getRelatedsbs] offset Or limit is invalid');
             }
 
             const res = await fetch(
@@ -185,15 +185,15 @@ export class PostFetchService<T extends POST_TYPE> {
 
             if (!res.ok) {
                 const resLog = new LoggableResponse(res);
-                logger.error('getRelatedPosts response error', { response: resLog });
-                throw new Error('getRelatedPosts response error');
+                logger.error('getRelatedsbs response error', { response: resLog });
+                throw new Error('getRelatedsbs response error');
             }
 
             const data: QuestPostApiResponseDto = await res.json();
             const relatedList = data.getPaginatedSbs as SubmissionPost[];
             const relatedSblist: PostContainer<SubmissionPost>[] = relatedList.map((sb) => {
                 const post: PostContainer<SubmissionPost> = {
-                    postData: sb,
+                    postData: { ...sb, type: POST_TYPE.SB },
                     paginatedOffset: offset,
                     lastFetched: new Date(),
                 };
@@ -202,7 +202,7 @@ export class PostFetchService<T extends POST_TYPE> {
 
             return relatedSblist;
         } catch (error) {
-            logger.error('getRelatedPosts error', { message: error });
+            logger.error('getRelatedsbs error', { message: error });
             return null;
         }
     }
@@ -245,7 +245,7 @@ export class PostFetchService<T extends POST_TYPE> {
 
             const posts: PostContainer<POST_TYPE_MAP[T]>[] = datalist.map((data) => {
                 const post: PostContainer<POST_TYPE_MAP[T]> = {
-                    postData: data,
+                    postData: { ...data, type: this.type },
                     paginatedOffset: offset,
                     lastFetched: new Date(),
                 };
@@ -264,7 +264,7 @@ export class PostFetchService<T extends POST_TYPE> {
             const offset = Math.floor(PostsPos / this.defaultLimit) + 1;
             const posts = await this.getCachedPaginatedPosts(offset, this.defaultLimit);
 
-            assert(Array.isArray(posts));
+            assert(Array.isArray(posts), `posts is not array. posts:${JSON.stringify(posts)}`);
 
             let post: PostContainer<POST_TYPE_MAP[T]> | null | undefined = posts.find((post) => {
                 return post.postData.id === parseInt(id);
@@ -294,19 +294,16 @@ export class PostFetchService<T extends POST_TYPE> {
 
             if (!res.ok) {
                 const resLog = new LoggableResponse(res);
-                logger.error('getPostByIDFromServer error', { response: resLog });
-                throw new Error('getPostByIDFromServer error');
+                logger.error('getPostByIDFromServer response error', { response: resLog });
+                throw new Error('getPostByIDFromServer response error');
             }
 
             const dto: PostApiResponseDto = await res.json();
-            logger.info(`path ${this.backendURL}/${this.routeSegment}/${id}`);
-
-            logger.info('getPostByIDFromServer is called');
 
             const data = dto.getById as POST_TYPE_MAP[T];
 
             const post: PostContainer<POST_TYPE_MAP[T]> = {
-                postData: data,
+                postData: { ...data, type: this.type },
                 paginatedOffset: NO_OFFSET,
                 lastFetched: new Date(),
             };

@@ -9,6 +9,8 @@ import { UpdatePostDto } from '../dto/update-post.dto';
 import { PostModel } from '../entities/post.entity';
 import { postCreateOption } from '../const/post-create-options.const';
 import { UserModel } from 'src/users/entities/user.entity';
+import { Not } from 'typeorm';
+import { ENV_ADMIN_EMAIL } from '@/_common/const/env-keys.const';
 @Injectable()
 export class QuestPostsService {
     constructor(
@@ -76,8 +78,7 @@ export class QuestPostsService {
             });
             return createdPost;
         } catch (e) {
-            console.log('create post error');
-            console.log(e);
+            Logger.error('[QuestPostsService][create] error', JSON.stringify(e));
         }
     }
 
@@ -89,8 +90,7 @@ export class QuestPostsService {
 
             return newPost;
         } catch (e) {
-            console.log(e);
-            console.log('post save');
+            Logger.error('[QuestPostsService][save] error', JSON.stringify(e));
         }
     }
     async updatePost(postId: number, postDto: UpdatePostDto) {
@@ -126,7 +126,6 @@ export class QuestPostsService {
         const repository = this._getRepository(qr);
 
         let post = await this.loadById(postId);
-        console.log(post.favoriteUsers);
 
         const result = await repository.save(post);
 
@@ -242,12 +241,17 @@ export class QuestPostsService {
         return qr ? qr.manager.getRepository<QuestPostModel>(QuestPostModel) : this.postsRepository;
     }
 
-    async getPaginatedPosts(offset: number, limit: number) {
-        const data = this.postsRepository.find({
+    async getPaginatedPosts(offset: number, limit: number, isOnlyAdminPost?: boolean) {
+        const adminEmail: string = process.env[ENV_ADMIN_EMAIL];
+        const data = await this.postsRepository.find({
             ...QUEST_POST_FIND_OPTION,
             where: {
                 isPublished: true,
+                author: {
+                    email: isOnlyAdminPost ? adminEmail : Not(adminEmail),
+                },
             },
+
             skip: limit * (offset - 1),
             take: limit,
             order: {
@@ -255,7 +259,6 @@ export class QuestPostsService {
             },
         });
 
-        console.log(data);
         return data;
     }
 

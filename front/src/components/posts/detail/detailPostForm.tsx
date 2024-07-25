@@ -14,17 +14,17 @@ import { useEffect, useState } from 'react';
 import FavoriteButton from '../common/FavoriteButton';
 import { useRouter } from 'next/navigation';
 import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons'
+import { RouteTable } from '@/components/sidebar/SideBarRoute';
 
 type DetailPostFormProps = {
     post: PostContainer<QuestPost | SubmissionPost>;
     type: POST_TYPE;
+    parentPost?: PostContainer<QuestPost | SubmissionPost> | null;
 };
 
-export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) => {
+export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type, parentPost}) => {
 
     const { title , content , tags } = post.postData;
-
-
     return (
         <Box w="100%" minW="300px">
             <DetailPostHeader post={post} type={type} />
@@ -51,7 +51,7 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type }) =>
 
                 <Box height={5}></Box>
 
-                {type === POST_TYPE.SB && <ParentPostCard post={post} type="quest" />}
+                {parentPost && <ParentPostCard post={parentPost} type={parentPost.postData.type} />}
 
                 <Box height={35}></Box>
                 {/* content */}
@@ -95,7 +95,7 @@ const QuestPostButtons : React.FC<QuestPostButtonsProps> = ({ post }) => {
     const router = useRouter();
 
     const handleDoIt = () => {
-        router.push(`/sb/create/${post.postData.id}`);
+        router.push(RouteTable.SubmissionRoute.getCreate(post.postData.id.toString()));
     };
 
     return (
@@ -114,7 +114,16 @@ interface SubmissionPostButtonsProps {
 
 const SubmissionPostButtons : React.FC<SubmissionPostButtonsProps> = ({ post }) => {
 
+    const [UserAccountState] = useUserAccountWithSSR();
+    const isLogin = UserAccountState.isLogin;
+
     const handleVote = async (isPositive : boolean) => {
+
+        if(!isLogin) {
+            alert('please, login first. After login, you can vote. Thank you!');
+            return;
+        }
+
         const result = await evaluateSubmission(POST_TYPE.SB, post.postData.id, post.paginatedOffset, isPositive);
     
         if(!result) {
@@ -130,10 +139,16 @@ const SubmissionPostButtons : React.FC<SubmissionPostButtonsProps> = ({ post }) 
     return (
         <Box>
             <HStack>
-                <Button w="100px" variant={'purple'} onClick={() => handleVote(true)} >
+                <Button
+                    w="100px"
+                    variant="purple"
+                    onClick={() => handleVote(true)} >
                     <CheckIcon />
                 </Button>
-                <Button w="100px" variant={'purple'} onClick={() => handleVote(false)}>
+                <Button 
+                    w="100px"
+                    variant="purple"
+                    onClick={() => handleVote(false)}>
                     <NotAllowedIcon />
                 </Button>
             </HStack>

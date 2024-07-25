@@ -58,10 +58,6 @@ export class SbPostsController {
         @Body(ValidationPipe) body: CreatePostDto,
         @QueryRunner() qr: QR,
     ) {
-        // 로직 실행
-        console.log(body);
-        console.log(`questId==> ${questId}`);
-
         const newPost = await this.postUseCase.createSb(userId, questId, body, qr);
 
         return newPost;

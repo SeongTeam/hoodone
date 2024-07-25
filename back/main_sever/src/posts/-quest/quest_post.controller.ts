@@ -57,8 +57,6 @@ export class QuestPostsController {
         @Body(ValidationPipe) body: CreatePostDto,
         @QueryRunner() qr: QR,
     ) {
-        // 로직 실행
-        console.log(body);
         const res = new PostApiResponseDto();
         res.post = await this.postUseCase.createQuest(userId, body, ticket.id, qr);
 
@@ -81,6 +79,19 @@ export class QuestPostsController {
         const { offset, limit } = queryParams;
         const res = new PostApiResponseDto();
         res.getPaginatedPosts = await this.postUseCase.getPaginatedQuests(offset, limit);
+
+        return res;
+    }
+
+    @Get('/admin-paginated')
+    async getAdminQuests(
+        @Query(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
+        queryParams: GetPaginatedPostsQueryDTO,
+    ) {
+        const { offset, limit } = queryParams;
+        const res = new PostApiResponseDto();
+
+        res.getPaginatedPosts = await this.postUseCase.getPaginateAdminQuests(offset, limit);
 
         return res;
     }
@@ -139,7 +150,6 @@ export class QuestPostsController {
         @User('id') userId: number,
         @QueryRunner() qr: QR,
     ) {
-        console.log(userId);
         const result = await this.postUseCase.increaseQuestFavorite(userId, postId, qr);
 
         return result;
@@ -155,8 +165,6 @@ export class QuestPostsController {
         @User('id') userId: number,
         @QueryRunner() qr: QR,
     ) {
-        console.log(userId);
-
         const result = await this.postUseCase.decreaseQuestFavorite(userId, postId, qr);
         return result;
     }

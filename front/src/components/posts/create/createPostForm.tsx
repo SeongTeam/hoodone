@@ -15,6 +15,7 @@ import { contentTexts, titleTexts } from '../card/const/rule_card_texts';
 import { useRecoilState } from 'recoil';
 import { UserAccountState } from '@/atoms/userAccount';
 import { getCldImageUrl } from 'next-cloudinary';
+import { RouteTable } from '@/components/sidebar/SideBarRoute';
 
 type CreatePostFormProps = {
     type: POST_TYPE;
@@ -96,7 +97,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({
     useEffect(() => {
         if(!userAccount.isLogin){
             alert('pleae login first');
-            router.push('/authentication/sign-in');
+            router.push(RouteTable.authRoute.signIn);
         }
     },[userAccount.isLogin,router]);
 

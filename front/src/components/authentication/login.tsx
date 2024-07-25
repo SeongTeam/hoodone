@@ -9,6 +9,7 @@ import { useRecoilState } from 'recoil';
 import { UserAccountState } from '@/atoms/userAccount';
 import { useRouter } from 'next/navigation';
 import { useUserAccountWithSSR } from '@/hooks/userAccount';
+import { RouteTable } from '../sidebar/SideBarRoute';
 
 type LoginProps = {};
 
@@ -50,7 +51,7 @@ const Login: React.FC<LoginProps> = () => {
                 favoriteQuests,
             }));
 
-            router.push('/');
+            router.push(RouteTable.defaultRoute.home);
         } else {
             setMsg(res.message);
         }

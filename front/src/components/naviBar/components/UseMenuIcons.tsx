@@ -3,6 +3,7 @@ import { Box, Flex, IconButton } from '@chakra-ui/react';
 import { Icon } from '@iconify-icon/react';
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { RouteTable } from '@/components/sidebar/SideBarRoute';
 
 /*TODO
 = Icon 위치 조정 hardcode하지 말기 */
@@ -13,7 +14,7 @@ const UserMenuIcons: React.FC = () => {
     const router = useRouter();
 
     const handleCreateButtonClick = () => {
-        router.push('/quest/create')
+        router.push(RouteTable.QuestRoute.create)
     }
 
 

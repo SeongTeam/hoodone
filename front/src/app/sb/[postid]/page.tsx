@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { POST_TYPE } from '@/components/posts/postType';
+import { POST_TYPE, PostContainer, QuestPost, SubmissionPost } from '@/components/posts/postType';
 import { PostFetchService } from '@/components/posts/postLib';
 import { Box, Text, Spacer, Flex, Grid, VStack, SimpleGrid, Image } from '@chakra-ui/react';
 import logger from '@/utils/log/logger';
@@ -26,22 +26,31 @@ export type SbPageProps = {
 const SbPage: NextPage<SbPageProps> = async ({ params, searchParams }) => {
     const borderColor = customColors.shadeLavender[300];
 
-    logger.info('#PostPage Rendered', { message: params.postid });
+    logger.info('#SubmissionPage Rendered', { message: params.postid });
     console.log(params.postid, searchParams.index);
 
-    const postService = new PostFetchService(POST_TYPE.SB);
+    const sbService = new PostFetchService(POST_TYPE.SB);
+    const qeustService = new PostFetchService(POST_TYPE.QUEST);
 
-    const post = await postService.getPostByID(
+    const sb = await sbService.getPostByID(
         params.postid,
         parseInt(searchParams.index),
-    );
+    ) as PostContainer<SubmissionPost>;
 
-    const allPosts = await postService.getCachedPaginatedPosts(1);
 
-    if (!post) {
-        logger.error(`post${params.postid} not found`);
+    if (!sb) {
+        logger.error(`sb ${params.postid} not found`);
         notFound();
     }
+
+    const parentQuest : PostContainer<QuestPost> ={
+        postData: sb.postData.parentPost,
+        paginatedOffset: 0,
+        lastFetched: new Date(),
+    };
+    const relatedSbs = await qeustService.getRelatedsbs(parentQuest.postData.id.toString());
+
+
 
     return (
         <Box
@@ -86,20 +95,20 @@ const SbPage: NextPage<SbPageProps> = async ({ params, searchParams }) => {
                             borderRadius="15px"
                             border={`1px solid ${borderColor}`}
                         >
-                            <DetailPostForm type={POST_TYPE.SB} post={post}></DetailPostForm>
+                            <DetailPostForm type={POST_TYPE.SB} post={sb} parentPost={parentQuest}></DetailPostForm>
 
                             <Box h="16px" />
 
                             <Text fontSize="1.4em"> Submission</Text>
                             <PostSlider sliderName="sbsPostsOnDetail" height="190px">
-                                {allPosts?.map((post, index) => (
-                                    <MiniPostCard key={index} index={index} post={post} />
+                                {Array.isArray(relatedSbs) && relatedSbs?.map((s, index) => (
+                                    <MiniPostCard key={index} index={index} post={s} />
                                 ))}
                             </PostSlider>
 
                             <Spacer h="26px" />
 
-                            <CommentArea postType={POST_TYPE.SB} postID={post.postData.id}></CommentArea>
+                            <CommentArea postType={POST_TYPE.SB} postID={sb.postData.id}></CommentArea>
                         </VStack>
 
                         <RuleCard

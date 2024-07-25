@@ -7,6 +7,8 @@ import { RouteInterface } from "@/components/sidebar/SideBarRoute";
 import NextLink from 'next/link'
 import { usePathname } from "next/navigation";
 import { customColors } from "@/utils/chakra/customColors";
+import { RouteTable } from "@/components/sidebar/SideBarRoute";
+
 
 type SideBarLinksType = {
     routes: RouteInterface[];
@@ -31,11 +33,20 @@ export function SidebarLinks({ routes } : SideBarLinksType) {
   const activeRoute = (route : string) => {
     const currentRoute = usePathname().toLowerCase();
     
-    const currentRootRoute = '/'+ currentRoute.split("/")[1];
+    const currentRoot = currentRoute.split("/")[1];
+    let routePoint =''
+    switch (currentRoot) {
+      case RouteTable.authRoute.root:
+      case RouteTable.profileRoute.root:
+        routePoint = '/'+ currentRoot + '/' + currentRoute.split("/")[2];
 
-    
+        return routePoint === route.toLocaleLowerCase();
 
-    return currentRootRoute === route.toLowerCase();
+      default:
+        routePoint = '/'+ currentRoot;
+        return  routePoint === route.toLocaleLowerCase();
+    }
+   
   };
 
   // this function creates the links from the secondary accordions (for example auth -> sign-in -> default)

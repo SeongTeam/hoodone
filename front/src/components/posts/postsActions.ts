@@ -17,7 +17,10 @@ import { getUserBasicInfo } from '@/lib/server-only/authLib';
 import { validateImage, uploadQuestImage, uploadSubmissionImage } from '@/utils/cloudinary/lib';
 import { cloudinaryTempData } from '@/utils/cloudinary/mockUpData';
 import { responseData } from '@/type/responseType';
-import { PostApiResponseDto, voteResponseDto } from 'hoodone-shared';
+import {
+    PostApiResponseDto,
+    voteResponseDto,
+} from '@/sharedModule/response-dto/post-api-reponse.dto';
 import { PostCache } from '@/components/posts/postLib';
 import { LoggableResponse } from '@/utils/log/types';
 
