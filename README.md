@@ -54,19 +54,25 @@ front $ npm run start
 ## Technical Stack
 
 ### Common
+[![Common](https://skillicons.dev/icons?i=ts,git)](https://skillicons.dev)
 - TypeScript 
 - git
 
 ### FrontEnd
+[![Common](https://skillicons.dev/icons?i=nextjs,reat,)](https://skillicons.dev)
 - Next.js 
 - Chakra-UI
 - Cloudinary
 
 ### Backend 
+[![Common](https://skillicons.dev/icons?i=nestjs,)](https://skillicons.dev)
+
 - Nest.js
 - TypeORM, 
 
 ### DataBase
+[![Common](https://skillicons.dev/icons?i=postgresql,)](https://skillicons.dev)
+
 - postgresSQL,
 
 ## Deployment
