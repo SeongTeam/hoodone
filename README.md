@@ -77,3 +77,50 @@ front $ npm run start
 
 ## Deployment
 - Hostend on AWS EC2 
+
+## Structure
+
+### Front
+
+```mermaid 
+block-beta
+    block:FrontEnd:1
+        columns 2
+        name1{{"Frontend"}}:2
+        block:component:2
+            columns 2
+            cc["client-component"]:1 
+            sc["server-component"]:1
+        end
+        sa["server-action"]:1
+        lib["fetch-lib"] :1
+        alib["auth-lib"]:2
+    end 
+```
+
+### Backend
+
+```mermaid
+block-beta
+    block:Backend:1
+        columns 2
+        name2{{"Backend"}}:2
+        block:NestDecorator:2
+            columns 1
+            mid["Middleware"]:1
+            guard["Guard"]:1
+            ic["Interceptor"]:1
+            pipe["Pipe"]:1
+        end
+        block:AppModule:2
+            appModule{{"App Module"}}:1
+            AM["Auth"]:1
+            UM["User"]:1
+            PM["Post"]:1
+            CM["Comment"]:1
+            Etc["etc..."]:1
+
+        end
+        TypeORM:2
+    end
+```
