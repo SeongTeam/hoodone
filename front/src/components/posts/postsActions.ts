@@ -61,7 +61,10 @@ export async function createPosts(formData: FormData, editPostId?: number) {
         const accessToken = await validateAuth();
         const type = postDto.type;
 
-        await uploadImage(imageFile, type, postDto);
+        const userInfoPromise = getUserBasicInfo();
+        const uploadPromise = uploadImage(imageFile, type, postDto);
+
+        const [userInfo, upload] = await Promise.all([userInfoPromise, uploadPromise]);
 
         if (editPostId) {
             switch (type) {
@@ -100,7 +103,13 @@ export async function createPosts(formData: FormData, editPostId?: number) {
             throw new Error('createPosts error');
         }
 
-        const postTag = PostCache.getPostTag(type);
+        let postTag = '';
+        if (type === POST_TYPE.SB) {
+            postTag = PostCache.getPostTag(POST_TYPE.SB);
+        } else {
+            if (userInfo.isAdmin) postTag = PostCache.getAdminQuestTag(POST_TYPE.QUEST);
+            else postTag = PostCache.getPostTag(POST_TYPE.QUEST);
+        }
         revalidateTag(postTag);
     } catch (error) {
         logger.error('createPosts error', { message: error });

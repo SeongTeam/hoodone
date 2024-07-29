@@ -106,7 +106,7 @@ export async function getUserBasicInfo() {
         if (!response.ok) {
             const resLog = new LoggableResponse(response);
             logger.error('[getUserBasicInfo] response is not ok', {
-                response: JSON.stringify(response),
+                response: JSON.stringify(resLog),
             });
             throw new Error('getUserBasicInfo response error');
         }

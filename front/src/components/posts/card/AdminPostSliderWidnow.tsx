@@ -33,7 +33,7 @@ const BatchSize = 1;
 interface AdminPostSliderWidnowProps {}
 
 const AdminPostSliderWidnow: React.FC<AdminPostSliderWidnowProps> = async () => {
-    const posts = await new PostFetchService(POST_TYPE.QUEST).getPaginatedAdminQuests(1, 5);
+    const posts = await new PostFetchService(POST_TYPE.QUEST).getPaginatedAdminQuests();
 
     const postColor = [
         customColors.pastelGreen[300],
