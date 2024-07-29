@@ -47,7 +47,7 @@ export class AuthController {
     @UseGuards(AccessTokenGuard)
     async identifyUser(@User('id') userId: number) {
         let res = new AuthApiResponseDto();
-        res.identify = await this.userUseCase.getUserById(userId);
+        res.identify = await this.userUseCase.getUserInfo(userId);
 
         return res;
     }

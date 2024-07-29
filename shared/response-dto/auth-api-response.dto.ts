@@ -36,5 +36,6 @@ export class AuthApiResponseDto {
         nickname: string;
         email: string;
         profileImagePublicId: string;
+        isAdmin: boolean;
     };
 }

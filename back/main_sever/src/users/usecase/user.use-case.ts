@@ -33,7 +33,7 @@ export class UserUseCase {
                 let ticket = await this.ticketService.create(qr);
                 let newUser = await this.userService.createUser(userInfo, ticket, qr);
 
-              await this.ticketService.addUser(ticket.id, newUser, qr);
+                await this.ticketService.addUser(ticket.id, newUser, qr);
 
                 return newUser;
             }
@@ -103,7 +103,7 @@ export class UserUseCase {
         return existingUser;
     }
 
-    async getUserById(id: number, option?: FindManyOptions<UserModel>) {
+    async getUserInfo(id: number, option?: FindManyOptions<UserModel>) {
         const existingUser = await this.userService.getUser(
             {
                 email: null,
@@ -113,10 +113,12 @@ export class UserUseCase {
             option,
         );
         if (!existingUser) {
-            Logger.error('UserUseCase getUserById', { message: `User[${id}] does not exist` });
+            Logger.error('UserUseCase getUserInfo', { message: `User[${id}] does not exist` });
             throw new AuthException('EMAIL_NOT_FOUND');
         }
-        return existingUser;
+        const isAdmin = this.userService.isAdmin(existingUser);
+
+        return { ...existingUser, isAdmin };
     }
 
     async updateUserData(

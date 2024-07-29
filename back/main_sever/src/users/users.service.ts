@@ -9,6 +9,7 @@ import { COMMON_FIND_USER_OPTIONS } from './const/user-find-options';
 import { DEFAULT_CREATE_USER_OPTION } from './const/default-user-create-option';
 import { TempUserModel } from './entities/temp-user.entity';
 import { TicketModel } from 'src/users/_tickets/entities/ticket.entity';
+import { ENV_ADMIN_EMAIL } from '@/_common/const/env-keys.const';
 
 @Injectable()
 export class UsersService {
@@ -165,5 +166,9 @@ export class UsersService {
         return qr
             ? qr.manager.getRepository<TempUserModel>(TempUserModel)
             : this.tempUserRepository;
+    }
+
+    isAdmin(user: UserModel) {
+        return user.email === process.env[ENV_ADMIN_EMAIL];
     }
 }
