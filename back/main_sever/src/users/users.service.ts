@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AuthException } from 'src/_common/exception/auth-exception';
 
 import { UserModel } from './entities/user.entity';
-import { COMMON_FIND_USER_OPTIONS } from './const/user-find-options';
+import { EXTENDED_FIND_USER_OPTIONS } from './const/user-find-options';
 import { DEFAULT_CREATE_USER_OPTION } from './const/default-user-create-option';
 import { TempUserModel } from './entities/temp-user.entity';
 import { TicketModel } from 'src/users/_tickets/entities/ticket.entity';
@@ -125,7 +125,7 @@ export class UsersService {
 
     async getAllUsers() {
         return this.usersRepository.find({
-            ...COMMON_FIND_USER_OPTIONS,
+            ...EXTENDED_FIND_USER_OPTIONS,
         });
     }
 
@@ -133,10 +133,10 @@ export class UsersService {
         where: Pick<UserModel, 'id' | 'nickname' | 'email'>,
         option?: FindManyOptions<UserModel>,
     ) {
-        const findOption = option ?? COMMON_FIND_USER_OPTIONS;
+        const findOption = option ?? EXTENDED_FIND_USER_OPTIONS;
         const existingUser = await this.usersRepository.findOne({
             where: where,
-            ...COMMON_FIND_USER_OPTIONS,
+            ...findOption,
         });
         return existingUser;
     }

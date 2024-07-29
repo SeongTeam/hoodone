@@ -9,6 +9,7 @@ import { BadRequestException, Logger } from '@nestjs/common';
 import { TicketUseCase } from 'src/users/_tickets/usecase/ticket_use_case';
 import { FindManyOptions } from 'typeorm';
 import { TicketService } from '../_tickets/ticket.service';
+import { instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class UserUseCase {
@@ -117,8 +118,9 @@ export class UserUseCase {
             throw new AuthException('EMAIL_NOT_FOUND');
         }
         const isAdmin = this.userService.isAdmin(existingUser);
+        const userInfo = instanceToPlain(existingUser) as UserModel;
 
-        return { ...existingUser, isAdmin };
+        return { ...userInfo, isAdmin };
     }
 
     async updateUserData(

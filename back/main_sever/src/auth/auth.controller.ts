@@ -34,6 +34,7 @@ import { ResetPasswordRequestDto } from './dto/reset-password-request.dto';
 import { AccessTokenGuard } from './guard/token/access-token.guard';
 import { User } from 'src/users/decorator/user.decorator';
 import { emit } from 'process';
+import { BASIC_FIND_USER_OPTIONS } from '@/users/const/user-find-options';
 
 @Controller('auth')
 export class AuthController {
@@ -47,7 +48,7 @@ export class AuthController {
     @UseGuards(AccessTokenGuard)
     async identifyUser(@User('id') userId: number) {
         let res = new AuthApiResponseDto();
-        res.identify = await this.userUseCase.getUserInfo(userId);
+        res.identify = await this.userUseCase.getUserInfo(userId, BASIC_FIND_USER_OPTIONS);
 
         return res;
     }
