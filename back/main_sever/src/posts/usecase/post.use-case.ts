@@ -15,6 +15,7 @@ import { PostType } from '../-comment/enum/post_type';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { QuestFavoriteModel } from 'src/favorite/entities/quest_favorite.entity';
 import { UserUseCase } from '@/users/usecase/user.use-case';
+import { SbFavoriteModel } from '@/favorite/entities/sb_favorite.entity';
 
 export enum SbVoteMessage {
     ALREADY_VOTED = 'already vote',
@@ -143,7 +144,7 @@ export class PostsUseCases {
                 await qr.startTransaction();
 
                 let QuestFavorites: QuestFavoriteModel[] =
-                    await this.favoriteService.getAllFavoritesByUserId(userId);
+                    await this.favoriteService.getAllFavoriteQuestsByUserId(userId);
                 const postIds = QuestFavorites.map((favorite) => favorite.postId);
                 return postIds;
             } else {
@@ -168,7 +169,7 @@ export class PostsUseCases {
                 await qr.startTransaction();
 
                 let QuestFavorites: QuestFavoriteModel[] =
-                    await this.favoriteService.getAllFavoritesByUserId(userId);
+                    await this.favoriteService.getAllFavoriteQuestsByUserId(userId);
                 const postIds = QuestFavorites.map((favorite) => favorite.postId);
                 return postIds;
             } else {
@@ -180,25 +181,44 @@ export class PostsUseCases {
     }
 
     async increaseSbFavorite(userId: number, sbId: number, qr: QueryRunner) {
-        const isExist = await this.favoriteService.confirmQuestFavorite(userId, sbId, qr);
+        const isExist = await this.favoriteService.confirmSbFavorite(userId, sbId, qr);
         if (isExist === false) {
             const result = await this.favoriteService.addSbFavorite(userId, sbId, qr);
             const _ = await this.sbService.incrementFavoriteCount(sbId, qr);
-            return result;
-        } else {
-            throw new BadRequestException('이미 좋아요 한 post 입니다');
+
+            const isFavorite = await this.favoriteService.validateSbModel(result);
+            if (isFavorite) {
+                await qr.commitTransaction();
+                await qr.startTransaction();
+                let SbFavorites: SbFavoriteModel[] =
+                    await this.favoriteService.getAllFavoriteSbsByUserId(userId);
+                const postIds = SbFavorites.map((favorite) => favorite.postId);
+                return postIds;
+            } else {
+                ('DB에 저장은 성공 하지만, return User.FavoriteSb 실패');
+            }
         }
+        throw new BadRequestException('이미 좋아요 한 Sb 입니다');
     }
 
     async decreaseSbFavorite(userId: number, sbId: number, qr: QueryRunner) {
-        const isExist = await this.favoriteService.confirmQuestFavorite(userId, sbId, qr);
+        const isExist = await this.favoriteService.confirmSbFavorite(userId, sbId, qr);
         if (isExist === true) {
             const result = await this.favoriteService.minusSbFavorite(userId, sbId, qr);
             const _ = await this.sbService.decrementFavoriteCount(sbId, qr);
-            return result;
-        }
+            if (result instanceof DeleteResult) {
+                await qr.commitTransaction();
+                await qr.startTransaction();
 
-        return isExist;
+                let SbFavorites: SbFavoriteModel[] =
+                    await this.favoriteService.getAllFavoriteSbsByUserId(userId);
+                const postIds = SbFavorites.map((favorite) => favorite.postId);
+                return postIds;
+            } else {
+                ('DB에 저장은 성공 하지만, return User.FavoriteSb 실패');
+            }
+        }
+        throw new BadRequestException('좋아요를 누른 적이 없는 Sb 입니다');
     }
 
     async appendApproval(email: string, postId: number, ticketId: number, qr: QueryRunner) {

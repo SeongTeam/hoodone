@@ -50,7 +50,7 @@ export class FavoriteService {
 
         const result = await repository.save({
             favoriteUsers: { id: userId },
-            favoriteQuests: { id: sbId },
+            favoriteSbs: { id: sbId },
             postId: sbId,
             postType: PostType.SB,
         });
@@ -90,7 +90,7 @@ export class FavoriteService {
                 favoriteUsers: true,
             },
         });
-
+        Logger.debug('confirmQuestFavorite()', existing);
         if (existing) {
             return true;
         }
@@ -116,16 +116,27 @@ export class FavoriteService {
             },
         });
 
+        Logger.debug('confirmSbFavorite()', existing);
+
         if (existing) {
-            throw new BadRequestException('이미 좋아요 한 post 입니다');
+            return true;
         }
 
         return false;
     }
 
-    getAllFavoritesByUserId(userId: number) {
-        Logger.debug('getAllFavoritesByUserId() work !!');
+    getAllFavoriteQuestsByUserId(userId: number) {
+        Logger.debug('getAllFavoriteQuestsByUserId() work !!');
         return this.questFavoriteRepository.find({
+            where: {
+                favoriteUsers: { id: userId },
+            },
+        });
+    }
+
+    getAllFavoriteSbsByUserId(userId: number) {
+        Logger.debug('getAllFavoriteSbsByUserId() work !!');
+        return this.sbFavoriteRepository.find({
             where: {
                 favoriteUsers: { id: userId },
             },
@@ -134,6 +145,14 @@ export class FavoriteService {
 
     async validateQuestModel(obj: any): Promise<boolean> {
         const validator = new QuestFavoriteModel();
+        Object.assign(validator, obj);
+        const errors = await validate(validator);
+
+        return errors.length === 0;
+    }
+
+    async validateSbModel(obj: any): Promise<boolean> {
+        const validator = new SbFavoriteModel();
         Object.assign(validator, obj);
         const errors = await validate(validator);
 
