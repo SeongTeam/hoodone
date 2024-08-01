@@ -54,7 +54,7 @@ const QuestButtons: React.FC<QuestButtonsProps> = ({ post }) => {
                     Vote it
                 </Button>
             }
-            <FavoriteButton post={post} type={POST_TYPE.QUEST} />
+            <FavoriteButton post={post} type={post.postData.type} />
             <Button
                 leftIcon={<ChatIcon />}
                 variant='purple'

@@ -3,7 +3,7 @@ import React , {useEffect}from "react";
 import { Button } from "@chakra-ui/react";
 import { Icon } from "@iconify-icon/react";
 import { useUserAccountWithSSR } from "@/hooks/userAccount";
-import { addFavorite, deleteFavorite } from "@/components/posts/postsActions";
+import { setFavoriteQuest, setFavoriteSb } from "@/components/posts/postsActions";
 import { POST_TYPE, PostContainer, QuestPost, SubmissionPost } from "@/components/posts/postType";
 import { responseData } from "@/type/responseType";
 
@@ -28,32 +28,64 @@ const FavoriteButton : React.FC<FavoriteButtonProps> = ({ type, post }) => {
         const res = await _callFavoriteAPI(isUserFavorite);
 
         if (res.ok) {
-            const favoriteQuests = res.response as number[];
+            
+            console.log("response", res.response);
+            if(type === POST_TYPE.QUEST){
+                const data = res.response.favoriteQuests!! as number[];
+                setUserAccount((prev) => ({
+                    ...prev,
+                    favoriteQuests: data,
+                }));
+            }
+            else{
+                const data = res.response.favoriteSbs!! as number[];
+                setUserAccount((prev) => ({
+                    ...prev,
+                    favoriteSbs: data,
+                }));
+            }
 
-            setUserAccount((prev) => ({
-                ...prev,
-                favoriteQuests: favoriteQuests,
-            }));
         }
+
 
         console.log(id);
 
         setIsUserFavorite(prev => !prev);
     };
     const _callFavoriteAPI = async (isFavorite: boolean): Promise<responseData> => {
-        if (!isFavorite) {
-            setFavoriteCount(favoriteCount + 1);
-            return await addFavorite(POST_TYPE.QUEST, id,offset);
-        }
-        setFavoriteCount(favoriteCount - 1);
+        
+        let ret : responseData ;
 
-        return await deleteFavorite(POST_TYPE.QUEST, id,offset);
+        setFavoriteCount(favoriteCount + (isFavorite ? -1 : 1));
+
+        switch (type) {
+            case POST_TYPE.QUEST:
+                ret =  await setFavoriteQuest(id, offset, !isFavorite);
+                break;
+            case POST_TYPE.SB:
+                ret = await setFavoriteSb(id, offset, !isFavorite);
+                break;
+            default:
+                ret = { ok: false, message: 'Favorite Operation. try it later', response: {} };
+        }
+        
+        return ret;
     };
 
     useEffect(() => {
-        if(userAccount.favoriteQuests && Array.isArray(userAccount.favoriteQuests)){
-            setIsUserFavorite(userAccount.favoriteQuests.includes(id));
+        if(type === POST_TYPE.QUEST){
+            if(userAccount.favoriteQuests && Array.isArray(userAccount.favoriteQuests)){
+                setIsUserFavorite(userAccount.favoriteQuests.includes(id));
+            }
+            console.log("FavoriteButton", type, userAccount.favoriteQuests);
+        }else{
+            if(userAccount.favoriteSbs && Array.isArray(userAccount.favoriteSbs)){
+                setIsUserFavorite(userAccount.favoriteSbs.includes(id));
+            }
+            console.log("FavoriteButton", type, userAccount.favoriteSbs);
         }
+
+        
     }, [userAccount,id]);
 
     return (

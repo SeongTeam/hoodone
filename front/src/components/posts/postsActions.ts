@@ -23,6 +23,8 @@ import {
 } from '@/sharedModule/response-dto/post-api-reponse.dto';
 import { PostCache } from '@/components/posts/postLib';
 import { LoggableResponse } from '@/utils/log/types';
+import { QuestPostApiResponseDto, SbPostApiResponseDto } from '@/sharedModule/index';
+import { userAccountState } from '@/atoms/userAccount';
 
 /*
 ref : https://www.youtube.com/watch?v=5L5YoFm1obk
@@ -235,86 +237,58 @@ async function uploadImage(imageFile: File, type: POST_TYPE, newPost: NewPostFor
     }
 }
 
-export async function addFavorite(postType: POST_TYPE, questId: number, postOffset: number) {
+export async function setFavoriteQuest(questId: number, offset: number, isAdd: boolean) {
     const ret: responseData = {
         ok: false,
         message: '',
-        response: { favoriteQuestIds: [] as number[] },
+        response: {
+            favoriteQuests: [] as Pick<userAccountState, 'favoriteQuests'>['favoriteQuests'],
+        },
     };
+    const pageTag = PostCache.getPaginatedTag(POST_TYPE.QUEST, offset);
 
     try {
+        let data: number[] = [];
         const accessToken = await validateAuth();
-
-        const res = await fetch(`${backendURL}/quests/${questId}/increaseFavorite`, {
-            method: 'PATCH',
-            headers: {
-                'content-type': 'application/json',
-                authorization: `Bearer ${accessToken}`,
-            },
-        });
-        // Logger.error(`registerWithEmail() =>>> ${JSON.stringify(newUser)}`);
-
-        // logger.info(' deleteFavorite res ', { message: `${res.text()}` });
-        if (res.ok) {
-            const responseData: PostApiResponseDto = await res.json();
-            logger.info('addFavorite Response', { message: responseData });
-            ret.response = responseData;
-            ret.ok = true;
-            const pageTag = PostCache.getPaginatedTag(postType, postOffset);
-            revalidateTag(pageTag);
+        if (isAdd) {
+            data = await addFavoriteQuest(accessToken, questId);
         } else {
-            const data = await res.json();
-            logger.error('addFavorite Error', {
-                message: `deleteFavorite() :  ${JSON.stringify(data)}`,
-            });
-            ret.message = `favorite 취소 실패`;
+            data = await deleteFavoriteQuest(accessToken, questId);
         }
-
-        return ret;
+        ret.ok = true;
+        ret.response = { favoriteQuests: data };
+        revalidateTag(pageTag);
     } catch (error) {
-        logger.info('addFavorite error', { message: error });
-
-        throw new Error('addFavorite error');
+        logger.error('[setFavoriteQuest] error', { message: error });
+        ret.message = 'Favorite Quest Operation. try it later';
+    } finally {
+        return ret;
     }
 }
 
-export async function deleteFavorite(postType: POST_TYPE, questId: number, postOffset: number) {
+export async function setFavoriteSb(sbId: number, offset: number, isAdd: boolean) {
     const ret: responseData = {
         ok: false,
         message: '',
-        response: { favoriteQuestIds: [] },
+        response: { favoriteSbs: [] as Pick<userAccountState, 'favoriteSbs'>['favoriteSbs'] },
     };
-
+    const pageTag = PostCache.getPaginatedTag(POST_TYPE.SB, offset);
     try {
+        let data: number[] = [];
         const accessToken = await validateAuth();
-
-        const res = await fetch(`${backendURL}/quests/${questId}/decreaseFavorite`, {
-            method: 'PATCH',
-            headers: {
-                'content-type': 'application/json',
-                authorization: `Bearer ${accessToken}`,
-            },
-        });
-
-        if (res.ok) {
-            const responseData: PostApiResponseDto = await res.json();
-            logger.info('Backend Response', { message: responseData });
-            ret.response = responseData;
-            ret.ok = true;
-            const pageTag = PostCache.getPaginatedTag(postType, postOffset);
-            revalidateTag(pageTag);
+        if (isAdd) {
+            data = await addFavoriteSb(accessToken, sbId);
         } else {
-            const data = await res.json();
-            logger.error('Backend Error', {
-                message: `deleteFavorite() :  ${JSON.stringify(data)}`,
-            });
-            ret.message = `favorite 취소 실패`;
+            data = await deleteFavoriteSb(accessToken, sbId);
         }
-
-        return ret;
+        ret.ok = true;
+        ret.response = { favoriteSbs: data };
+        revalidateTag(pageTag);
     } catch (error) {
-        logger.info('deleteFavorite error', { message: error });
-        throw new Error('deleteFavorite error');
+        logger.error('[setFavoriteSb] error', { message: error });
+        ret.message = 'Favorite Submission Operation. try it later';
+    } finally {
+        return ret;
     }
 }
 
@@ -428,4 +402,122 @@ export async function deletePost(type: POST_TYPE, postId: number, postPos: numbe
     revalidateTag(postTag);
 
     redirect(`/`);
+}
+
+async function addFavoriteQuest(accessToken: string, questId: number) {
+    const res = await fetch(`${backendURL}/quests/${questId}/increaseFavorite`, {
+        method: 'PATCH',
+        headers: {
+            'content-type': 'application/json',
+            authorization: `Bearer ${accessToken}`,
+        },
+    });
+
+    if (!res.ok) {
+        const logRes = new LoggableResponse(res);
+        logger.error('[addFavoriteQuest] response error', {
+            response: logRes,
+            message: { questId },
+        });
+    }
+
+    const responseData: QuestPostApiResponseDto = await res.json();
+    logger.info('Backend Response', { message: responseData });
+    if (
+        responseData.patchQuestIncreaseFavorite === undefined ||
+        typeof responseData.patchQuestIncreaseFavorite === 'string'
+    ) {
+        logger.error('[addFavoriteQuest] response data error', {
+            message: responseData.patchQuestIncreaseFavorite,
+        });
+        throw new Error('[addFavoriteQuest] server error. need to check server');
+    }
+
+    return responseData.patchQuestIncreaseFavorite;
+}
+
+async function deleteFavoriteQuest(accessToken: string, questId: number) {
+    const res = await fetch(`${backendURL}/quests/${questId}/decreaseFavorite`, {
+        method: 'PATCH',
+        headers: {
+            'content-type': 'application/json',
+            authorization: `Bearer ${accessToken}`,
+        },
+    });
+    if (!res.ok) {
+        const logRes = new LoggableResponse(res);
+        logger.error('[setFavoriteQuest]\\ response error', {
+            response: logRes,
+            message: { questId },
+        });
+    }
+
+    const responseData: QuestPostApiResponseDto = await res.json();
+    logger.info('Backend Response', { message: responseData });
+    if (
+        responseData.patchQuestDecreaseFavorite === undefined ||
+        typeof responseData.patchQuestDecreaseFavorite === 'string'
+    ) {
+        logger.error('[setFavoriteQuest]\\ response data error', {
+            message: responseData.patchQuestIncreaseFavorite,
+        });
+        throw new Error('[setFavoriteQuest]\\ server error. need to check server');
+    }
+
+    return responseData.patchQuestDecreaseFavorite;
+}
+
+async function addFavoriteSb(accessToken: string, sbId: number) {
+    const res = await fetch(`${backendURL}/sbs/${sbId}/increaseFavorite`, {
+        method: 'PATCH',
+        headers: {
+            'content-type': 'application/json',
+            authorization: `Bearer ${accessToken}`,
+        },
+    });
+
+    if (!res.ok) {
+        const logRes = new LoggableResponse(res);
+        logger.error('[addFavoriteSb] response error', {
+            response: logRes,
+            message: { sbId },
+        });
+    }
+
+    const responseData: SbPostApiResponseDto = await res.json();
+    logger.info('Backend Response', { message: responseData });
+    const temp = responseData.patchSbIncreaseFavorite;
+    if (temp === undefined || typeof temp === 'string') {
+        logger.error('[addFavoriteSb] response data error', { message: temp });
+        throw new Error('[addFavoriteSb] server error. need to check server');
+    }
+
+    return temp;
+}
+
+async function deleteFavoriteSb(accessToken: string, sbId: number) {
+    const res = await fetch(`${backendURL}/sbs/${sbId}/decreaseFavorite`, {
+        method: 'PATCH',
+        headers: {
+            'content-type': 'application/json',
+            authorization: `Bearer ${accessToken}`,
+        },
+    });
+    if (!res.ok) {
+        const logRes = new LoggableResponse(res);
+        logger.error('[deleteFavoriteSb] response error', {
+            response: logRes,
+            message: { sbId },
+        });
+    }
+
+    const responseData: SbPostApiResponseDto = await res.json();
+    const temp = responseData.patchSbDecreaseFavorite;
+    logger.info('Backend Response', { message: JSON.stringify(responseData) });
+    if (temp === undefined || typeof temp === 'string') {
+        logger.error('[deleteFavoriteSb] response data error', { message: temp });
+        throw new Error('[deleteFavoriteSb] server error. need to check server');
+    }
+
+    return temp;
 }
