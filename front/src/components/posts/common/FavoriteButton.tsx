@@ -6,6 +6,7 @@ import { useUserAccountWithSSR } from "@/hooks/userAccount";
 import { setFavoriteQuest, setFavoriteSb } from "@/components/posts/postsActions";
 import { POST_TYPE, PostContainer, QuestPost, SubmissionPost } from "@/components/posts/postType";
 import { responseData } from "@/type/responseType";
+import { setFavoriteDTO } from '@/components/posts/postAction.dto';
 
 interface FavoriteButtonProps {
     type: POST_TYPE;
@@ -31,17 +32,18 @@ const FavoriteButton : React.FC<FavoriteButtonProps> = ({ type, post }) => {
             
             console.log("response", res.response);
             if(type === POST_TYPE.QUEST){
-                const data = res.response.favoriteQuests!! as number[];
+                const { favoriteQuests } = res.response as setFavoriteDTO;
                 setUserAccount((prev) => ({
                     ...prev,
-                    favoriteQuests: data,
+                    favoriteQuests
                 }));
             }
             else{
-                const data = res.response.favoriteSbs!! as number[];
+
+                const { favoriteSbs } = res.response as setFavoriteDTO;
                 setUserAccount((prev) => ({
                     ...prev,
-                    favoriteSbs: data,
+                    favoriteSbs,
                 }));
             }
 
@@ -52,7 +54,7 @@ const FavoriteButton : React.FC<FavoriteButtonProps> = ({ type, post }) => {
 
         setIsUserFavorite(prev => !prev);
     };
-    const _callFavoriteAPI = async (isFavorite: boolean): Promise<responseData> => {
+    const _callFavoriteAPI = async (isFavorite: boolean) => {
         
         let ret : responseData ;
 
@@ -86,7 +88,7 @@ const FavoriteButton : React.FC<FavoriteButtonProps> = ({ type, post }) => {
         }
 
         
-    }, [userAccount,id]);
+    }, [userAccount,id,type]);
 
     return (
         <Button

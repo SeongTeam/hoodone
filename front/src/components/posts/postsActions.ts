@@ -25,6 +25,7 @@ import { PostCache } from '@/components/posts/postLib';
 import { LoggableResponse } from '@/utils/log/types';
 import { QuestPostApiResponseDto, SbPostApiResponseDto } from '@/sharedModule/index';
 import { userAccountState } from '@/atoms/userAccount';
+import { setFavoriteDTO } from '@/components/posts/postAction.dto';
 
 /*
 ref : https://www.youtube.com/watch?v=5L5YoFm1obk
@@ -241,22 +242,20 @@ export async function setFavoriteQuest(questId: number, offset: number, isAdd: b
     const ret: responseData = {
         ok: false,
         message: '',
-        response: {
-            favoriteQuests: [] as Pick<userAccountState, 'favoriteQuests'>['favoriteQuests'],
-        },
+        response: { favoriteQuests: [], favoriteSbs: [] } as setFavoriteDTO,
     };
     const pageTag = PostCache.getPaginatedTag(POST_TYPE.QUEST, offset);
 
     try {
-        let data: number[] = [];
+        let favoriteQuests = [];
         const accessToken = await validateAuth();
         if (isAdd) {
-            data = await addFavoriteQuest(accessToken, questId);
+            favoriteQuests = await addFavoriteQuest(accessToken, questId);
         } else {
-            data = await deleteFavoriteQuest(accessToken, questId);
+            favoriteQuests = await deleteFavoriteQuest(accessToken, questId);
         }
         ret.ok = true;
-        ret.response = { favoriteQuests: data };
+        ret.response = { favoriteQuests, favoriteSbs: [] };
         revalidateTag(pageTag);
     } catch (error) {
         logger.error('[setFavoriteQuest] error', { message: error });
@@ -270,19 +269,19 @@ export async function setFavoriteSb(sbId: number, offset: number, isAdd: boolean
     const ret: responseData = {
         ok: false,
         message: '',
-        response: { favoriteSbs: [] as Pick<userAccountState, 'favoriteSbs'>['favoriteSbs'] },
+        response: { favoriteQuests: [], favoriteSbs: [] } as setFavoriteDTO,
     };
     const pageTag = PostCache.getPaginatedTag(POST_TYPE.SB, offset);
     try {
-        let data: number[] = [];
+        let favoriteSbs = [];
         const accessToken = await validateAuth();
         if (isAdd) {
-            data = await addFavoriteSb(accessToken, sbId);
+            favoriteSbs = await addFavoriteSb(accessToken, sbId);
         } else {
-            data = await deleteFavoriteSb(accessToken, sbId);
+            favoriteSbs = await deleteFavoriteSb(accessToken, sbId);
         }
         ret.ok = true;
-        ret.response = { favoriteSbs: data };
+        ret.response = { favoriteSbs };
         revalidateTag(pageTag);
     } catch (error) {
         logger.error('[setFavoriteSb] error', { message: error });
