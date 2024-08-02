@@ -85,12 +85,12 @@ export async function signIn(formData: FormData) {
             const responseData: AuthApiResponseDto = await res.json();
             logger.info('Backend Response', { message: responseData });
 
-            const { nickname, accessToken, refreshToken, favoriteQuests } =
+            const { nickname, accessToken, refreshToken, favoriteQuests, favoriteSbs } =
                 responseData.postLoginEmail!;
 
             setAccessTokenCookie(accessToken);
             setRefreshTokenCookie(refreshToken);
-            ret.response = { nickname, favoriteQuests } as SignInDTO;
+            ret.response = { nickname, favoriteQuests, favoriteSbs } as SignInDTO;
             ret.ok = true;
         } else {
             const data = await res.json();
