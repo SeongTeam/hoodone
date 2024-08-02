@@ -105,6 +105,7 @@ export class AuthController {
         const { user, accessToken, refreshToken } =
             await this.authUseCase.loginWithEmail(credentials);
         const favoriteQuests = user.favoriteQuests.map((favorite) => favorite.postId);
+        const favoriteSbs = user.favoriteSbs.map((favorite) => favorite.postId);
 
         /**front에게 보내줄 데이터 집어 넣기 */
         res.postLoginEmail = {
@@ -112,6 +113,7 @@ export class AuthController {
             favoriteQuests,
             accessToken,
             refreshToken,
+            favoriteSbs,
         };
 
         return res;
