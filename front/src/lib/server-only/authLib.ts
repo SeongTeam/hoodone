@@ -68,24 +68,31 @@ export async function validateAuth() {
 }
 
 export function setAccessTokenCookie(accessToken: string) {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const isSecure = process.env.APP_COOKIE_SECURE === 'true';
+    logger.info(`[setAccessTokenCookie] secure config : ${isProduction && isSecure}`);
+
     cookies().set({
         name: 'accessToken',
         value: accessToken,
         maxAge: 60 * 10,
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: isProduction && isSecure,
         sameSite: 'strict',
         path: '/',
     });
 }
 
 export function setRefreshTokenCookie(refreshToken: string) {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const isSecure = process.env.APP_COOKIE_SECURE === 'true';
+
     cookies().set({
         name: 'refreshToken',
         value: refreshToken,
-        maxAge: 60 * 60 * 24,
+        maxAge: 60 * 60 * 24 * 2,
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: isProduction && isSecure,
         sameSite: 'strict',
         path: '/',
     });
@@ -106,7 +113,7 @@ export async function getUserBasicInfo() {
         if (!response.ok) {
             const resLog = new LoggableResponse(response);
             logger.error('[getUserBasicInfo] response is not ok', {
-                response: JSON.stringify(response),
+                response: JSON.stringify(resLog),
             });
             throw new Error('getUserBasicInfo response error');
         }

@@ -11,6 +11,7 @@ export class AuthApiResponseDto {
     postLoginEmail?: {
         nickname: string;
         favoriteQuests: number[];
+        favoriteSbs: number[];
         refreshToken: string;
         accessToken: string;
     };
@@ -36,5 +37,6 @@ export class AuthApiResponseDto {
         nickname: string;
         email: string;
         profileImagePublicId: string;
+        isAdmin: boolean;
     };
 }

@@ -34,6 +34,7 @@ import { ResetPasswordRequestDto } from './dto/reset-password-request.dto';
 import { AccessTokenGuard } from './guard/token/access-token.guard';
 import { User } from 'src/users/decorator/user.decorator';
 import { emit } from 'process';
+import { BASIC_FIND_USER_OPTIONS } from '@/users/const/user-find-options';
 
 @Controller('auth')
 export class AuthController {
@@ -47,7 +48,7 @@ export class AuthController {
     @UseGuards(AccessTokenGuard)
     async identifyUser(@User('id') userId: number) {
         let res = new AuthApiResponseDto();
-        res.identify = await this.userUseCase.getUserById(userId);
+        res.identify = await this.userUseCase.getUserInfo(userId, BASIC_FIND_USER_OPTIONS);
 
         return res;
     }
@@ -104,6 +105,7 @@ export class AuthController {
         const { user, accessToken, refreshToken } =
             await this.authUseCase.loginWithEmail(credentials);
         const favoriteQuests = user.favoriteQuests.map((favorite) => favorite.postId);
+        const favoriteSbs = user.favoriteSbs.map((favorite) => favorite.postId);
 
         /**front에게 보내줄 데이터 집어 넣기 */
         res.postLoginEmail = {
@@ -111,6 +113,7 @@ export class AuthController {
             favoriteQuests,
             accessToken,
             refreshToken,
+            favoriteSbs,
         };
 
         return res;

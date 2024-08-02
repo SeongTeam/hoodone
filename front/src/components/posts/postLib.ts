@@ -2,7 +2,7 @@ import 'server-only';
 import logger from '@/utils/log/logger';
 import { PostApiResponseDto } from '@/sharedModule/response-dto/post-api-reponse.dto';
 import assert from 'assert';
-import { unstable_cache } from 'next/cache';
+import { revalidatePath, unstable_cache } from 'next/cache';
 import {
     POST_TYPE_MAP,
     POST_TYPE,
@@ -54,6 +54,11 @@ export namespace PostCache {
         const postTypeTag = getPostTag(postType);
         return `${postTypeTag}-${POST_CACHE_TAG.ID}:${postID}`;
     }
+
+    export function getAdminQuestTag(postType: POST_TYPE) {
+        const postTypeTag = getPostTag(postType);
+        return `${postTypeTag}:AdminQuest`;
+    }
 }
 
 export class PostFetchService<T extends POST_TYPE> {
@@ -69,6 +74,8 @@ export class PostFetchService<T extends POST_TYPE> {
     private defaultLimit = 5;
     private initialOffset = 1;
     private backendURL = process.env.BACKEND_URL;
+    private adminQuestOffset = 1;
+    private adminQuestLimit = 10;
 
     constructor(type: POST_TYPE) {
         this.type = type;
@@ -206,9 +213,12 @@ export class PostFetchService<T extends POST_TYPE> {
             return null;
         }
     }
-    async getPaginatedAdminQuests(offset: number, limit: number) {
-        // const postTag = PostCache.getPostTag(this.type);
-        // const pageTag = PostCache.getPaginatedTag(this.type, offset);
+    async getPaginatedAdminQuests(
+        offset: number = this.adminQuestOffset,
+        limit: number = this.adminQuestLimit,
+    ) {
+        const tag = PostCache.getAdminQuestTag(this.type);
+
         try {
             if (offset <= 0) {
                 logger.error('offset <= 0', { message: { offset } });
@@ -221,6 +231,7 @@ export class PostFetchService<T extends POST_TYPE> {
 
             const res = await fetch(
                 `${this.backendURL}/quests/admin-paginated?offset=${offset}&limit=${limit}`,
+                { next: { tags: [tag] } },
             );
 
             if (!res.ok) {

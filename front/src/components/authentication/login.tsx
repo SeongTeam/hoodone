@@ -43,12 +43,11 @@ const Login: React.FC<LoginProps> = () => {
         const res = await signIn(formData);
 
         if (res.ok) {
-            const { nickname, favoriteQuests } = res.response as SignInDTO;
+            const { nickname, favoriteQuests, favoriteSbs } = res.response as SignInDTO;
             setUserState((prev) => ({
                 ...prev,
-                nickname: nickname,
+                ...res.response,
                 isLogin: true,
-                favoriteQuests,
             }));
 
             router.push(RouteTable.defaultRoute.home);

@@ -150,9 +150,14 @@ export class QuestPostsController {
         @User('id') userId: number,
         @QueryRunner() qr: QR,
     ) {
-        const result = await this.postUseCase.increaseQuestFavorite(userId, postId, qr);
+        const ret = new QuestPostApiResponseDto();
+        ret.patchQuestIncreaseFavorite = await this.postUseCase.increaseQuestFavorite(
+            userId,
+            postId,
+            qr,
+        );
 
-        return result;
+        return ret;
     }
 
     @Patch('/:id/decreaseFavorite')
@@ -165,8 +170,13 @@ export class QuestPostsController {
         @User('id') userId: number,
         @QueryRunner() qr: QR,
     ) {
-        const result = await this.postUseCase.decreaseQuestFavorite(userId, postId, qr);
-        return result;
+        const ret = new QuestPostApiResponseDto();
+        ret.patchQuestDecreaseFavorite = await this.postUseCase.decreaseQuestFavorite(
+            userId,
+            postId,
+            qr,
+        );
+        return ret;
     }
 
     @Delete('/:id')

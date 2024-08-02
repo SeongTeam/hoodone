@@ -21,7 +21,7 @@ interface CreateSbPageProps {
  const CreateSbPage : NextPage<CreateSbPageProps> =async  ({ params, searchParams }) => {
     const noPos = 0;
     const parentQuestId = params.questId;
-    const pos = parseInt(searchParams.index);
+    const pos = parseInt(searchParams.index) ?? noPos;
     const questPost = await new PostFetchService(POST_TYPE.QUEST).getPostByID( parentQuestId, pos );
     if (!questPost) {
         logger.error(`Quest post not found ${parentQuestId}`, { questPost: JSON.stringify(params) });

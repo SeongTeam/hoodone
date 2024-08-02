@@ -22,5 +22,5 @@ export function formatTimeFromNow(createdAt: Date) {
 export function formatCreatedAt(createdAt: Date) {
     const createdTime = new Date(createdAt);
 
-    return createdTime.toLocaleDateString();
+    return createdTime.toLocaleDateString('en-us');
 }

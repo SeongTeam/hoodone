@@ -5,7 +5,7 @@ import { Box, Button, Divider, Flex, HStack, Icon, Image, Spacer, Tag, Text } fr
 import DetailPostHeader from './components/DetailPostHeader';
 import ParentPostCard from './components/ParentPostCard';
 import { POST_TYPE, QuestPost, SubmissionPost,PostContainer } from '@/components/posts/postType';
-import { addFavorite, deleteFavorite, evaluateSubmission } from '@/components/posts/postsActions';
+import { evaluateSubmission } from '@/components/posts/postsActions';
 import { UserAccountState } from '@/atoms/userAccount';
 import { useRecoilState } from 'recoil';
 import { useUserAccountWithSSR, useUserAccountWithoutSSR } from '@/hooks/userAccount';
@@ -22,7 +22,7 @@ type DetailPostFormProps = {
     parentPost?: PostContainer<QuestPost | SubmissionPost> | null;
 };
 
-export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type, parentPost}) => {
+const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type, parentPost}) => {
 
     const { title , content , tags } = post.postData;
     return (
@@ -43,7 +43,7 @@ export const DetailPostForm: React.FC<DetailPostFormProps> = ({ post, type, pare
                     alignContent="left"
                     align="left"
                 >
-                    {'Sb:\t'}
+                    { type === POST_TYPE.QUEST ? 'Quest:\t' : 'Sb:\t'}
                     {title}
                 </Text>
 

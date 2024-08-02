@@ -1,4 +1,5 @@
 import { PostApiResponseDto } from '@/sharedModule/response-dto/post-api-reponse.dto';
+import { SbPostApiResponseDto } from '@/sharedModule/response-dto/sb-post-api-response.dto';
 import { ParseIntPipe, ValidationPipe, ParseBoolPipe } from '@nestjs/common/pipes';
 import { Controller, UseGuards, UseInterceptors } from '@nestjs/common/decorators/core';
 import {
@@ -124,7 +125,9 @@ export class SbPostsController {
         @User('id') userId: number,
         @QueryRunner() qr: QR,
     ) {
-        return this.postUseCase.increaseSbFavorite(userId, postId, qr);
+        const ret = new SbPostApiResponseDto();
+        ret.patchSbIncreaseFavorite = await this.postUseCase.increaseSbFavorite(userId, postId, qr);
+        return ret;
     }
 
     @Patch('/:id/decreaseFavorite')
@@ -136,7 +139,9 @@ export class SbPostsController {
         @User('id') userId: number,
         @QueryRunner() qr: QR,
     ) {
-        return this.postUseCase.decreaseSbFavorite(userId, postId, qr);
+        const ret = new SbPostApiResponseDto();
+        ret.patchSbDecreaseFavorite = await this.postUseCase.decreaseSbFavorite(userId, postId, qr);
+        return ret;
     }
 
     @Patch('/:id/:isApproval')
