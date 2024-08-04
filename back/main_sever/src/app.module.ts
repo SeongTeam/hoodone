@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -81,6 +81,7 @@ import { TypeormConfig } from './_configs/typeorm.config';
             provide: APP_INTERCEPTOR,
             useClass: ClassSerializerInterceptor,
         },
+        Logger,
     ],
 })
 export class AppModule {}

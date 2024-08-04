@@ -13,6 +13,7 @@ import {
     Patch,
     NotFoundException,
     BadRequestException,
+    Logger,
 } from '@nestjs/common';
 import { QueryRunner as QR } from 'typeorm';
 
@@ -27,7 +28,6 @@ import { AuthException } from 'src/_common/exception/auth-exception';
 import { CommonExceptionFilter } from 'src/_common/filter/common-exception.filter';
 import { RefreshTokenGuard } from './guard/token/refresh-token.guard';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { Logger } from '@nestjs/common';
 import { TempUserUseCase } from 'src/users/usecase/temp-user.case';
 import { retry } from 'rxjs';
 import { ResetPasswordRequestDto } from './dto/reset-password-request.dto';
@@ -80,8 +80,6 @@ export class AuthController {
     @UseInterceptors(TransactionInterceptor)
     @UseFilters(CommonExceptionFilter)
     async signUp(@Body(ValidationPipe) registerUserDto: RegisterUserDto, @QueryRunner() qr: QR) {
-        Logger.log(`signUp() =>>> ${JSON.stringify(registerUserDto)}`);
-
         // TODO): 이메일과 닉네임 확인 로직은 서로 분리 시킬 예정
         const isEmailExist = await this.userUseCase.hasExistedEmail(registerUserDto.email);
         if (isEmailExist) throw new AuthException('EMAIL_EXISTS');
