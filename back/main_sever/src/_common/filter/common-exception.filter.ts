@@ -4,9 +4,14 @@ import { BaseException } from '../exception/common/base.exception';
 
 import { UnCatchedException } from '../exception/uncatch.exception';
 import { InterceptorExceptionCodeEnum } from '../exception/common/enum/interceptor-exception';
+import { Logger } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common/enums/http-status.enum';
+import { QueryFailedError } from 'typeorm';
+import { HttpException } from '@nestjs/common/exceptions/http.exception';
 
 @Catch()
 export class CommonExceptionFilter implements ExceptionFilter {
+    private readonly logger: Logger = new Logger();
     catch(exception: any, host: ArgumentsHost): void {
         const ctx = host.switchToHttp();
         const request = ctx.getRequest();
@@ -19,9 +24,29 @@ export class CommonExceptionFilter implements ExceptionFilter {
         _exception.path = request.url;
         const errCode = _exception.errorCode;
 
+        const statusCode = this.getHttpStatus(exception);
+        const errorResponse = {
+            errorCode: _exception.errorCode,
+            statusCode: statusCode,
+            timestamp: _exception.timestamp,
+            detail: {
+                message: _exception.getResponse?.(),
+                pst: _exception.pastMsg,
+                describe: _exception.describe,
+            },
+            path: _exception.path,
+            method: request.method,
+        };
+
+        if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
+            this.logger.error({ err: errorResponse, args: { request, response } });
+        } else {
+            this.logger.warn({ err: errorResponse });
+        }
+
         switch (errCode) {
             case InterceptorExceptionCodeEnum.transaction:
-                response.status(_exception.getStatus()).json({
+                const pastErrorRes = {
                     errorCode: _exception.pastMsg.errorCode,
                     statusCode: _exception.pastMsg.getStatus?.(),
                     timestamp: _exception.timestamp,
@@ -30,22 +55,25 @@ export class CommonExceptionFilter implements ExceptionFilter {
                         describe: _exception.pastMsg.describe,
                     },
                     path: _exception.path,
-                });
+                    method: _exception.pastMsg.method,
+                };
+                this.logger.error({ err: pastErrorRes });
+                response.status(_exception.getStatus()).json(pastErrorRes);
                 break;
 
             default:
-                response.status(_exception.getStatus()).json({
-                    errorCode: _exception.errorCode,
-                    statusCode: _exception.getStatus(),
-                    timestamp: _exception.timestamp,
-                    detail: {
-                        message: _exception.getResponse?.(),
-                        pst: _exception.pastMsg,
-                        describe: _exception.describe,
-                    },
-                    path: _exception.path,
-                });
+                response.status(_exception.getStatus()).json(errorResponse);
         }
+    }
+
+    private getHttpStatus(exception: unknown): HttpStatus {
+        if (
+            exception instanceof QueryFailedError &&
+            exception.driverError.code === 'ER_DUP_ENTRY'
+        ) {
+            return HttpStatus.CONFLICT;
+        } else if (exception instanceof HttpException) return exception.getStatus();
+        else return HttpStatus.INTERNAL_SERVER_ERROR;
     }
 }
 
