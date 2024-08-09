@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: small_qu:front
+    build:
+      context: .
+      dockerfile: front/Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./shared:/app/shared
+
+  backend:
+    image: small_qu:back
+    build:
+      context: .
+      dockerfile: back/main_sever/Dockerfile
+    ports:
+      - '4000:3000'
+    volumes:
+      - ./shared:/app/shared
+    environment:
+      - NODE_ENV=server
+    
