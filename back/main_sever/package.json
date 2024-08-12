@@ -5,6 +5,7 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "sideEffects": false,
   "scripts": {
     "deploy": "bash ./scripts/deploy.sh",
     "build": "tsc --build && nest build",

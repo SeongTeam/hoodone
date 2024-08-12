@@ -1,0 +1,44 @@
+version: '3.8'
+
+name: small_qu
+
+services:
+  frontend:
+    image: small_qu:front
+    env_file: # 파일이 여러 개라면 리스트 형태로 삽입한다.
+      - front/.env
+    build:
+      context: .
+      dockerfile: front/Dockerfile
+    ports:
+      - '4000:4000'
+    volumes:
+      - ./shared:/app/shared
+    environment:
+      PORT: 4000
+      NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+      NEXT_PUBLIC_CLOUDINARY_API_KEY: ${NEXT_PUBLIC_CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+    networks:
+      - overlay
+    links:
+      - backend
+
+  backend:
+    image: small_qu:back
+
+    build:
+      context: .
+      dockerfile: back/main_sever/Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./shared:/app/shared
+    networks:
+      - overlay
+
+networks:
+  overlay:
+    driver: bridge
+    name: overlay
+

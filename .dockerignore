@@ -1,0 +1,15 @@
+**/node_modules
+**/dist
+**/logs
+
+
+<!-- .git -->
+**/.git
+
+**/.gitignore
+**/.dockerignore
+**/Dockerfile
+**/ecosystem.config.js
+**/.next
+**.pem
+front/.env
