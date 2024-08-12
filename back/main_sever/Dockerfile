@@ -1,5 +1,4 @@
-
-FROM node:22-alpine AS base
+FROM node:22-alpine as builder
 
 
 WORKDIR /app
@@ -7,13 +6,21 @@ WORKDIR /app
 COPY back/main_sever/. ./back/main_sever/.
 COPY shared/. ./shared/.
 
+WORKDIR /app/back/main_sever
 
-
-RUN cd ./back/main_sever && npm install &&  npm run build 
-
-
-WORKDIR ./back/main_sever/
+RUN npm install &&  npm run build 
 RUN npm prune --production
+
+
+FROM node:22-alpine 
+WORKDIR /app/back/main_sever
+
+# 빌드 단계에서 생성된 필수 파일만 복사
+COPY --from=builder /app/back/main_sever/dist ./dist
+COPY --from=builder /app/back/main_sever/node_modules ./node_modules
+COPY --from=builder /app/back/main_sever/.env ./
+
+
 
 EXPOSE 3000
 
