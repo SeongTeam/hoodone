@@ -41,11 +41,14 @@ export const winstonLogger = WinstonModule.createLogger({
             format: isProduction
                 ? winston.format.simple()
                 : winston.format.combine(
-                      winston.format.timestamp(),
+                      winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
                       winston.format.ms(),
+                      winston.format.json(),
                       nestWinstonModuleUtilities.format.nestLike('Small-Quest', {
                           colors: true,
                           prettyPrint: true,
+                          processId: true,
+                          appName: true,
                       }),
                   ),
         }),
