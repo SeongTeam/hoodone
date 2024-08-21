@@ -182,4 +182,8 @@ export class AuthUseCase {
             throw new BadRequestException('비밀번호 초기화 실패');
         }
     }
+
+    async getEmailByToken(jwtToken: string) {
+        return this.verifyToken(jwtToken).email;
+    }
 }
