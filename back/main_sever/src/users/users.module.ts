@@ -9,12 +9,14 @@ import { TempUserUseCase } from './usecase/temp-user.case';
 import { TicketUseCase } from 'src/users/_tickets/usecase/ticket_use_case';
 import { TicketModule } from 'src/users/_tickets/ticket.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { LoggerModule } from '@/logger/logger.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([TempUserModel, UserModel]),
         forwardRef(() => TicketModule),
         forwardRef(() => AuthModule),
+        LoggerModule,
     ],
     exports: [UserUseCase, TempUserUseCase],
     controllers: [UsersController],
