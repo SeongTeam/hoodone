@@ -10,6 +10,7 @@ import { AuthUseCase } from './usecase/auth.use-case';
 import { MailModule } from 'src/mail/mail.module';
 import { TempUserModel } from 'src/users/entities/temp-user.entity';
 import { ReportController } from './report/_report_controller';
+import { LoggerModule } from '@/logger/logger.module';
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import { ReportController } from './report/_report_controller';
         JwtModule.register({}),
         MailModule,
         TempUserModel,
+        LoggerModule,
     ],
     exports: [AuthUseCase],
     controllers: [AuthController, ReportController],

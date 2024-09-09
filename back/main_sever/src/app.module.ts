@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, Logger, Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, ExecutionContext, Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -26,7 +26,8 @@ import { LocalTypeormConfig } from './_configs/local-typeorm.config';
 import { TicketModule } from './users/_tickets/ticket.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { TypeormConfig } from './_configs/typeorm.config';
-
+import { ClsModule } from 'nestjs-cls';
+import { LoggerModule } from './logger/logger.module';
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -64,6 +65,12 @@ import { TypeormConfig } from './_configs/typeorm.config';
                 return new DataSource(options).initialize();
             },
         }),
+        ClsModule.forRoot({
+            global: true,
+            interceptor: {
+                mount: true,
+            },
+        }),
         AuthModule,
         UsersModule,
         CommonModule,
@@ -73,6 +80,7 @@ import { TypeormConfig } from './_configs/typeorm.config';
         TicketModule,
         FavoriteModule,
         MailModule,
+        LoggerModule,
     ],
     controllers: [AppController],
     providers: [
