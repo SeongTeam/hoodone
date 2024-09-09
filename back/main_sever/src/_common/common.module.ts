@@ -5,18 +5,22 @@ import { LoggerConTextMiddleware } from './middleware/logger-context.middleware'
 import { LoggerUsecase } from '@/_common/provider/LoggerUsecase';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpLoggingInterceptor } from './interceptor/logging.interceptor';
+import { TraceInterceptor } from './interceptor/trace.interceptor';
+import { LoggerModule } from '@/logger/logger.module';
 
 @Module({
+    imports: [LoggerModule],
     controllers: [CommonController],
     providers: [
         CommonService,
-        Logger,
-        LoggerUsecase,
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: TraceInterceptor,
+        },
         {
             provide: APP_INTERCEPTOR,
             useClass: HttpLoggingInterceptor,
         },
     ],
-    exports: [LoggerUsecase],
 })
 export class CommonModule {}
