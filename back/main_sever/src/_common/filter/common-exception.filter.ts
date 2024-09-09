@@ -1,4 +1,4 @@
-import { Catch } from '@nestjs/common/decorators';
+import { Catch, Inject } from '@nestjs/common/decorators';
 import { ArgumentsHost, ExceptionFilter } from '@nestjs/common/interfaces';
 import { BaseException } from '../exception/common/base.exception';
 
@@ -8,10 +8,12 @@ import { Logger } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums/http-status.enum';
 import { QueryFailedError } from 'typeorm';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
+import { LoggerUsecase } from '../provider/LoggerUsecase';
 
 @Catch()
 export class CommonExceptionFilter implements ExceptionFilter {
-    private readonly logger: Logger = new Logger();
+    className = 'CommonExceptionFilter';
+    constructor(private readonly loggerUseCase: LoggerUsecase) {}
     catch(exception: any, host: ArgumentsHost): void {
         const ctx = host.switchToHttp();
         const request = ctx.getRequest();
@@ -26,6 +28,7 @@ export class CommonExceptionFilter implements ExceptionFilter {
 
         const statusCode = this.getHttpStatus(exception);
         const errorResponse = {
+            targetRequest: exception[LoggerUsecase.KEY.traceReq],
             errorCode: _exception.errorCode,
             statusCode: statusCode,
             timestamp: _exception.timestamp,
@@ -39,9 +42,15 @@ export class CommonExceptionFilter implements ExceptionFilter {
         };
 
         if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
-            this.logger.error({ err: errorResponse, args: { request, response } });
+            this.loggerUseCase.error(
+                {
+                    err: errorResponse,
+                },
+                exception.stack,
+                this.className,
+            );
         } else {
-            this.logger.warn({ err: errorResponse });
+            this.loggerUseCase.warn(errorResponse, this.className);
         }
 
         switch (errCode) {
@@ -57,7 +66,7 @@ export class CommonExceptionFilter implements ExceptionFilter {
                     path: _exception.path,
                     method: _exception.pastMsg.method,
                 };
-                this.logger.error({ err: pastErrorRes });
+                this.loggerUseCase.error({ err: pastErrorRes }, exception.stack, this.className);
                 response.status(_exception.getStatus()).json(pastErrorRes);
                 break;
 
