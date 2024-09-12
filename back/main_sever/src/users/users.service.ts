@@ -57,10 +57,7 @@ export class UsersService {
                 });
             }
         } catch (e) {
-            throw new AuthException('ACCOUNT_CREATION_FAILED', {
-                describe:
-                    'UserService.createTempUser()에서 error / user.service.ts createdTempUse() FAIL',
-            });
+            throw new AuthException('ACCOUNT_CREATION_FAILED');
         }
         return await repository.save(tempUser);
     }
@@ -87,9 +84,7 @@ export class UsersService {
             return await userRepository.save(user);
         } catch (e) {
             Logger.error(`[UsersService][createUser] error`, JSON.stringify(e));
-            throw new AuthException('ACCOUNT_CREATION_FAILED', {
-                describe: 'UserService.createUser()에서 error',
-            });
+            throw new AuthException('ACCOUNT_CREATION_FAILED');
         }
     }
 

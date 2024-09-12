@@ -5,11 +5,7 @@ import { PostExceptionEnum } from './common/enum/post-exception-code.enum';
 type PostExceptionEnumType = keyof typeof PostExceptionEnum;
 
 export class PostException extends BaseException {
-    constructor(
-        ExceptionEnum: PostExceptionEnumType,
-
-        detailInfo?: { describe?: string; pastMsg?: any },
-    ) {
+    constructor(ExceptionEnum: PostExceptionEnumType) {
         // message 형식 ex) 'Error-10141):토큰 타입이 refresh가 아닙니다',
 
         const errorCode = PostExceptionEnum[ExceptionEnum];
@@ -23,6 +19,6 @@ export class PostException extends BaseException {
             );
         }
         /**각각에 Exception 마다  HttpStatus를 변경하는 권장합니다*/
-        super(errorCode, HttpStatus.NOT_ACCEPTABLE, response, detailInfo);
+        super(errorCode, HttpStatus.NOT_ACCEPTABLE, response);
     }
 }

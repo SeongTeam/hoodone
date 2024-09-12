@@ -23,7 +23,7 @@ export class TempUserUseCase {
         // const pinCode = await this.generatePinCode();
         const isExist = await this.userUseCase.hasExistedEmail(email);
         if (isExist) {
-            throw new AuthException('EMAIL_EXISTS', { describe: 'upsertTempUser에서 에러' });
+            throw new AuthException('EMAIL_EXISTS');
         }
 
         return await this.userService.upsertTempUser({ email, pinCode }, qr);
