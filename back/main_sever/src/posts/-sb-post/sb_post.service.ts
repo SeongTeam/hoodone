@@ -7,6 +7,7 @@ import { SB_POST_FIND_OPTION } from '../const/post-find-options.const';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { SbPostModel, VoteResult } from '../entities/sb_post.entity';
 import { postCreateOption } from '../const/post-create-options.const';
+import { ServiceException } from '@/_common/exception/service-exception';
 
 const APPROVAL_PASS_COUNT = 5;
 @Injectable()
@@ -347,19 +348,22 @@ export class SbPostsService {
             .getOne();
 
         if (!result) {
-            Logger.error('[sb_post.service][validateVoteQuery] post not found', {
-                message: {
-                    email,
-                    postId,
-                },
-            });
-            throw new NotFoundException(`post ${postId} is not found`);
+            throw new ServiceException('ENTITY_NOT_FOUND', 'NOT_FOUND', { email, postId });
         }
-        Logger.log('[sb_post.service][validateVoteQuery] post found', {
-            message: JSON.stringify(result),
-            authorInfo: result.author ? JSON.stringify(result.author) : 'No author',
-            resultKeys: Object.keys(result),
-        });
+        Logger.debug(
+            `post found` +
+                `
+            ${JSON.stringify(
+                {
+                    message: JSON.stringify(result),
+                    authorInfo: result.author ? JSON.stringify(result.author) : 'No author',
+                    resultKeys: Object.keys(result),
+                },
+                null,
+                2,
+            )}`,
+            `sb_post.service-validateVoteQuery`,
+        );
         return {
             isApprovalVoted: result.approvalUserEmails && result.approvalUserEmails.includes(email),
             isDisapprovalVoted:
@@ -397,8 +401,6 @@ export class SbPostsService {
         const newScore = email === questOwnerEmail ? VoteScore.AUTHOR_SCORE : VoteScore.USER_SCORE;
 
         voteScore += isApproval ? newScore : newScore * -1;
-        //Logger.log(`[sb_post.service][calcVoteResult] result : ${voteScore}`);
-        Logger.log(`[sb_post.service][calcVoteResult] result : ${voteScore}`);
 
         if (voteScore >= VoteScore.MINIMUM_SCORE) {
             return VoteResult.APPROVAL;

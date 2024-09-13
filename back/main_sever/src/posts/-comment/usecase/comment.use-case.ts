@@ -14,6 +14,7 @@ import { PostsUseCases } from 'src/posts/usecase/post.use-case';
 import { UpdateCommentDto } from '../dto/update-comment.dto';
 import { PostId } from 'src/posts/pips/post-id.pip';
 import { PostType } from '../enum/post_type';
+import { ServiceException } from '@/_common/exception/service-exception';
 
 @Injectable()
 export class CommentUseCase {
@@ -29,17 +30,12 @@ export class CommentUseCase {
         qr?: QueryRunner,
     ) {
         let comment: CommentModel;
-        try {
-            comment = await this.commentService.createComment(author, commentInfo, postId, qr);
+        comment = await this.commentService.createComment(author, commentInfo, postId, qr);
 
-            const newComment = this.commentService.save(comment, qr);
-            await this.postUseCase.incrementCommentCount(postId, qr);
+        const newComment = this.commentService.save(comment, qr);
+        await this.postUseCase.incrementCommentCount(postId, qr);
 
-            return newComment;
-        } catch (e) {
-            Logger.error(`[CommentUseCase][createComment] error`, JSON.stringify(e));
-            throw new InternalServerErrorException(`CommentUseCases.createComment() error \n${e}`);
-        }
+        return newComment;
     }
 
     async createReplyComment(
@@ -50,35 +46,29 @@ export class CommentUseCase {
     ) {
         const { id, postType } = postId;
         let replyComment: CommentModel;
-        try {
-            // depth의 값에 따라서 댓글 관계가 확인 0이면 댓글, depth가 1이상이면 대댓글
+        // depth의 값에 따라서 댓글 관계가 확인 0이면 댓글, depth가 1이상이면 대댓글
+        replyComment = await this.commentService.createReplyComment(
+            author,
+            commentInfo,
+            postId,
+            qr,
+        );
 
-            replyComment = await this.commentService.createReplyComment(
-                author,
-                commentInfo,
-                postId,
-                qr,
-            );
+        const newReplyComment = await this.commentService.save(replyComment, qr);
+        this.commentService.appendReplyCommentId(newReplyComment.id, newReplyComment.responseToId);
 
-            const newReplyComment = await this.commentService.save(replyComment, qr);
-            this.commentService.appendReplyCommentId(
-                newReplyComment.id,
-                newReplyComment.responseToId,
-            );
+        await this.postUseCase.incrementCommentCount(postId, qr);
 
-            await this.postUseCase.incrementCommentCount(postId, qr);
-
-            return newReplyComment;
-        } catch (e) {
-            throw new InternalServerErrorException(`commentService error \n${e}`);
-        }
+        return newReplyComment;
     }
     async update(commentId: number, updateData: UpdateCommentDto, qr: QueryRunner) {
         const { content } = updateData;
         const comment: CommentModel = await this.commentService.loadById(commentId);
         if (!comment) {
-            throw new NotFoundException(
-                `UseCase.update 실행x , commentId:${commentId}를 찾을 수 없음`,
+            throw new ServiceException(
+                'ENTITY_UPDATE_FAILED',
+                'NOT_FOUND',
+                `Comment id :${commentId} is not found`,
             );
         }
 
@@ -91,8 +81,10 @@ export class CommentUseCase {
         const comment: CommentModel = await this.commentService.loadById(commentId);
 
         if (!comment) {
-            throw new NotFoundException(
-                `UseCase.softdelete 실행x , commentId:${commentId}를 찾을 수 없음`,
+            throw new ServiceException(
+                'ENTITY_DELETE_FAILED',
+                'NOT_FOUND',
+                `Comment id : ${commentId} is not found`,
             );
         }
         comment.content = '';
@@ -108,8 +100,10 @@ export class CommentUseCase {
 
         // TODO Post 전용 Exception 구현
         if (!comment) {
-            throw new NotFoundException(
-                `UseCase.delete 실행x , commentId:${commentId}를 찾을 수 없음`,
+            throw new ServiceException(
+                'ENTITY_DELETE_FAILED',
+                'NOT_FOUND',
+                `Comment id : ${commentId} is not found`,
             );
         }
 

@@ -16,6 +16,7 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 import { QuestFavoriteModel } from 'src/favorite/entities/quest_favorite.entity';
 import { UserUseCase } from '@/users/usecase/user.use-case';
 import { SbFavoriteModel } from '@/favorite/entities/sb_favorite.entity';
+import { ServiceException } from '@/_common/exception/service-exception';
 
 export enum SbVoteMessage {
     ALREADY_VOTED = 'already vote',
@@ -102,9 +103,9 @@ export class PostsUseCases {
     // ex title = "    " => 공백으로 이뤄져 있을 경우 어떻게 할 것인가?
     async updateQuest(postId: number, updateData: UpdatePostDto) {
         const post: QuestPostModel = await this.questService.loadById(postId);
+
         if (!post) {
-            Logger.error(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
-            throw new NotFoundException(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
+            throw new ServiceException('ENTITY_UPDATE_FAILED', 'NOT_FOUND', { postId });
         }
 
         DtoUtils.getExistPropertyNames(updateData).forEach((key) => {
@@ -117,8 +118,7 @@ export class PostsUseCases {
     async updateSb(postId: number, updateData: UpdatePostDto) {
         const post: SbPostModel = await this.sbService.loadById(postId);
         if (!post) {
-            Logger.error(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
-            throw new NotFoundException(`UseCase.update 실행x , postId:${postId}를 찾을 수 없음`);
+            throw new ServiceException('ENTITY_UPDATE_FAILED', 'NOT_FOUND', { postId });
         }
 
         DtoUtils.getExistPropertyNames(updateData).forEach((key) => {
@@ -151,7 +151,11 @@ export class PostsUseCases {
                 return 'DB에 저장은 성공 하지만, return User.FavoriteQuest 실패';
             }
         }
-        throw new BadRequestException('이미 좋아요 한 post 입니다');
+        throw new ServiceException('ENTITY_UPDATE_FAILED', 'BAD_REQUEST', {
+            msg: '이미 좋아요 한 post 입니다',
+            userId,
+            questId,
+        });
     }
 
     async decreaseQuestFavorite(userId: number, questId: number, qr: QueryRunner) {
@@ -176,8 +180,11 @@ export class PostsUseCases {
                 return 'DB에 저장은 성공 하지만, return User.FavoriteQuest 실패';
             }
         }
-
-        throw new BadRequestException('좋아요를 누른 적이 없는 post 입니다');
+        throw new ServiceException('ENTITY_UPDATE_FAILED', 'BAD_REQUEST', {
+            msg: '좋아요를 누른 적이 없는 post 입니다',
+            userId,
+            questId,
+        });
     }
 
     async increaseSbFavorite(userId: number, sbId: number, qr: QueryRunner) {
@@ -198,7 +205,11 @@ export class PostsUseCases {
                 ('DB에 저장은 성공 하지만, return User.FavoriteSb 실패');
             }
         }
-        throw new BadRequestException('이미 좋아요 한 Sb 입니다');
+        throw new ServiceException('ENTITY_UPDATE_FAILED', 'BAD_REQUEST', {
+            msg: '이미 좋아요 한 Sb 입니다',
+            userId,
+            sbId,
+        });
     }
 
     async decreaseSbFavorite(userId: number, sbId: number, qr: QueryRunner) {
@@ -218,7 +229,11 @@ export class PostsUseCases {
                 ('DB에 저장은 성공 하지만, return User.FavoriteSb 실패');
             }
         }
-        throw new BadRequestException('좋아요를 누른 적이 없는 Sb 입니다');
+        throw new ServiceException('ENTITY_UPDATE_FAILED', 'BAD_REQUEST', {
+            msg: '좋아요를 누른 적이 없는 Sb 입니다',
+            userId,
+            sbId,
+        });
     }
 
     async appendApproval(email: string, postId: number, ticketId: number, qr: QueryRunner) {
@@ -272,8 +287,9 @@ export class PostsUseCases {
 
         // TODO Post 전용 Exception 구현
         if (!post) {
-            Logger.log(`[deleteQuest] run fail. postId:${postId} is not found.`);
-            throw new NotFoundException(`[deleteQuest] postId:${postId} is not found.`);
+            throw new ServiceException('ENTITY_DELETE_FAILED', 'NOT_FOUND', {
+                msg: `postId:${postId} is not found.`,
+            });
         }
 
         return await this.questService.softRemove(post, qr);
@@ -284,8 +300,9 @@ export class PostsUseCases {
 
         // TODO Post 전용 Exception 구현
         if (!post) {
-            Logger.error(`[deleteSb] run fail. postId:${postId} is not found.`);
-            throw new NotFoundException(`[deleteSb] postId:${postId} is not found.`);
+            throw new ServiceException('ENTITY_DELETE_FAILED', 'NOT_FOUND', {
+                msg: `postId:${postId} is not found.`,
+            });
         }
 
         return await this.sbService.softRemove(post, qr);
@@ -340,7 +357,6 @@ export class PostsUseCases {
     }
 
     getRelatedSbs(questId: number, offset: number, limit: number) {
-        Logger.log(`getRelatedSbs() => questId: ${questId}, offset: ${offset}, limit: ${limit}`);
         return this.sbService.getRelatedSBsByQuestId(questId, offset, limit);
     }
 }

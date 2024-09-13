@@ -4,6 +4,7 @@ import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 import { BoardService } from '../boards.service';
 import { BoardModel } from '../entities/board.entity';
 import { Logger, NotFoundException } from '@nestjs/common';
+import { ServiceException } from '@/_common/exception/service-exception';
 
 @Injectable()
 export class BoardUseCase {
@@ -21,7 +22,9 @@ export class BoardUseCase {
             const newBoard = await this.boardService.save(createdBoard, qr);
             return newBoard;
         } catch (error) {
-            throw new NotFoundException('board create 에러');
+            throw new ServiceException('ENTITY_CREATE_FAILED', 'INTERNAL_SERVER_ERROR', {
+                cause: error,
+            });
         }
     }
 
@@ -48,8 +51,11 @@ export class BoardUseCase {
     async addPost(boardId: number, postId: number, qr: QueryRunner) {
         const targetBoard = await this.boardService.findOne(boardId);
         if (!targetBoard) {
-            Logger.log('targetBoard is null', { message: targetBoard });
-            throw new NotFoundException();
+            throw new ServiceException('ENTITY_UPDATE_FAILED', 'NOT_FOUND', {
+                boardId,
+                postId,
+                targetBoard,
+            });
         }
         if (!targetBoard.postIdHashMap) {
             targetBoard.postIdHashMap = {};
@@ -62,12 +68,18 @@ export class BoardUseCase {
     async deletePost(boardId: number, postId: number, qr: QueryRunner) {
         const targetBoard = await this.boardService.findOne(boardId);
         if (!targetBoard) {
-            Logger.log(`targetBoard${boardId} is null`, { message: targetBoard });
-            throw new NotFoundException();
+            throw new ServiceException('ENTITY_DELETE_FAILED', 'NOT_FOUND', {
+                boardId,
+                postId,
+                targetBoard,
+            });
         }
         if (!(postId in targetBoard.postIdHashMap)) {
-            Logger.log(`post:${postId} is null`, { message: targetBoard });
-            throw new NotFoundException();
+            throw new ServiceException('ENTITY_DELETE_FAILED', 'NOT_FOUND', {
+                boardId,
+                postId,
+                targetBoard,
+            });
         }
         delete targetBoard.postIdHashMap[postId];
         return await this.boardService.save(targetBoard, qr);

@@ -15,7 +15,7 @@ import { BoardUseCase } from 'src/boards/usecase/board.use-case';
 import { User } from 'src/users/decorator/user.decorator';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { QueryRunner } from 'src/_common/decorator/query-runner.decorator';
-import { QueryRunner as QR } from 'typeorm';
+import { Entity, QueryRunner as QR } from 'typeorm';
 import { AccessTokenGuard } from 'src/auth/guard/token/access-token.guard';
 import { TransactionInterceptor } from 'src/_common/interceptor/transaction.interceptor';
 import { PostApiResponseDto } from '@/sharedModule/response-dto/post-api-reponse.dto';
@@ -33,6 +33,7 @@ import { UserModel } from 'src/users/entities/user.entity';
 import { UserUseCase } from 'src/users/usecase/user.use-case';
 import { FavoriteService } from 'src/favorite/favorite.service';
 import { TicketModel } from '@/users/_tickets/entities/ticket.entity';
+import { ServiceException } from '@/_common/exception/service-exception';
 
 /*TODO
 - Comment list 미포함하여 반환하도록 수정
@@ -79,8 +80,12 @@ export class QuestPostsController {
         const { offset, limit } = queryParams;
         const res = new PostApiResponseDto();
         res.getPaginatedPosts = await this.postUseCase.getPaginatedQuests(offset, limit);
-
-        return res;
+        try {
+            throw new ServiceException('ENTITY_NOT_FOUND', 'CONFLICT', { msg: 'test msg' });
+            return res;
+        } catch (e) {
+            throw new ServiceException('DB_INCONSISTENCY', 'INTERNAL_SERVER_ERROR', { cause: e });
+        }
     }
 
     @Get('/admin-paginated')

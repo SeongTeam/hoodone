@@ -9,70 +9,17 @@ import { HttpStatus } from '@nestjs/common/enums/http-status.enum';
 import { QueryFailedError } from 'typeorm';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { LoggerUsecase } from '../provider/LoggerUsecase';
+import { CustomExceptionFilter } from './custom-base-exception.filter';
 
 @Catch()
-export class CommonExceptionFilter implements ExceptionFilter {
-    className = 'CommonExceptionFilter';
-    constructor(private readonly loggerUseCase: LoggerUsecase) {}
+export class CommonExceptionFilter extends CustomExceptionFilter {
+    constructor(private readonly loggerUsecase: LoggerUsecase) {
+        super(loggerUsecase, 'CommonExceptionFilter');
+        this.loggerUsecase.log(`successfully mounted`, this.className);
+    }
+
     catch(exception: any, host: ArgumentsHost): void {
-        const ctx = host.switchToHttp();
-        const request = ctx.getRequest();
-        const response = ctx.getResponse();
-
-        const _exception =
-            exception instanceof BaseException ? exception : new UnCatchedException();
-
-        _exception.timestamp = new Date().toLocaleString('kr');
-        _exception.path = request.url;
-        const errCode = _exception.errorCode;
-
-        const statusCode = this.getHttpStatus(exception);
-        const errorResponse = {
-            targetRequest: exception[LoggerUsecase.KEY.traceReq],
-            errorCode: _exception.errorCode,
-            statusCode: statusCode,
-            timestamp: _exception.timestamp,
-            detail: {
-                message: _exception.getResponse?.(),
-                pst: _exception.pastMsg,
-                describe: _exception.describe,
-            },
-            path: _exception.path,
-            method: request.method,
-        };
-
-        if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
-            this.loggerUseCase.error(
-                {
-                    err: errorResponse,
-                },
-                exception.stack,
-                this.className,
-            );
-        } else {
-            this.loggerUseCase.warn(errorResponse, this.className);
-        }
-
-        switch (errCode) {
-            case InterceptorExceptionCodeEnum.transaction:
-                const pastErrorRes = {
-                    errorCode: _exception.pastMsg.errorCode,
-                    statusCode: _exception.pastMsg.getStatus?.(),
-                    timestamp: _exception.timestamp,
-                    detail: {
-                        message: _exception.pastMsg.getResponse?.(),
-                        describe: _exception.pastMsg.describe,
-                    },
-                    path: _exception.path,
-                    method: _exception.pastMsg.method,
-                };
-                this.loggerUseCase.error({ err: pastErrorRes }, exception.stack, this.className);
-                response.status(_exception.getStatus()).json(pastErrorRes);
-                break;
-
-            default:
-                response.status(_exception.getStatus()).json(errorResponse);
-        }
+        super.catch(exception, host);
     }
 
     private getHttpStatus(exception: unknown): HttpStatus {

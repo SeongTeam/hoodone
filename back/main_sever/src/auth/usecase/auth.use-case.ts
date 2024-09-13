@@ -11,6 +11,7 @@ import { AuthCredentialsDto } from '../dto/auth-credential.dto';
 import { BadRequestException, ConflictException, Logger } from '@nestjs/common';
 import { MailUseCase } from 'src/mail/usecase/mail.usecase';
 import { TempUserUseCase } from 'src/users/usecase/temp-user.case';
+import { ServiceException } from '@/_common/exception/service-exception';
 
 @Injectable()
 export class AuthUseCase {
@@ -160,11 +161,20 @@ export class AuthUseCase {
             );
 
             if (updateResult.affected != 1) {
-                throw new ConflictException('userUseCase.updateUserData() 실행 에러');
+                throw new ServiceException(
+                    'DB_CONFLICT',
+                    'CONFLICT',
+                    'userUseCase.updateUserData() 실행 에러',
+                );
             }
             return this.mailUseCase.sendCertificationPinCode(toEmail, pinCode);
         } catch (e) {
-            throw new ConflictException('sendPasswordResetLink 동작 에러');
+            throw new ServiceException(
+                'SERVICE_RUN_ERROR',
+                'CONFLICT',
+                'sendPasswordResetLink 동작 에러',
+                { cause: e },
+            );
         }
     }
 
@@ -175,8 +185,9 @@ export class AuthUseCase {
         try {
             this.userUseCase.updateUserPassword(id, { password: hashedPassword }, qr);
         } catch (e) {
-            Logger.error(`resetPassword() =>>> ${JSON.stringify(e)}`);
-            throw new BadRequestException('비밀번호 초기화 실패');
+            throw new ServiceException('SERVICE_RUN_ERROR', 'BAD_REQUEST', '비밀번호 초기화 실패', {
+                cause: e,
+            });
         }
     }
 
