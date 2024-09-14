@@ -35,7 +35,9 @@ import { AccessTokenGuard } from './guard/token/access-token.guard';
 import { User } from 'src/users/decorator/user.decorator';
 import { emit } from 'process';
 import { BASIC_FIND_USER_OPTIONS } from '@/users/const/user-find-options';
+import { AuthExceptionFilter } from '@/_common/filter/auth-exception.filter';
 
+UseFilters(AuthExceptionFilter);
 @Controller('auth')
 export class AuthController {
     constructor(

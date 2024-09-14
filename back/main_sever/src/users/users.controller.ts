@@ -27,7 +27,9 @@ import { AccessTokenGuard } from 'src/auth/guard/token/access-token.guard';
 import { User } from './decorator/user.decorator';
 import { TicketUseCase } from 'src/users/_tickets/usecase/ticket_use_case';
 import { TicketModel } from 'src/users/_tickets/entities/ticket.entity';
+import { AuthExceptionFilter } from '@/_common/filter/auth-exception.filter';
 
+@UseFilters(AuthExceptionFilter)
 @Controller('users')
 export class UsersController {
     constructor(
