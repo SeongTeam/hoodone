@@ -8,10 +8,11 @@ import { UserModel } from 'src/users/entities/user.entity';
 
 import { AuthService } from '../auth.service';
 import { AuthCredentialsDto } from '../dto/auth-credential.dto';
-import { BadRequestException, ConflictException, Logger } from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpStatus, Logger } from '@nestjs/common';
 import { MailUseCase } from 'src/mail/usecase/mail.usecase';
 import { TempUserUseCase } from 'src/users/usecase/temp-user.case';
 import { ServiceException } from '@/_common/exception/service-exception';
+import { BaseException } from '@/_common/exception/common/base.exception';
 
 @Injectable()
 export class AuthUseCase {
@@ -162,8 +163,8 @@ export class AuthUseCase {
 
             if (updateResult.affected != 1) {
                 throw new ServiceException(
-                    'DB_CONFLICT',
-                    'CONFLICT',
+                    'DB_INCONSISTENCY',
+                    'INTERNAL_SERVER_ERROR',
                     'userUseCase.updateUserData() 실행 에러',
                 );
             }
@@ -171,7 +172,7 @@ export class AuthUseCase {
         } catch (e) {
             throw new ServiceException(
                 'SERVICE_RUN_ERROR',
-                'CONFLICT',
+                'INTERNAL_SERVER_ERROR',
                 'sendPasswordResetLink 동작 에러',
                 { cause: e },
             );
@@ -185,9 +186,14 @@ export class AuthUseCase {
         try {
             this.userUseCase.updateUserPassword(id, { password: hashedPassword }, qr);
         } catch (e) {
-            throw new ServiceException('SERVICE_RUN_ERROR', 'BAD_REQUEST', '비밀번호 초기화 실패', {
-                cause: e,
-            });
+            throw new ServiceException(
+                'SERVICE_RUN_ERROR',
+                'INTERNAL_SERVER_ERROR',
+                '비밀번호 초기화 실패',
+                {
+                    cause: e,
+                },
+            );
         }
     }
 

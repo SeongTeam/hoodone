@@ -29,6 +29,7 @@ export class MailService {
                         'SERVICE_RUN_ERROR',
                         'INTERNAL_SERVER_ERROR',
                         `${to} this.mailerService.sendMail`,
+                        { cause: err },
                     );
                 });
             return result;
@@ -62,6 +63,7 @@ export class MailService {
                         'SERVICE_RUN_ERROR',
                         'INTERNAL_SERVER_ERROR',
                         `${to} this.mailerService.sendMail`,
+                        { cause: err },
                     );
                 });
             return result;

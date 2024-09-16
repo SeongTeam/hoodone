@@ -1,5 +1,4 @@
 import { Inject, Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
-import { ServiceException } from '../exception/service-exception';
 import { LoggerUsecase } from '../provider/LoggerUsecase';
 import { CustomExceptionFilter } from './custom-base-exception.filter';
 import { AuthException } from '../exception/auth-exception';
@@ -14,7 +13,7 @@ export class AuthExceptionFilter extends CustomExceptionFilter {
         this.loggerUsecase.log(`successfully mounted`, this.className);
     }
 
-    catch(exception: ServiceException, host: ArgumentsHost): void {
+    catch(exception: AuthException, host: ArgumentsHost): void {
         const code = exception.errorCode;
 
         super.catch(exception, host);

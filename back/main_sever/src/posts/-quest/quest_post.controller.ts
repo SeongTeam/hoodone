@@ -33,7 +33,6 @@ import { UserModel } from 'src/users/entities/user.entity';
 import { UserUseCase } from 'src/users/usecase/user.use-case';
 import { FavoriteService } from 'src/favorite/favorite.service';
 import { TicketModel } from '@/users/_tickets/entities/ticket.entity';
-import { ServiceException } from '@/_common/exception/service-exception';
 
 /*TODO
 - Comment list 미포함하여 반환하도록 수정
@@ -80,12 +79,8 @@ export class QuestPostsController {
         const { offset, limit } = queryParams;
         const res = new PostApiResponseDto();
         res.getPaginatedPosts = await this.postUseCase.getPaginatedQuests(offset, limit);
-        try {
-            throw new ServiceException('ENTITY_NOT_FOUND', 'CONFLICT', { msg: 'test msg' });
-            return res;
-        } catch (e) {
-            throw new ServiceException('DB_INCONSISTENCY', 'INTERNAL_SERVER_ERROR', { cause: e });
-        }
+
+        return res;
     }
 
     @Get('/admin-paginated')
