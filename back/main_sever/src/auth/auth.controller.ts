@@ -25,7 +25,6 @@ import { AuthCredentialsDto } from './dto/auth-credential.dto';
 import { BasicTokenGuard } from './guard/token/basic-token.guard';
 import { UserUseCase } from 'src/users/usecase/user.use-case';
 import { AuthException } from 'src/_common/exception/auth-exception';
-import { CommonExceptionFilter } from 'src/_common/filter/common-exception.filter';
 import { RefreshTokenGuard } from './guard/token/refresh-token.guard';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { TempUserUseCase } from 'src/users/usecase/temp-user.case';
@@ -80,7 +79,6 @@ export class AuthController {
 
     @Post('/signup')
     @UseInterceptors(TransactionInterceptor)
-    @UseFilters(CommonExceptionFilter)
     async signUp(@Body(ValidationPipe) registerUserDto: RegisterUserDto, @QueryRunner() qr: QR) {
         // TODO): 이메일과 닉네임 확인 로직은 서로 분리 시킬 예정
         const isEmailExist = await this.userUseCase.hasExistedEmail(registerUserDto.email);
@@ -96,7 +94,6 @@ export class AuthController {
 
     @Post('/login/email')
     @UseGuards(BasicTokenGuard)
-    @UseFilters(CommonExceptionFilter)
     async login(@Headers('authorization') rawToken: string) {
         const token = this.authUseCase.extractTokenFromHeader(rawToken, false);
         const credentials: AuthCredentialsDto = this.authUseCase.decodeBasicToken(token);
@@ -121,7 +118,6 @@ export class AuthController {
 
     @Post('send-pin-code')
     @UseInterceptors(TransactionInterceptor)
-    @UseFilters(CommonExceptionFilter)
     async sendSignUpPinCode(@Body(ValidationPipe) body, @QueryRunner() qr: QR) {
         /**reponse로 온 result의 response 안에
          * result[response] : '250 2.0.0 OK ... gsmpt가 들어 있으면 성골
@@ -158,7 +154,6 @@ export class AuthController {
 
     @Patch('reset-password')
     @UseInterceptors(TransactionInterceptor)
-    @UseFilters(CommonExceptionFilter)
     async resetPassword(@Body(ValidationPipe) dto: ResetPasswordRequestDto, @QueryRunner() qr: QR) {
         /**`TODO 추후에 링크로 사용할 로직이기에 controller에서 기능을 정의했습니다. */
         const { email, password, pinCode } = dto;
@@ -185,7 +180,6 @@ export class AuthController {
 
     @Patch('send-password-reset-link')
     @UseInterceptors(TransactionInterceptor)
-    @UseFilters(CommonExceptionFilter)
     async sendPasswordResetLink(
         @Body(ValidationPipe) body: { toEmail: string },
         @QueryRunner() qr: QR,

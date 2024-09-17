@@ -6,46 +6,56 @@ import { UnCatchedException } from '../exception/uncatch.exception';
 import { InterceptorExceptionCodeEnum } from '../exception/common/enum/interceptor-exception';
 import { Logger } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums/http-status.enum';
-import { QueryFailedError } from 'typeorm';
+import { QueryFailedError, TypeORMError } from 'typeorm';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { LoggerUsecase } from '../provider/LoggerUsecase';
 import { CustomExceptionFilter } from './custom-base-exception.filter';
+import { Response } from 'express';
+import { ServiceException } from '../exception/service-exception';
 
+/*TODO
+ - add handling logic for each Exception 
+   eg) notify to Administor that serious exception happen by using email or other things.
+
+*/
 @Catch()
 export class CommonExceptionFilter extends CustomExceptionFilter {
     constructor(private readonly loggerUsecase: LoggerUsecase) {
         super(loggerUsecase, 'CommonExceptionFilter');
-        this.loggerUsecase.log(`successfully mounted`, this.className);
     }
 
     catch(exception: any, host: ArgumentsHost): void {
-        super.catch(exception, host);
+        const errName = exception.name;
+
+        if (exception instanceof TypeORMError) {
+            this.handleTypeORMException(exception, host);
+        } else {
+            super.catch(exception, host);
+        }
     }
 
-    private getHttpStatus(exception: unknown): HttpStatus {
-        if (
-            exception instanceof QueryFailedError &&
-            exception.driverError.code === 'ER_DUP_ENTRY'
-        ) {
-            return HttpStatus.CONFLICT;
-        } else if (exception instanceof HttpException) return exception.getStatus();
-        else return HttpStatus.INTERNAL_SERVER_ERROR;
+    handleTypeORMException(e: TypeORMError, host: ArgumentsHost) {
+        const name = e.name;
+        const info: Record<string, any> = {
+            msg: `typeOrm Exception ${name} Occur, please check db log on '~/ormlogs.log' file`,
+        };
+
+        switch (name) {
+            case 'QueryFailedError': {
+                info.query = (e as QueryFailedError).query;
+                break;
+            }
+            case 'EntityNotFoundError': {
+                break;
+            }
+            default: {
+            }
+        }
+        info.typeORMMsg = e.message;
+        const newError = new ServiceException('SERVICE_RUN_ERROR', 'INTERNAL_SERVER_ERROR', info, {
+            cause: e,
+        });
+
+        super.catch(newError, host);
     }
 }
-
-// {
-//     "errorCode": 100,
-//     "statusCode": 406,
-//     "timestamp": "4/23/2024, 5:31:44 PM",
-//     "response": "Error-100)트랜잭션 실행 취소",
-//     "message": "TransactionInterceptor에서 에러 발생",
-//     "pastMsg": {
-//         "response": "Error-10001):이미 존재하는 email입니다. 다른 email을 사용해 주세요",
-//         "status": 401,
-//         "message": "",
-//         "name": "AuthException",
-//         "errorCode": 10001,
-//         "pastMsg": ""
-//     },
-//     "path": "/auth/signup"
-// }

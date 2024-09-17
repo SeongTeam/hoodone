@@ -16,7 +16,6 @@ export class TempUserUseCase {
     ) {}
 
     /**DB에 이미 존재하는 tempUser라면 update 아니면 새로 생성,  pinCode는 DB에 tempUser를 만든 후 재생성 가능
-     *(AuthException 사용중 CommonExceptionFilter 사용 요망)
      *  1) update시에는 QueryRunner사용 필수 아님, 새로 생성시에는 QueryRunner 사용 요망
      */
     async upsertTempUser(email: string, pinCode: string, qr?: QueryRunner) {

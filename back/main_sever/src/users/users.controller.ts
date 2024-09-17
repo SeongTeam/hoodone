@@ -22,7 +22,6 @@ import { QueryRunner as QR } from 'typeorm';
 import { QueryRunner } from 'src/_common/decorator/query-runner.decorator';
 import { TempUserModel } from './entities/temp-user.entity';
 import { TempUserUseCase } from './usecase/temp-user.case';
-import { CommonExceptionFilter } from 'src/_common/filter/common-exception.filter';
 import { AccessTokenGuard } from 'src/auth/guard/token/access-token.guard';
 import { User } from './decorator/user.decorator';
 import { TicketUseCase } from 'src/users/_tickets/usecase/ticket_use_case';
@@ -39,7 +38,6 @@ export class UsersController {
 
     @Post('/tempUser')
     @UseInterceptors(TransactionInterceptor)
-    @UseFilters(CommonExceptionFilter)
     async postTempUser(
         @Body(ValidationPipe) userInfo: Pick<TempUserModel, 'email'>,
         @QueryRunner() qr: QR,

@@ -8,6 +8,7 @@ import { HttpLoggingInterceptor } from './interceptor/logging.interceptor';
 import { TraceInterceptor } from './interceptor/trace.interceptor';
 import { LoggerModule } from '@/logger/logger.module';
 import { ServiceExceptionFilter } from './filter/service-exception.filter';
+import { CommonExceptionFilter } from './filter/common-exception.filter';
 
 @Module({
     imports: [LoggerModule],
@@ -25,6 +26,10 @@ import { ServiceExceptionFilter } from './filter/service-exception.filter';
         {
             provide: APP_FILTER,
             useClass: ServiceExceptionFilter,
+        },
+        {
+            provide: APP_FILTER,
+            useClass: CommonExceptionFilter,
         },
     ],
 })
