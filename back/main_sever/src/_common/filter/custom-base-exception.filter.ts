@@ -5,9 +5,14 @@ import { BaseException } from '../exception/common/base.exception';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { Request, Response } from 'express';
 import { timeStamp } from 'console';
+
+interface CauseInfo {
+    innerError: unknown;
+    stack: string;
+}
 interface IExceptionInfo extends Pick<BaseException, 'timestamp' | 'path'> {
     message: string | object;
-    cause?: unknown;
+    cause?: CauseInfo;
     error?: unknown;
 }
 
@@ -19,10 +24,6 @@ export class CustomExceptionFilter implements ExceptionFilter {
         className: string,
     ) {
         this.className = className;
-        this.logger.log(
-            `[${CustomExceptionFilter.cnt++}]Constructor CustomExcpetionFilter `,
-            this.className,
-        );
     }
 
     catch(exception: any, host: ArgumentsHost): void {
@@ -65,7 +66,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
             timestamp: exception.timestamp,
             path: exception.path,
             message: exception.getResponse(),
-            cause: exception.cause,
+            cause: this.getCauseInfo(exception),
         };
 
         if (exception.getStatus() >= HttpStatus.INTERNAL_SERVER_ERROR) {
@@ -80,11 +81,11 @@ export class CustomExceptionFilter implements ExceptionFilter {
             timestamp: e.timeStamp,
             path: e.path,
             message: e,
-            cause: e.cause,
+            cause: this.getCauseInfo(e),
         };
 
         this.logger.error(
-            `Unknown Exception occurs` + `${JSON.stringify(info, null, 2)}`,
+            `Unknown Exception ${e.name} occurs ` + `${JSON.stringify(info, null, 2)}`,
             e.stack,
             this.className,
         );
@@ -92,5 +93,19 @@ export class CustomExceptionFilter implements ExceptionFilter {
 
     notifySeriousError(msg: string) {
         //심각한 에러 발생시 알려주는 용도?
+    }
+
+    getCauseInfo(e: any) {
+        const innerError = e.cause;
+        if (!innerError) {
+            return;
+        }
+
+        const ret: CauseInfo = {
+            innerError: innerError,
+            stack: innerError.stack,
+        };
+
+        return ret;
     }
 }
