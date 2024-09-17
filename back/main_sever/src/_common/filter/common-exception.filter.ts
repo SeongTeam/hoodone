@@ -1,9 +1,6 @@
 import { Catch, Inject } from '@nestjs/common/decorators';
 import { ArgumentsHost, ExceptionFilter } from '@nestjs/common/interfaces';
 import { BaseException } from '../exception/common/base.exception';
-
-import { UnCatchedException } from '../exception/uncatch.exception';
-import { InterceptorExceptionCodeEnum } from '../exception/common/enum/interceptor-exception';
 import { Logger } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums/http-status.enum';
 import { QueryFailedError, TypeORMError } from 'typeorm';
