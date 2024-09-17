@@ -1,6 +1,7 @@
 import { utilities as nestWinstonModuleUtilities, WinstonModule } from 'nest-winston';
 import * as winstonDaily from 'winston-daily-rotate-file';
 import * as winston from 'winston';
+import { basename } from 'path';
 
 //ref : https://pypystory.tistory.com/80
 
@@ -34,23 +35,31 @@ const dailyOptions = (level: string) => {
 };
 */
 
+const appName = basename(process.cwd());
+
 export const winstonLogger = WinstonModule.createLogger({
+    format: winston.format.combine(
+        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        winston.format.label({ label: appName }),
+        winston.format.printf(
+            (info) =>
+                `[${info.label}] ${info.timestamp} ${info.level} [${info.context}] ${info.message}`,
+        ),
+    ),
     transports: [
         new winston.transports.Console({
             level: isProduction ? 'info' : 'debug',
-            format: isProduction
-                ? winston.format.simple()
-                : winston.format.combine(
-                      winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-                      winston.format.ms(),
-                      winston.format.json(),
-                      nestWinstonModuleUtilities.format.nestLike('Small-Quest', {
-                          colors: true,
-                          prettyPrint: true,
-                          processId: true,
-                          appName: true,
-                      }),
-                  ),
+            format: winston.format.combine(
+                winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+                winston.format.ms(),
+                winston.format.json(),
+                nestWinstonModuleUtilities.format.nestLike(appName, {
+                    colors: true,
+                    prettyPrint: true,
+                    processId: true,
+                    appName: true,
+                }),
+            ),
         }),
 
         new winstonDaily(dailyOptions('info')),

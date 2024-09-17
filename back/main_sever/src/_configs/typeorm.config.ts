@@ -25,7 +25,9 @@ export class TypeormConfig implements TypeOrmOptionsFactory {
             synchronize: true, // 스키마 자동 동기화 (production에서는 false)
             // dropSchema: true, // 애플리케이션 실행시 기존 스키마 삭제 여부
             keepConnectionAlive: true, // 애플리케이션 재시작 시 연결 유지
-            // logging: true, // TODO: 데이터베이스 쿼리 로깅 여부
+            logging: ['error', 'log'],
+            logger: 'file', // writes all logs into (project)/ormlogs.log
+            maxQueryExecutionTime: 1000, // Log query that runtime is over 1s
             entities: [BaseModel, __dirname + 'src/**/entity/*.entity.{ts,js}'], //엔티티 클래스 경로
             extra: {
                 max: 100,
