@@ -6,7 +6,7 @@ import { HttpStatus } from '@nestjs/common/enums/http-status.enum';
 import { QueryFailedError, TypeORMError } from 'typeorm';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { LoggerUsecase } from '../provider/LoggerUsecase';
-import { CustomExceptionFilter } from './custom-base-exception.filter';
+import { CustomExceptionFilter } from './common/custom-base-exception.filter';
 import { Response } from 'express';
 import { ServiceException } from '../exception/service-exception';
 

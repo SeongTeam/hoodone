@@ -1,6 +1,6 @@
 import { Inject, Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
 import { LoggerUsecase } from '../provider/LoggerUsecase';
-import { CustomExceptionFilter } from './custom-base-exception.filter';
+import { CustomExceptionFilter } from './common/custom-base-exception.filter';
 import { AuthException } from '../exception/auth-exception';
 import { AuthExceptionEnum } from '../exception/common/enum/auth-exception-code.enum';
 

@@ -1,7 +1,7 @@
 import { Catch, Inject, Injectable } from '@nestjs/common/decorators';
 import { ArgumentsHost, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
-import { LoggerUsecase } from '../provider/LoggerUsecase';
-import { BaseException } from '../exception/common/base.exception';
+import { LoggerUsecase } from '../../provider/LoggerUsecase';
+import { BaseException } from '../../exception/common/base.exception';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { Request, Response } from 'express';
 import { timeStamp } from 'console';
