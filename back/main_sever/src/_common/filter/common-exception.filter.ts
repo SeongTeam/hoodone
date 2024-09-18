@@ -9,6 +9,7 @@ import { LoggerUsecase } from '../provider/LoggerUsecase';
 import { CustomExceptionFilter } from './common/custom-base-exception.filter';
 import { Response } from 'express';
 import { ServiceException } from '../exception/service-exception';
+import { PipeException } from '../exception/pipe-exception';
 
 /*TODO
  - add handling logic for each Exception 
@@ -24,8 +25,12 @@ export class CommonExceptionFilter extends CustomExceptionFilter {
     catch(exception: any, host: ArgumentsHost): void {
         const errName = exception.name;
 
+        this.loggerUsecase.debug(`catch ${errName} exception`, this.className);
+
         if (exception instanceof TypeORMError) {
             this.handleTypeORMException(exception, host);
+        } else if (exception instanceof PipeException) {
+            this.handlePipeException(exception, host);
         } else {
             super.catch(exception, host);
         }
@@ -54,5 +59,22 @@ export class CommonExceptionFilter extends CustomExceptionFilter {
         });
 
         super.catch(newError, host);
+    }
+
+    handlePipeException(e: PipeException, host: ArgumentsHost) {
+        const ctx = host.switchToHttp();
+        const req = ctx.getRequest<Request>();
+        const res = ctx.getResponse<Response>();
+
+        e.timestamp = new Date().toLocaleTimeString('kr');
+        e.path = req.url;
+
+        res.status(e.getStatus()).json({
+            errorCode: e.errorCode,
+            status: e.getStatus(),
+            timestamp: e.timestamp,
+            path: e.path,
+            message: e.validationMessage,
+        });
     }
 }

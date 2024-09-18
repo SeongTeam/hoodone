@@ -14,7 +14,7 @@ import {
     Delete,
     Logger,
     Query,
-    ValidationPipe,
+    UsePipes,
 } from '@nestjs/common';
 import { QueryRunner as QR } from 'typeorm';
 
@@ -34,6 +34,7 @@ import { RoleGuard } from 'src/auth/guard/role.guard';
 import { CommentOwnerGuard } from './guard/comment-owner.guard';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { PostId, PostIdPip } from '../pips/post-id.pip';
+import { CustomValidationPipe } from '@/_common/pipe/custom-validation.pipe';
 
 /** 
 
@@ -41,6 +42,7 @@ TODO comment는 controller까지 분리하여서 사용,
 1. comment도 model을 나눠서 사용한다. 하지만 유저는 그런 것을 느끼지 못하게 만들단
 * */
 @Controller('posts/:postId/comments')
+@UsePipes(CustomValidationPipe)
 export class CommentsController {
     constructor(
         @Inject(forwardRef(() => CommentUseCase))
@@ -52,7 +54,7 @@ export class CommentsController {
     async postComment(
         @User() user: UserModel,
         @Param('postId', PostIdPip) postId: PostId,
-        @Body(ValidationPipe) createDto: CreateCommentDto,
+        @Body() createDto: CreateCommentDto,
         @QueryRunner() qr: QR,
     ) {
         let res = new CommentApiResponseDto();
@@ -69,7 +71,7 @@ export class CommentsController {
     @UseInterceptors(TransactionInterceptor)
     async postReplyComment(
         @Param('postId', PostIdPip) postId: PostId,
-        @Body(ValidationPipe) createDto: CreateReplyCommentDto,
+        @Body() createDto: CreateReplyCommentDto,
         @User() user: UserModel,
         @QueryRunner() qr: QR,
     ) {
@@ -137,7 +139,7 @@ export class CommentsController {
     @UseInterceptors(TransactionInterceptor)
     async patch(
         @Param('id', ParseIntPipe) id: number,
-        @Body(ValidationPipe) body: UpdateCommentDto,
+        @Body() body: UpdateCommentDto,
         @QueryRunner() qr: QR,
     ) {
         return this.commentUseCases.update(id, body, qr);
