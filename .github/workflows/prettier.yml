@@ -18,8 +18,8 @@ jobs:
         with:
           node-version: "14.x"
       - name: Install dependencies
-        working-directory: ./hoodone/back/main-sever # Change this to the correct folder
+        working-directory: ./back/main_sever # Change this to the correct folder
         run: npm ci
       - name: Run Prettier
-        working-directory : ./hoodone/back/main-sever
+        working-directory : ./back/main_sever
         run: npm run format
