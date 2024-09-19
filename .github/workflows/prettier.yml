@@ -11,14 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name : clone current branch
+        uses: actions/checkout@v2
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
           node-version: "14.x"
       - name: Install dependencies
-        working-directory: ./back/main-sever # Change this to the correct folder
+        working-directory: ./hoodone/back/main-sever # Change this to the correct folder
         run: npm ci
       - name: Run Prettier
-        working-directory : ./back/main-sever
+        working-directory : ./hoodone/back/main-sever
         run: npm run format
