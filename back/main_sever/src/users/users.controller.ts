@@ -9,7 +9,6 @@ import {
     UseInterceptors,
     ClassSerializerInterceptor,
     ParseIntPipe,
-    ValidationPipe,
     BadRequestException,
     UseFilters,
     UseGuards,
@@ -22,12 +21,14 @@ import { QueryRunner as QR } from 'typeorm';
 import { QueryRunner } from 'src/_common/decorator/query-runner.decorator';
 import { TempUserModel } from './entities/temp-user.entity';
 import { TempUserUseCase } from './usecase/temp-user.case';
-import { CommonExceptionFilter } from 'src/_common/filter/common-exception.filter';
 import { AccessTokenGuard } from 'src/auth/guard/token/access-token.guard';
 import { User } from './decorator/user.decorator';
 import { TicketUseCase } from 'src/users/_tickets/usecase/ticket_use_case';
 import { TicketModel } from 'src/users/_tickets/entities/ticket.entity';
+import { AuthExceptionFilter } from '@/_common/filter/auth-exception.filter';
+import { CustomValidationPipe } from '@/_common/pipe/custom-validation.pipe';
 
+@UseFilters(AuthExceptionFilter)
 @Controller('users')
 export class UsersController {
     constructor(
@@ -37,9 +38,8 @@ export class UsersController {
 
     @Post('/tempUser')
     @UseInterceptors(TransactionInterceptor)
-    @UseFilters(CommonExceptionFilter)
     async postTempUser(
-        @Body(ValidationPipe) userInfo: Pick<TempUserModel, 'email'>,
+        @Body(CustomValidationPipe) userInfo: Pick<TempUserModel, 'email'>,
         @QueryRunner() qr: QR,
     ) {
         const { email } = userInfo;
@@ -52,7 +52,9 @@ export class UsersController {
     }
 
     @Patch('/tempUser')
-    comparePINCodes(@Body(ValidationPipe) userInfo: Pick<TempUserModel, 'email' | 'pinCode'>) {
+    comparePINCodes(
+        @Body(CustomValidationPipe) userInfo: Pick<TempUserModel, 'email' | 'pinCode'>,
+    ) {
         return this.tempUserUseCase.comparePinCodes(userInfo);
     }
 

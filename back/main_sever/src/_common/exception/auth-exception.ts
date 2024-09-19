@@ -1,11 +1,10 @@
 import { HttpStatus } from '@nestjs/common/enums';
-import { BaseException } from './common/base.exception';
-import { InternalServerErrorException } from '@nestjs/common';
+import { BaseException, HttpStatusType } from './common/base.exception';
+import { HttpExceptionOptions, InternalServerErrorException } from '@nestjs/common';
 import { authExceptionMsg } from './common/const/message/exception.message';
 import { AuthExceptionEnum } from './common/enum/auth-exception-code.enum';
 
 type AuthExceptionEnumType = keyof typeof AuthExceptionEnum;
-
 export class AuthException extends BaseException {
     /** custom Exception auth와 관련된 error message를 보낼 수 있습니다.
      *
@@ -19,19 +18,19 @@ export class AuthException extends BaseException {
      */
     constructor(
         ExceptionEnum: AuthExceptionEnumType,
-        detailInfo?: { describe?: string; pastMsg?: any },
+        statusEnum?: HttpStatusType,
+        response?: Record<string, any> | string,
+        options?: HttpExceptionOptions,
     ) {
         const errorCode = AuthExceptionEnum[ExceptionEnum];
         const content = authExceptionMsg[`error${errorCode}`];
+        const status = HttpStatus[statusEnum || 'UNAUTHORIZED'];
         // message 형식 ex) 'Error-10141):토큰 타입이 refresh가 아닙니다',
-        const response = `Error-${errorCode}):${content}`;
+        const bascisMsg = `Error-${errorCode}):${content}`;
 
-        if (!errorCode) {
-            throw new InternalServerErrorException(
-                ` errorCod값이  undefined 입니다. ${ExceptionEnum}은 ExceptionErrorCode에 정의되지 않은 에러입니다`,
-            );
-        }
+        const resBody = { msg: bascisMsg, detail: response };
+
         /**각각에 Exception 마다  HttpStatus를 변경하는 권장합니다*/
-        super(errorCode, HttpStatus.UNAUTHORIZED, response, detailInfo);
+        super(errorCode, status, resBody, options);
     }
 }

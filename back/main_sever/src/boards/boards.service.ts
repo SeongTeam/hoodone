@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BoardModel } from './entities/board.entity';
 import { QueryRunner, Repository, Not, IsNull } from 'typeorm';
 import { COMMON_BOARD_FIND_OPTION } from './const/board-find-option.const';
+import { ServiceException } from '@/_common/exception/service-exception';
 
 @Injectable()
 export class BoardService {
@@ -40,12 +41,14 @@ export class BoardService {
         });
 
         if (!targetBoard) {
-            throw new NotFoundException();
+            throw new ServiceException('ENTITY_DELETE_FAILED', 'NOT_FOUND', { id });
         }
 
         if (!this.isBoardEmpty(targetBoard)) {
-            Logger.log('board is not empty. post migration is required', { message: targetBoard });
-            throw new Error('board is not empty. post migration is required');
+            throw new ServiceException('ENTITY_DELETE_FAILED', 'BAD_REQUEST', {
+                msg: 'board is not empty. post migration is required',
+                targetBoard,
+            });
         }
         return await _repository.softRemove(targetBoard);
     }
@@ -58,7 +61,7 @@ export class BoardService {
             withDeleted: true,
         });
         if (!deletedBoard) {
-            throw new NotFoundException();
+            throw new ServiceException('ENTITY_RESTORE_FAILED', 'NOT_FOUND', { id });
         }
 
         deletedBoard.deletedAt = null;
@@ -108,12 +111,14 @@ export class BoardService {
         });
 
         if (!targetBoard) {
-            throw new NotFoundException();
+            throw new ServiceException('ENTITY_DELETE_FAILED', 'NOT_FOUND');
         }
 
         if (!this.isBoardEmpty(targetBoard)) {
-            Logger.log('board is not empty. post migration is required', { message: targetBoard });
-            throw new Error('board is not empty. post migration is required');
+            throw new ServiceException('ENTITY_DELETE_FAILED', 'BAD_REQUEST', {
+                msg: 'board is not empty. post migration is required',
+                targetBoard,
+            });
         }
         await _repository.remove(targetBoard);
     }

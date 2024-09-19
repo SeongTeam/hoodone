@@ -31,7 +31,8 @@ export class TraceInterceptor implements NestInterceptor {
             return next.handle().pipe(
                 catchError((err) => {
                     const key = LoggerUsecase.KEY.traceReq;
-                    err[key] = this.clsService.get(key);
+                    const traceId: string = this.clsService.get(key);
+                    this.logger.traceId = traceId;
                     throw err;
                 }),
             );

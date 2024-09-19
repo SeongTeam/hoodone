@@ -61,7 +61,8 @@ export class HttpLoggingInterceptor implements NestInterceptor {
         const status = response.statusCode;
         const { method, originalUrl: url, ip, query, params, headers } = request;
         this.loggerUsecase.log(
-            `accessing [${handlerKey}()] ${method}::${url}-{${status}} from ${ip} ` +
+            `accessing [${handlerKey}()] ${method}::${url} from ${ip}\n` +
+                `status : ${status} \n` +
                 `header : ${JSON.stringify(headers, null, 2)}` +
                 `Params: ${JSON.stringify(params)}` +
                 `Query: ${JSON.stringify(query)}`,
@@ -79,7 +80,7 @@ export class HttpLoggingInterceptor implements NestInterceptor {
             `----Develop log---\n` +
                 `user: "${email}"\n` +
                 `[REQUEST] \n` +
-                `Body: {\n${JSON.stringify(body, null, 2)}\n}\n` +
+                `Body: ${JSON.stringify(body, null, 2)}\n` +
                 `[RESPONSE]\n` +
                 `body :${JSON.stringify(v.body, null, 2)}`,
             this.className,
@@ -89,35 +90,27 @@ export class HttpLoggingInterceptor implements NestInterceptor {
     logError(error: any, ctx: ExecutionContext) {
         const request = ctx.switchToHttp().getRequest<Request>();
 
-        const { method, originalUrl: url, params, query, body, headers } = request;
+        const { method, originalUrl: url, params, query, body, headers, ip } = request;
         const handlerkey = ctx.getHandler().name;
         const email = this.getUserEmail(request);
 
         const httpStatus = error.status;
 
+        const format =
+            `accessing ${handlerkey} handler\n` +
+            `${method}::${url} from ${ip}\n` +
+            `Status : ${httpStatus} \n` +
+            `User: ${email} \n` +
+            `[REQUEST] \n` +
+            `Params: ${JSON.stringify(params)} \n` +
+            `Query: ${JSON.stringify(query)} \n` +
+            `Body: ${JSON.stringify(body, null, 2)}\n` +
+            `Headers: ${JSON.stringify(headers, null, 2)}\n`;
+
         if (httpStatus < 500) {
-            this.loggerUsecase.warn(
-                `WARNING accessing ${handlerkey} handler by User: ${email}\n` +
-                    `${method}-${url}\n` +
-                    `[REQUEST] \n` +
-                    `Params: ${JSON.stringify(params)} \n` +
-                    `Query: ${JSON.stringify(query)} \n` +
-                    `Body: {\n${JSON.stringify(body, null, 2)}\n}\n` +
-                    `Headers: { \n${JSON.stringify(headers, null, 2)} \n}\n`,
-                this.className,
-            );
+            this.loggerUsecase.warn(format, this.className);
         } else {
-            this.loggerUsecase.error(
-                `ERROR accessing ${handlerkey} handler by User: ${email}\n` +
-                    `${method}-${url}\n` +
-                    `[REQUEST] \n` +
-                    `Params: ${JSON.stringify(params)} \n` +
-                    `Query: ${JSON.stringify(query)} \n` +
-                    `Body: {\n${JSON.stringify(body, null, 2)}\n}\n` +
-                    `Headers: { \n${JSON.stringify(headers, null, 2)} \n}\n`,
-                error.stack,
-                this.className,
-            );
+            this.loggerUsecase.error(format, error.stack, this.className);
         }
     }
 

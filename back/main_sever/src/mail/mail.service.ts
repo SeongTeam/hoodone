@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, Logger, NotFoundException } from '@nes
 import { InjectRepository } from '@nestjs/typeorm/dist/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { CreateReportDto } from 'src/auth/report/dto/create_report.dto';
+import { ServiceException } from '@/_common/exception/service-exception';
 
 @Injectable()
 export class MailService {
@@ -24,13 +25,18 @@ export class MailService {
                     return response;
                 })
                 .catch((err) => {
-                    throw new BadRequestException(`${to} this.mailerService.sendMail`);
+                    throw new ServiceException(
+                        'SERVICE_RUN_ERROR',
+                        'INTERNAL_SERVER_ERROR',
+                        `${to} this.mailerService.sendMail`,
+                        { cause: err },
+                    );
                 });
             return result;
         } catch (e) {
-            Logger.error(`[sendCertificationPinCode] error`, JSON.stringify(e), 'MailService');
-
-            throw new BadRequestException(' this.mailerService.sendMail');
+            throw new ServiceException('EXTERNAL_SERVICE_FAILED', 'INTERNAL_SERVER_ERROR', {
+                cause: e,
+            });
         }
     }
     async generatePinCode(): Promise<string> {
@@ -53,13 +59,18 @@ export class MailService {
                 })
                 .catch((err) => {
                     Logger.error(`[MailService][sendReport] error`, JSON.stringify(err));
-                    throw new BadRequestException(`${to} this.mailerService.sendMail`);
+                    throw new ServiceException(
+                        'SERVICE_RUN_ERROR',
+                        'INTERNAL_SERVER_ERROR',
+                        `${to} this.mailerService.sendMail`,
+                        { cause: err },
+                    );
                 });
             return result;
         } catch (e) {
-            Logger.error(`[MailService][sendReport] error`, JSON.stringify(e));
-
-            throw new BadRequestException(' this.mailerService.sendMail');
+            throw new ServiceException('EXTERNAL_SERVICE_FAILED', 'INTERNAL_SERVER_ERROR', {
+                cause: e,
+            });
         }
     }
 }

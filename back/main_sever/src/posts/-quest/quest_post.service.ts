@@ -11,6 +11,7 @@ import { postCreateOption } from '../const/post-create-options.const';
 import { UserModel } from 'src/users/entities/user.entity';
 import { Not } from 'typeorm';
 import { ENV_ADMIN_EMAIL } from '@/_common/const/env-keys.const';
+import { ServiceException } from '@/_common/exception/service-exception';
 @Injectable()
 export class QuestPostsService {
     constructor(
@@ -49,7 +50,7 @@ export class QuestPostsService {
         });
 
         if (!post) {
-            throw new NotFoundException();
+            throw new ServiceException('ENTITY_NOT_FOUND', 'NOT_FOUND');
         }
 
         return post;
@@ -106,7 +107,7 @@ export class QuestPostsService {
         });
 
         if (!post) {
-            throw new NotFoundException('Post id를 찾을 수 없습니다');
+            throw new ServiceException('ENTITY_UPDATE_FAILED', 'NOT_FOUND', { postId });
         }
 
         if (title) {
@@ -160,7 +161,7 @@ export class QuestPostsService {
             id: postId,
         });
         if (!post) {
-            throw new NotFoundException(`${postId}id인 게시물을 찾지 못했습니다`);
+            throw new ServiceException('ENTITY_NOT_FOUND', 'NOT_FOUND', { postId });
         }
         return post;
     }

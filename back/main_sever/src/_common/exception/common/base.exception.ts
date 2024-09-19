@@ -1,28 +1,32 @@
-import { HttpException } from '@nestjs/common/exceptions';
+import { HttpStatus, Logger } from '@nestjs/common';
+import { HttpException, HttpExceptionOptions } from '@nestjs/common/exceptions';
 import { ApiProperty } from '@nestjs/swagger';
+import { error } from 'console';
 
 interface IBaseException {
     errorCode: number;
     timestamp: string;
-    pastMsg: any;
-    describe: string;
+    //pastMsg: any; // error.cause = prevError  로 대체하므로 삭제 예정
+    msg: string;
     path: string;
 }
+
+export type HttpStatusType = keyof typeof HttpStatus;
 
 export class BaseException extends HttpException implements IBaseException {
     constructor(
         errorCode: number,
         status: number,
-        response: string,
-        detailInfo?: {
-            describe?: string;
-            pastMsg?: string;
-        },
+        response: Record<string, any> | string,
+        options?: HttpExceptionOptions,
     ) {
-        super(response, status);
+        let resbody = typeof response === 'string' ? { message: response } : response;
+
+        resbody['errorCode'] = errorCode;
+        resbody['status'] = status;
+        super(resbody, status, options);
         this.errorCode = errorCode;
-        this.describe = detailInfo?.describe ?? '';
-        this.pastMsg = detailInfo?.pastMsg ?? '';
+        this.msg = JSON.stringify(resbody, null, 2);
     }
 
     @ApiProperty()
@@ -32,10 +36,7 @@ export class BaseException extends HttpException implements IBaseException {
     timestamp: string;
 
     @ApiProperty()
-    describe: string;
-
-    @ApiProperty()
-    pastMsg: any;
+    msg: string;
 
     @ApiProperty()
     path: string;

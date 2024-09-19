@@ -1,7 +1,7 @@
 import { PostApiResponseDto } from '@/sharedModule/response-dto/post-api-reponse.dto';
 import { SbPostApiResponseDto } from '@/sharedModule/response-dto/sb-post-api-response.dto';
-import { ParseIntPipe, ValidationPipe, ParseBoolPipe } from '@nestjs/common/pipes';
-import { Controller, UseGuards, UseInterceptors } from '@nestjs/common/decorators/core';
+import { ParseIntPipe, ParseBoolPipe } from '@nestjs/common/pipes';
+import { Controller, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common/decorators/core';
 import {
     Body,
     Delete,
@@ -33,12 +33,14 @@ import { UpdatePostDto } from '../dto/update-post.dto';
 import { SbPostOwnerGuard } from '../guard/sb-post-owner.guard';
 import { UserUseCase } from 'src/users/usecase/user.use-case';
 import { TicketModel } from '@/users/_tickets/entities/ticket.entity';
+import { CustomValidationPipe } from '@/_common/pipe/custom-validation.pipe';
 
 /*TODO
 - Comment list 미포함하여 반환하도록 수정
     - front의 infinite scroll 동작시 fetch를 감소시켜야하므로 수정 필요
 */
 @Controller('/sbs')
+@UsePipes(CustomValidationPipe)
 export class SbPostsController {
     constructor(
         private readonly postUseCase: PostsUseCases,
@@ -56,7 +58,7 @@ export class SbPostsController {
     async postQuest(
         @User('id') userId: number,
         @Headers('questId') questId: number,
-        @Body(ValidationPipe) body: CreatePostDto,
+        @Body() body: CreatePostDto,
         @QueryRunner() qr: QR,
     ) {
         const newPost = await this.postUseCase.createSb(userId, questId, body, qr);
@@ -74,7 +76,7 @@ export class SbPostsController {
     /** TODO paginated 구현 quest와 sb 나눌 것인지 논의*/
     @Get('/paginated')
     async getPaginatedPosts(
-        @Query(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
+        @Query()
         queryParams: GetPaginatedPostsQueryDTO,
     ) {
         const { offset, limit } = queryParams;
@@ -110,7 +112,7 @@ export class SbPostsController {
     @UseInterceptors(TransactionInterceptor)
     async patchSb(
         @Param('id', ParseIntPipe) id: number,
-        @Body(ValidationPipe) body: UpdatePostDto,
+        @Body() body: UpdatePostDto,
         @QueryRunner() qr: QR,
     ) {
         return this.postUseCase.updateSb(id, body);
@@ -192,7 +194,7 @@ export class SbPostsController {
     async addPost(
         @User('id') userId: number,
         @Param('boardId', ParseIntPipe) boardId: number,
-        @Body(ValidationPipe) body: CreatePostDto,
+        @Body() body: CreatePostDto,
         @QueryRunner() qr: QR,
     ) {
         /*TODO
@@ -206,7 +208,7 @@ export class SbPostsController {
     @Roles(RoleType.USER, RoleType.ADMIN)
     @UseGuards(AccessTokenGuard, RoleGuard)
     @UseInterceptors(TransactionInterceptor)
-    async patchBoardMigration(@Body(ValidationPipe) body, @QueryRunner() qr: QR) {
+    async patchBoardMigration(@Body() body, @QueryRunner() qr: QR) {
         const { boardIdList, postIdList } = body;
         /*TODO
         - 특정 post 리스트를 board에 옮기는 로직 구현 필요.

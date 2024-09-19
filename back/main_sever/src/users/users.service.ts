@@ -57,9 +57,8 @@ export class UsersService {
                 });
             }
         } catch (e) {
-            throw new AuthException('ACCOUNT_CREATION_FAILED', {
-                describe:
-                    'UserService.createTempUser()에서 error / user.service.ts createdTempUse() FAIL',
+            throw new AuthException('ACCOUNT_CREATION_FAILED', 'INTERNAL_SERVER_ERROR', {
+                cause: e,
             });
         }
         return await repository.save(tempUser);
@@ -87,9 +86,7 @@ export class UsersService {
             return await userRepository.save(user);
         } catch (e) {
             Logger.error(`[UsersService][createUser] error`, JSON.stringify(e));
-            throw new AuthException('ACCOUNT_CREATION_FAILED', {
-                describe: 'UserService.createUser()에서 error',
-            });
+            throw new AuthException('ACCOUNT_CREATION_FAILED', 'UNAUTHORIZED', { cause: e });
         }
     }
 
@@ -100,19 +97,15 @@ export class UsersService {
     ): Promise<UpdateResult> {
         const { nickname, verificationToken } = userDtoData;
 
-        try {
-            const userRepository = this._getUsersRepository(qr);
-            const now: Date = new Date();
+        const userRepository = this._getUsersRepository(qr);
+        const now: Date = new Date();
 
-            const result: UpdateResult = await userRepository.update(
-                { id: userId },
-                { ...userDtoData, updatedAt: now },
-            );
+        const result: UpdateResult = await userRepository.update(
+            { id: userId },
+            { ...userDtoData, updatedAt: now },
+        );
 
-            return result;
-        } catch (e) {
-            throw new NotFoundException(e);
-        }
+        return result;
     }
     resetPassword(userInfo: Pick<UserModel, 'id' | 'password'>, qr: QueryRunner) {
         const { password, id } = userInfo;

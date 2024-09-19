@@ -8,6 +8,7 @@ import { CommentModel } from './entities/comment.entity';
 import { Between } from 'typeorm';
 import { PostId } from '../pips/post-id.pip';
 import { PostType } from './enum/post_type';
+import { ServiceException } from '@/_common/exception/service-exception';
 
 @Injectable()
 export class CommentsService {
@@ -59,6 +60,10 @@ export class CommentsService {
         const name = questId ? 'questPost' : 'sbPost';
         const id = questId ? questId : sbId;
 
+        /* TODO
+           Guard,Pipe enhancer 사용 또는 Manager클래스 생성하여 유효성 검증하기.
+           서비스 로직 내부에서 유효성 검증은 불필요.
+        */
         if (depthRange.length !== 2 || depthRange[0] > depthRange[1]) {
             Logger.error('depthRange is invalid', { message: { depthRange } });
             throw new BadRequestException('depthRange is invalid');
@@ -66,7 +71,6 @@ export class CommentsService {
         return this.commentRepository.find({
             ...COMMON_COMMENT_FIND_OPTION,
             where: {
-
                 [name]: { id },
                 depth: Between(depthRange[0], depthRange[1]),
             },
@@ -133,6 +137,10 @@ export class CommentsService {
         const depth = responseToComment.depth + 1;
         const _commentIDs = responseToComment.replyCommentIds;
 
+        /* TODO
+           Guard,Pipe enhancer 사용 또는 Manager클래스 생성하여 유효성 검증하기.
+           서비스 로직 내부에서 유효성 검증은 불필요.
+        */
         if (questId && sbId) {
             throw new BadRequestException(
                 'commentService.createReplyComment(), questId, sbId가 들어 있으면 안됩니다. 1개만 들어 있어야 합니다. ',
@@ -173,10 +181,6 @@ export class CommentsService {
         const comment: CommentModel = await this.commentRepository.findOneBy({
             id: id,
         });
-
-        if (!comment) {
-            throw new BadRequestException(`id: ${id} Comment는 존재하지 않습니다.`);
-        }
 
         return comment;
     }
@@ -219,6 +223,10 @@ export class CommentsService {
         questId: number & { __brand: 'questId' },
         sbId: number & { __brand: 'sbId' },
     ) {
+        /* TODO
+           Guard,Pipe enhancer 사용 또는 Manager클래스 생성하여 유효성 검증하기.
+           서비스 로직 내부에서 유효성 검증은 불필요.
+        */
         if (questId && sbId) {
             throw new BadRequestException(
                 'createComment(), questId, sbId가 들어 있으면 안됩니다. 1개만 들어 있어야 합니다. ',

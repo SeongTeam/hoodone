@@ -33,10 +33,10 @@ export class AuthService {
         } catch (e) {
             // 만료되 토큰일 경우
             if (isExpired) {
-                throw new AuthException('JWT_EXPIRED');
+                throw new AuthException('JWT_EXPIRED', 'BAD_REQUEST', { cause: e });
             }
             // 토큰이 서버에서 발급한 것이 아닌 경우
-            throw new AuthException('JWT_INVALID_TOKEN');
+            throw new AuthException('JWT_INVALID_TOKEN', 'INTERNAL_SERVER_ERROR', { cause: e });
         }
     }
 
@@ -64,7 +64,7 @@ export class AuthService {
          * type: 'access' | 'refresh'
          */
         if (decoded.payload.type !== 'refresh') {
-            throw new AuthException('REFRESH_TOKEN_TYPE_MISMATCH');
+            throw new AuthException('REFRESH_TOKEN_TYPE_MISMATCH', 'BAD_REQUEST');
         }
         const newToken: string = this.signToken(
             {

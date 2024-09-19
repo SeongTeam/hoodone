@@ -10,6 +10,7 @@ import { TicketUseCase } from 'src/users/_tickets/usecase/ticket_use_case';
 import { FindManyOptions } from 'typeorm';
 import { TicketService } from '../_tickets/ticket.service';
 import { instanceToPlain } from 'class-transformer';
+import { ServiceException } from '@/_common/exception/service-exception';
 
 @Injectable()
 export class UserUseCase {
@@ -40,7 +41,12 @@ export class UserUseCase {
             }
             return null;
         } catch (e) {
-            throw e;
+            throw new ServiceException(
+                'ENTITY_CREATE_FAILED',
+                'INTERNAL_SERVER_ERROR',
+                { userInfo, isEmailExisted, isNicknameExisted },
+                { cause: e },
+            );
         }
     }
 
@@ -131,7 +137,17 @@ export class UserUseCase {
         try {
             return await this.userService.updateUser(id, { password: undefined, ...userData }, qr);
         } catch (e) {
-            throw new BadRequestException('UserUseCase updateUserData 에러');
+            throw new ServiceException(
+                'ENTITY_UPDATE_FAILED',
+                'INTERNAL_SERVER_ERROR',
+                {
+                    id,
+                    userData,
+                },
+                {
+                    cause: e,
+                },
+            );
         }
     }
 
@@ -145,7 +161,17 @@ export class UserUseCase {
                 qr,
             );
         } catch (e) {
-            throw new BadRequestException('UserUseCase  updateUserPassword 에러');
+            throw new ServiceException(
+                'ENTITY_UPDATE_FAILED',
+                'INTERNAL_SERVER_ERROR',
+                {
+                    id,
+                    userData,
+                },
+                {
+                    cause: e,
+                },
+            );
         }
     }
 

@@ -6,10 +6,11 @@ import {
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common/interfaces';
 import { Observable, catchError, tap } from 'rxjs';
 import { DataSource } from 'typeorm';
-import { UnCatchedException } from '../exception/uncatch.exception';
-import { InterceptorException } from '../exception/interceptor-exception';
-import { Logger } from '@nestjs/common';
 
+/* TODO
+    - Inject LoggerUsecase.
+    - modify log error by using e.stack and injected LoggerUsecase. 
+*/
 @Injectable()
 export class TransactionInterceptor implements NestInterceptor {
     constructor(private readonly dataSource: DataSource) {}
@@ -34,11 +35,7 @@ export class TransactionInterceptor implements NestInterceptor {
             catchError(async (e) => {
                 await qr.rollbackTransaction();
                 await qr.release();
-                Logger.error('[TransactionInterceptor][intercept] transaction error occur '); //
-                throw new InterceptorException({
-                    message: 'TransactionInterceptor에서 에러 발생',
-                    pastMsg: e,
-                });
+                throw e;
             }),
             tap(async () => {
                 await qr.commitTransaction();

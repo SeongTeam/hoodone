@@ -7,6 +7,7 @@ export class LoggerUsecase {
         traceReq: 'traceId',
     };
 
+    private _traceId: string;
     constructor(
         private readonly logger: Logger,
         private readonly clsService: ClsService,
@@ -33,7 +34,15 @@ export class LoggerUsecase {
     }
 
     private getFullContext(ctx: string) {
-        const reqInfo = this.clsService.get(LoggerUsecase.KEY.traceReq) || '';
+        const reqInfo = this.clsService.get(LoggerUsecase.KEY.traceReq) || this.traceId;
         return `${ctx} , req{${reqInfo}}`;
+    }
+
+    set traceId(value: string) {
+        this._traceId = value;
+    }
+
+    get traceId() {
+        return this._traceId;
     }
 }

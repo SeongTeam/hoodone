@@ -9,20 +9,21 @@ import {
     Query,
     UseGuards,
     UseInterceptors,
+    UsePipes,
 } from '@nestjs/common/decorators';
 import { PostsUseCases } from '../usecase/post.use-case';
 import { BoardUseCase } from 'src/boards/usecase/board.use-case';
 import { User } from 'src/users/decorator/user.decorator';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { QueryRunner } from 'src/_common/decorator/query-runner.decorator';
-import { QueryRunner as QR } from 'typeorm';
+import { Entity, QueryRunner as QR } from 'typeorm';
 import { AccessTokenGuard } from 'src/auth/guard/token/access-token.guard';
 import { TransactionInterceptor } from 'src/_common/interceptor/transaction.interceptor';
 import { PostApiResponseDto } from '@/sharedModule/response-dto/post-api-reponse.dto';
 import { QuestPostApiResponseDto } from '@/sharedModule/response-dto/quest-post-api-response.dto';
 import { GetPaginatedPostsQueryDTO } from '../dto/get-paginated-posts.dto';
 import { IsPublic } from 'src/_common/decorator/is-public.decorator';
-import { ParseBoolPipe, ParseIntPipe, ValidationPipe } from '@nestjs/common/pipes';
+import { ParseBoolPipe, ParseIntPipe } from '@nestjs/common/pipes';
 import { Roles } from 'src/users/decorator/roles.decorator';
 import { RoleType } from 'src/users/const/role.type';
 import { QuestPostOwnerGuard } from '../guard/quest-post-owner.guard';
@@ -33,12 +34,21 @@ import { UserModel } from 'src/users/entities/user.entity';
 import { UserUseCase } from 'src/users/usecase/user.use-case';
 import { FavoriteService } from 'src/favorite/favorite.service';
 import { TicketModel } from '@/users/_tickets/entities/ticket.entity';
+import { CustomValidationPipe } from '@/_common/pipe/custom-validation.pipe';
 
 /*TODO
 - Comment list 미포함하여 반환하도록 수정
     - front의 infinite scroll 동작시 fetch를 감소시켜야하므로 수정 필요
 */
+
 @Controller('quests')
+@UsePipes(
+    new CustomValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+    }),
+)
 export class QuestPostsController {
     constructor(
         private readonly postUseCase: PostsUseCases,
@@ -54,7 +64,8 @@ export class QuestPostsController {
     async post(
         @User('id') userId: number,
         @User('ticket') ticket: TicketModel,
-        @Body(ValidationPipe) body: CreatePostDto,
+        @Body()
+        body: CreatePostDto,
         @QueryRunner() qr: QR,
     ) {
         const res = new PostApiResponseDto();
@@ -73,7 +84,7 @@ export class QuestPostsController {
     /** TODO paginated 구현 quest와 sb 나눌 것인지 논의*/
     @Get('/paginated')
     async getPaginatedPosts(
-        @Query(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
+        @Query()
         queryParams: GetPaginatedPostsQueryDTO,
     ) {
         const { offset, limit } = queryParams;
@@ -85,7 +96,7 @@ export class QuestPostsController {
 
     @Get('/admin-paginated')
     async getAdminQuests(
-        @Query(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
+        @Query()
         queryParams: GetPaginatedPostsQueryDTO,
     ) {
         const { offset, limit } = queryParams;
@@ -117,7 +128,7 @@ export class QuestPostsController {
     @Get('/:id/sbs')
     async getRelatedSbs(
         @Param('id', ParseIntPipe) id: number,
-        @Query(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
+        @Query()
         queryParams: GetPaginatedPostsQueryDTO,
     ) {
         const { offset, limit } = queryParams;
