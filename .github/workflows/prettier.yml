@@ -17,6 +17,8 @@ jobs:
         with:
           node-version: "14.x"
       - name: Install dependencies
+        working-directory: ./back/main-sever # Change this to the correct folder
         run: npm ci
       - name: Run Prettier
-        run: npx prettier --write "src/**/*.ts" "test/**/*.ts"
+        working-directory : ./back/main-sever
+        run: npm run format
