@@ -88,6 +88,14 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
+    "moduleNameMapper": {
+      "@/sharedModule/(.*)$": "<rootDir>/../../../shared/$1",
+      "^src/(.*)$": "<rootDir>/$1",
+      "^@/(.*)$": "<rootDir>/$1"
+    },
+    "setupFiles": [
+      "../setEnvFile.js"
+    ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
