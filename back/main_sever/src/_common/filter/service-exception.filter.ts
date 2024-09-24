@@ -16,7 +16,6 @@ interface IExceptionInfo extends Pick<BaseException, 'timestamp' | 'path'> {
 export class ServiceExceptionFilter extends CustomExceptionFilter {
     constructor(private readonly loggerUsecase: LoggerUsecase) {
         super(loggerUsecase, 'ServiceExceptionFilter');
-        this.loggerUsecase.log(`successfully mounted`, this.className);
     }
 
     catch(exception: ServiceException, host: ArgumentsHost): void {
@@ -26,7 +25,10 @@ export class ServiceExceptionFilter extends CustomExceptionFilter {
 
         if (code == ServiceExceptionEnum.DB_INCONSISTENCY) {
             // notfiy to Developer.
-            this.loggerUsecase.error('DB has inconsistency', exception.stack, this.className);
+            this.loggerUsecase.error('DB has inconsistency', exception.stack, {
+                className: this.className,
+                traceId: exception.traceId,
+            });
         }
     }
 }

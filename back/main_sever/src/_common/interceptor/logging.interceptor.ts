@@ -66,7 +66,9 @@ export class HttpLoggingInterceptor implements NestInterceptor {
                 `header : ${JSON.stringify(headers, null, 2)}` +
                 `Params: ${JSON.stringify(params)}` +
                 `Query: ${JSON.stringify(query)}`,
-            this.className,
+            {
+                className: this.className,
+            },
         );
 
         return { request, response, body: val } as HttpInfo;
@@ -83,7 +85,9 @@ export class HttpLoggingInterceptor implements NestInterceptor {
                 `Body: ${JSON.stringify(body, null, 2)}\n` +
                 `[RESPONSE]\n` +
                 `body :${JSON.stringify(v.body, null, 2)}`,
-            this.className,
+            {
+                className: this.className,
+            },
         );
     }
 
@@ -108,9 +112,13 @@ export class HttpLoggingInterceptor implements NestInterceptor {
             `Headers: ${JSON.stringify(headers, null, 2)}\n`;
 
         if (httpStatus < 500) {
-            this.loggerUsecase.warn(format, this.className);
+            this.loggerUsecase.warn(format, {
+                className: this.className,
+            });
         } else {
-            this.loggerUsecase.error(format, error.stack, this.className);
+            this.loggerUsecase.error(format, error.stack, {
+                className: this.className,
+            });
         }
     }
 

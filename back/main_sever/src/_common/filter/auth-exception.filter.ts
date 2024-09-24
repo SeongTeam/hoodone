@@ -10,7 +10,6 @@ import { AuthExceptionEnum } from '../exception/common/enum/auth-exception-code.
 export class AuthExceptionFilter extends CustomExceptionFilter {
     constructor(private readonly loggerUsecase: LoggerUsecase) {
         super(loggerUsecase, 'AuthExceptionFilter');
-        this.loggerUsecase.log(`successfully mounted`, this.className);
     }
 
     catch(exception: AuthException, host: ArgumentsHost): void {
@@ -19,7 +18,10 @@ export class AuthExceptionFilter extends CustomExceptionFilter {
         super.catch(exception, host);
 
         if (code >= AuthExceptionEnum.CREDENTIALS_REVOKED) {
-            this.loggerUsecase.error('Serious Excpetion', exception.stack, this.className);
+            this.loggerUsecase.error('Serious Excpetion', exception.stack, {
+                className: this.className,
+                traceId: exception.traceId,
+            });
         }
     }
 }

@@ -14,6 +14,7 @@ interface IBaseException {
 export type HttpStatusType = keyof typeof HttpStatus;
 
 export class BaseException extends HttpException implements IBaseException {
+    traceId: string;
     constructor(
         errorCode: number,
         status: number,
