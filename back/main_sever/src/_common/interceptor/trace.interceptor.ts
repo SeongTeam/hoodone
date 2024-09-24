@@ -13,6 +13,7 @@ import { ClsService } from 'nestjs-cls';
 import { Observable, catchError } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { LoggerUsecase } from '../provider/LoggerUsecase';
+import { BaseException } from '../exception/common/base.exception';
 
 @Injectable()
 export class TraceInterceptor implements NestInterceptor {
@@ -30,14 +31,17 @@ export class TraceInterceptor implements NestInterceptor {
 
             return next.handle().pipe(
                 catchError((err) => {
-                    const key = LoggerUsecase.KEY.traceReq;
-                    const traceId: string = this.clsService.get(key);
-                    this.logger.traceId = traceId;
+                    if (!(err instanceof BaseException))
+                        this.logger.warn(`Unknown Exception Occur by request-${traceId} `, {
+                            className: this.className,
+                        });
+
+                    err.traceId = traceId;
                     throw err;
                 }),
             );
         } else {
-            this.logger.warn('Undefined communicate Approach', this.className);
+            this.logger.warn('Undefined communicate Approach', { className: this.className });
             return next.handle();
         }
     }

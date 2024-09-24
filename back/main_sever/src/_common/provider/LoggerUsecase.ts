@@ -1,6 +1,11 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClsService } from 'nestjs-cls';
 
+export interface ILogContext {
+    className: string;
+    traceId?: string;
+}
+
 @Injectable()
 export class LoggerUsecase {
     static KEY = {
@@ -13,36 +18,28 @@ export class LoggerUsecase {
         private readonly clsService: ClsService,
     ) {}
 
-    debug(message: any, context: string) {
+    debug(message: any, context: ILogContext) {
         return this.logger.debug(message, this.getFullContext(context));
     }
-    log(message: any, context: string) {
+    log(message: any, context: ILogContext) {
         return this.logger.log(message, this.getFullContext(context));
     }
-    error(message: any, stack: string, context: string) {
+    error(message: any, stack: string, context: ILogContext) {
         return this.logger.error(message, stack, this.getFullContext(context));
     }
 
-    fatal(message: any, stack: string, context: string) {
+    fatal(message: any, stack: string, context: ILogContext) {
         return this.logger.fatal(message, stack, this.getFullContext(context));
     }
-    verbose(message: any, context: string) {
+    verbose(message: any, context: ILogContext) {
         return this.logger.verbose(message, this.getFullContext(context));
     }
-    warn(message: any, context: string) {
+    warn(message: any, context: ILogContext) {
         return this.logger.warn(message, this.getFullContext(context));
     }
 
-    private getFullContext(ctx: string) {
-        const reqInfo = this.clsService.get(LoggerUsecase.KEY.traceReq) || this.traceId;
-        return `${ctx} , req{${reqInfo}}`;
-    }
-
-    set traceId(value: string) {
-        this._traceId = value;
-    }
-
-    get traceId() {
-        return this._traceId;
+    private getFullContext(ctx: ILogContext) {
+        const reqInfo = this.clsService.get(LoggerUsecase.KEY.traceReq) || ctx.traceId;
+        return `${ctx.className} , req{${reqInfo}}`;
     }
 }

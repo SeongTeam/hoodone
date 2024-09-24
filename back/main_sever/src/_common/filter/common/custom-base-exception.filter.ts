@@ -52,15 +52,13 @@ export class CustomExceptionFilter implements ExceptionFilter {
                 });
             }
         } else {
-            this.logger.error(
-                `unsupport host type[${host.getType()} access`,
-                exception.stack,
-                this.className,
-            );
+            this.logger.error(`unsupport host type[${host.getType()} access`, exception.stack, {
+                className: this.className,
+                traceId: exception.traceId,
+            });
         }
     }
 
-    // 부모 클래스 타입으로 자식 클래스 타입을 판별할 수 있는가?
     private logBaseException(exception: BaseException) {
         const info: IExceptionInfo = {
             timestamp: exception.timestamp,
@@ -70,9 +68,15 @@ export class CustomExceptionFilter implements ExceptionFilter {
         };
 
         if (exception.getStatus() >= HttpStatus.INTERNAL_SERVER_ERROR) {
-            this.logger.error(JSON.stringify(info, null, 2), exception.stack, this.className);
+            this.logger.error(JSON.stringify(info, null, 2), exception.stack, {
+                className: this.className,
+                traceId: exception.traceId,
+            });
         } else {
-            this.logger.warn(JSON.stringify(info, null, 2), this.className);
+            this.logger.warn(JSON.stringify(info, null, 2), {
+                className: this.className,
+                traceId: exception.traceId,
+            });
         }
     }
 
@@ -87,7 +91,10 @@ export class CustomExceptionFilter implements ExceptionFilter {
         this.logger.error(
             `Unknown Exception ${e.name} occurs ` + `${JSON.stringify(info, null, 2)}`,
             e.stack,
-            this.className,
+            {
+                className: this.className,
+                traceId: e.traceId,
+            },
         );
     }
 

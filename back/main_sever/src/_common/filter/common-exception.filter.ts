@@ -4,12 +4,13 @@ import { BaseException } from '../exception/common/base.exception';
 import { Logger } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums/http-status.enum';
 import { QueryFailedError, TypeORMError } from 'typeorm';
-import { HttpException } from '@nestjs/common/exceptions/http.exception';
+import { HttpException, HttpExceptionOptions } from '@nestjs/common/exceptions/http.exception';
 import { LoggerUsecase } from '../provider/LoggerUsecase';
 import { CustomExceptionFilter } from './common/custom-base-exception.filter';
 import { Response } from 'express';
 import { ServiceException } from '../exception/service-exception';
 import { PipeException } from '../exception/pipe-exception';
+import { ServiceExceptionEnum } from '../exception/common/enum/service-exception-code.enum';
 
 /*TODO
  - add handling logic for each Exception 
@@ -25,7 +26,10 @@ export class CommonExceptionFilter extends CustomExceptionFilter {
     catch(exception: any, host: ArgumentsHost): void {
         const errName = exception.name;
 
-        this.loggerUsecase.debug(`catch ${errName} exception`, this.className);
+        this.loggerUsecase.debug(`catch ${errName} exception`, {
+            className: this.className,
+            traceId: exception.traceId,
+        });
 
         if (exception instanceof TypeORMError) {
             this.handleTypeORMException(exception, host);
@@ -54,11 +58,14 @@ export class CommonExceptionFilter extends CustomExceptionFilter {
             }
         }
         info.typeORMMsg = e.message;
-        const newError = new ServiceException('SERVICE_RUN_ERROR', 'INTERNAL_SERVER_ERROR', info, {
-            cause: e,
-        });
+        const err = this.convertToCustomException(
+            e,
+            ServiceExceptionEnum.SERVICE_RUN_ERROR,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            info,
+        );
 
-        super.catch(newError, host);
+        super.catch(err, host);
     }
 
     handlePipeException(e: PipeException, host: ArgumentsHost) {
@@ -76,5 +83,16 @@ export class CommonExceptionFilter extends CustomExceptionFilter {
             path: e.path,
             message: e.validationMessage,
         });
+    }
+    convertToCustomException(
+        innerError: any,
+        errorCode: number,
+        status: number,
+        info: Record<string, any>,
+    ) {
+        const ret = new BaseException(errorCode, status, info, { cause: innerError });
+        ret.traceId = innerError.traceId;
+
+        return ret;
     }
 }
